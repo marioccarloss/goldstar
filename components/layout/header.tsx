@@ -14,7 +14,7 @@ const NavLink = ({ children }: { children: ReactNode }) => (
 
 export const Header = () => {
   return (
-    <header className='fixed top-8 left-0 right-0 max-w-[1444px] w-full mx-auto px-6 z-10'>
+    <header className='fixed top-8 left-0 right-0 max-w-[1444px] w-full mx-auto px-6 z-20'>
       <nav className='bg-black mx-auto px-6 py-6 flex justify-between items-center'>
         <Logo />
         <div className='hidden md:flex items-center space-x-8'>
