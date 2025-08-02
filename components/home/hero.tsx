@@ -1,11 +1,12 @@
 import Image from 'next/image'
 import { Star, ArrowRight } from 'lucide-react'
+import { Marquee } from '../marquee'
 import { Button } from '@/components/ui/button'
 
 export const Hero = () => {
   return (
     <div className='w-full bg-[#f6be00] text-black overflow-x-hidden px-6 min-h-svh flex items-center'>
-      <div className='max-w-[1400px] w-full mx-auto py-16 lg:py-24'>
+      <div className='max-w-[1400px] w-full mx-auto py-20 lg:py-28'>
         <div className='grid lg:grid-cols-2 gap-16 items-center relative'>
           {/* Columna de Texto */}
           <div className='flex flex-col gap-6 text-center lg:text-left z-10 text-black'>
@@ -22,8 +23,8 @@ export const Hero = () => {
               Reliable & Fast <br /> Plumbing in <br /> Vancouver
             </h1>
             <p
-              className='max-w-[521px]'
-              style={{ fontSize: 'clamp(1rem, 2vw, 22px)' }}
+              className='max-w-[380px] lg:max-w-[521px]'
+              style={{ fontSize: 'clamp(1rem, 1.5vw, 22px)' }}
             >
               24/7 licensed plumbers with upfront pricing. Drainage, heating,
               and renovation services guaranteed and precise.
@@ -52,14 +53,20 @@ export const Hero = () => {
           <div className='relative flex items-end md:gap-4 pb-20'>
             <div className='w-[90vw] h-[90vw] max-w-[360px] max-h-[490px] flex items-end justify-center relative'>
               <div className='bg-[#D0F5DA] rounded-b-full w-full h-[100vh] absolute bottom-0 left-0 right-0'></div>
-              <div className='overflow-hidden rounded-b-full z-10 mt-auto'>
+              <div className='overflow-hidden rounded-b-full z-10 mt-auto relative'>
+                <div className='absolute inset-0 transform -rotate-10 w-[120%]'>
+                  <Marquee className='bg-[#FFA500] text-white bottom-2/4' />
+                </div>
                 <Image
                   src='/images/fontanero.png'
                   alt='Fontanero profesional'
                   width={400}
                   height={600}
-                  className='object-contain rounded-b-full z-10 bg-[#D0F5DA]'
+                  className='object-contain rounded-b-full relative z-20'
                 />
+                <div className='absolute inset-0 z-20 transform rotate-12 w-[120%]'>
+                  <Marquee className='bg-[#000000] text-white bottom-1/3 -left-5' />
+                </div>
               </div>
             </div>
             <div className='w-[90vw] h-[90vw] max-w-[256px] max-h-[422px] flex items-end justify-center bg-[#EDD4E1] rounded-full overflow-hidden z-10 '>
@@ -70,6 +77,28 @@ export const Hero = () => {
                 height={300}
                 className='object-[80%] rounded-b-full z-10 mt-auto bg-[#EDD4E1] w-full'
               />
+            </div>
+            <div className='absolute bottom-0 left-0 lg:left-auto lg:right-1/3 bg-[#fefae0] p-3 shadow-lg flex items-center gap-3 z-20'>
+              <div className='flex -space-x-3'>
+                <Image
+                  src='/images/p1.png'
+                  alt='Customer 1'
+                  width={40}
+                  height={40}
+                  className='rounded-full border-2 border-white'
+                />
+                <Image
+                  src='/images/p2.png'
+                  alt='Customer 2'
+                  width={40}
+                  height={40}
+                  className='rounded-full border-2 border-white'
+                />
+              </div>
+              <div>
+                <p className='font-bold text-lg text-amber-700'>98%</p>
+                <p className='text-sm text-stone-600'>Customer Satisfaction</p>
+              </div>
             </div>
           </div>
         </div>
