@@ -1,32 +1,23 @@
 import { Star } from './icons/star'
 import { Logo } from './icons/logo'
 
-export const Marquee = ({ className }: { className?: string }) => {
-  const marqueeItems = (
-    <>
-      <Logo />
-      <Star />
-      <Logo />
-      <Star />
-      <Logo />
-      <Star />
-      <Logo />
-      <Star />
-    </>
-  )
+const MarqueeItem = () => (
+  <div className='flex items-center gap-4'>
+    <Logo />
+    <Star />
+  </div>
+)
 
+export const Marquee = ({ className }: { className?: string }) => {
   return (
     <div className={`absolute w-full overflow-hidden ${className}`}>
-      <div className='flex w-[200%] animate-marquee'>
-        <div className='flex items-center justify-around w-1/2 gap-3'>
-          {marqueeItems}
-        </div>
-        <div
-          className='flex items-center justify-around w-1/2 gap-3'
-          aria-hidden='true'
-        >
-          {marqueeItems}
-        </div>
+      <div className='flex w-max animate-marquee p-2 gap-3'>
+        {Array.from({ length: 10 }).map((_, i) => (
+          <MarqueeItem key={i} />
+        ))}
+        {Array.from({ length: 10 }).map((_, i) => (
+          <MarqueeItem key={i} />
+        ))}
       </div>
     </div>
   )
