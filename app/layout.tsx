@@ -9,7 +9,7 @@ const geologica = Geologica({
   subsets: ["latin"],
   weight: ["400", "500", "700", "800"],
   display: "swap",
-  variable: "--font-geologica",
+  variable: "--font-geologica", // Usamos una variable CSS para la fuente
 })
 
 export const metadata: Metadata = {
@@ -24,8 +24,8 @@ export default function RootLayout({
   children: ReactNode
 }>) {
   return (
-    <html lang="es">
-      <body className={`${geologica.variable} font-sans bg-amber-400`}>
+    <html lang="en">
+      <body className={`${geologica.variable} font-sans`}>
         <Header />
         <main>{children}</main>
         <Footer />
