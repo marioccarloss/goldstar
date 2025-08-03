@@ -11,7 +11,7 @@ import {
 export function Footer() {
   return (
     <footer className='bg-black text-white pt-12'>
-      <div className=' max-w-[1444px] w-full mx-auto px-6 lg:px-8'>
+      <div className='max-w-[1444px] w-full mx-auto px-6 lg:px-8'>
         {/* CTA Section */}
         <div className='bg-[#f6be00] text-black py-12 px-8 my-12'>
           <div className='flex flex-col md:flex-row justify-between items-center gap-6'>
