@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Geologica } from "next/font/google"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
+import { WhatsappButton } from "@/components/whatsapp-button"
 import "./globals.css"
 
 const geologica = Geologica({
@@ -16,7 +17,7 @@ const geologica = Geologica({
 export const metadata: Metadata = {
   title: "Gold Star Plumbing",
   description: "Reliable & Fast Plumbing in Vancouver",
-    generator: 'v0.dev'
+  generator: "v0.dev",
 }
 
 export default function RootLayout({
@@ -30,6 +31,7 @@ export default function RootLayout({
         <Header />
         <main>{children}</main>
         <Footer />
+        <WhatsappButton />
       </body>
     </html>
   )
