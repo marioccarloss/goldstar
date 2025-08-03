@@ -6,7 +6,15 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Se ha eliminado la clave 'images: { unoptimized: true }' para habilitar la optimización.
-}
+  images: {
+    unoptimized: true,
+  },
+  // Tu configuración existente de Next.js
+};
 
-export default nextConfig
+// Solo activa el analizador si la variable de entorno ANALYZE es 'true'
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
+
+export default withBundleAnalyzer(nextConfig);
