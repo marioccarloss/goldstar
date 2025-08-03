@@ -2,11 +2,13 @@ import type { ReactNode } from "react"
 import type { Metadata } from "next"
 import { Geologica } from "next/font/google"
 import { Header } from "@/components/layout/header"
+import { Footer } from "@/components/layout/footer"
 import "./globals.css"
 
 const geologica = Geologica({
   subsets: ["latin"],
   weight: ["400", "500", "700", "800"],
+  variable: "--font-geologica",
 })
 
 export const metadata: Metadata = {
@@ -22,9 +24,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={geologica.className}>
+      <body className={`${geologica.variable} font-sans bg-amber-400`}>
         <Header />
-        {children}
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   )

@@ -83,7 +83,7 @@ export const Hero = () => {
               Reliable & Fast <br /> Plumbing in <br /> Vancouver
             </motion.h1>
             <motion.p
-              className="max-w-[380px] lg:max-w-[521px]"
+              className="max-w-[380px] lg:max-w-[521px] mx-auto lg:mx-0"
               style={{ fontSize: "clamp(1rem, 1.5vw, 22px)" }}
               variants={textItemVariants}
             >
@@ -114,47 +114,91 @@ export const Hero = () => {
           </motion.div>
 
           {/* Columna de Imágenes Animada */}
-          <div className="relative flex items-end md:gap-4 pb-20">
-            <motion.div
-              className="w-[90vw] h-[90vw] max-w-[360px] max-h-[490px] flex items-end justify-center relative"
-              variants={imageVariants}
-              initial="hidden"
-              animate="visible"
-            >
-              <div className="bg-[#D0F5DA] rounded-b-full w-full h-[100vh] absolute bottom-0 left-0 right-0"></div>
-              <div className="overflow-hidden rounded-b-full z-10 mt-auto relative">
-                <div className="absolute inset-0 transform -rotate-10 w-[120%]">
-                  <Marquee className="bg-[#FFA500] text-white bottom-2/4" />
+          <div className="relative flex flex-col items-center justify-center gap-8 lg:flex-row lg:items-end lg:justify-start lg:gap-4 pb-10 lg:pb-20">
+            {/* Contenedor para las dos imágenes en móvil */}
+            <div className="flex flex-row items-end justify-center gap-4 lg:hidden w-full">
+              {/* Fontanero */}
+              <motion.div
+                className="relative w-1/2 flex justify-center"
+                variants={imageVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                <div className="w-full h-[300px] bg-[#D0F5DA] rounded-t-full overflow-hidden flex items-end justify-center">
+                  <Image
+                    src="/images/fontanero.png"
+                    alt="Fontanero profesional"
+                    width={200}
+                    height={300}
+                    className="object-contain object-bottom"
+                  />
                 </div>
+              </motion.div>
+              {/* Clienta */}
+              <motion.div
+                className="relative w-1/2 flex justify-center"
+                variants={imageVariants}
+                initial="hidden"
+                animate="visible"
+                transition={{ delay: 0.2 }}
+              >
+                <div className="w-full h-[300px] bg-[#EDD4E1] rounded-t-full overflow-hidden flex items-end justify-center">
+                  <Image
+                    src="/images/clienta.png"
+                    alt="Clienta satisfecha"
+                    width={200}
+                    height={300}
+                    className="object-cover object-bottom"
+                  />
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Diseño original para pantallas grandes */}
+            <div className="hidden lg:flex items-end md:gap-4">
+              <motion.div
+                className="w-[90vw] h-[90vw] max-w-[360px] max-h-[490px] flex items-end justify-center relative"
+                variants={imageVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                <div className="bg-[#D0F5DA] rounded-b-full w-full h-[100vh] absolute bottom-0 left-0 right-0"></div>
+                <div className="overflow-hidden rounded-b-full z-10 mt-auto relative bg-[#d0f5da]">
+                  <div className="absolute inset-0 transform -rotate-10 w-[120%]">
+                    <Marquee className="bg-[#FFA500] text-white bottom-2/4" />
+                  </div>
+                  <Image
+                    src="/images/fontanero.png"
+                    alt="Fontanero profesional"
+                    width={400}
+                    height={600}
+                    className="object-contain rounded-b-full relative z-20"
+                  />
+                  <div className="absolute inset-0 z-20 transform rotate-12 w-[120%]">
+                    <Marquee className="bg-[#000000] text-white bottom-1/3 -left-5" />
+                  </div>
+                </div>
+              </motion.div>
+              <motion.div
+                className="w-[90vw] h-[90vw] max-w-[256px] max-h-[422px] flex items-end justify-center bg-[#EDD4E1] rounded-full overflow-hidden z-10 "
+                variants={imageVariants}
+                initial="hidden"
+                animate="visible"
+                transition={{ delay: 0.2 }}
+              >
                 <Image
-                  src="/images/fontanero.png"
-                  alt="Fontanero profesional"
-                  width={400}
-                  height={600}
-                  className="object-contain rounded-b-full relative z-20"
+                  src="/images/clienta.png"
+                  alt="Clienta satisfecha"
+                  width={200}
+                  height={300}
+                  className="object-[80%] rounded-b-full z-10 mt-auto bg-[#EDD4E1] w-full"
                 />
-                <div className="absolute inset-0 z-20 transform rotate-12 w-[120%]">
-                  <Marquee className="bg-[#000000] text-white bottom-1/3 -left-5" />
-                </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </div>
+
+            {/* Tarjeta de Satisfacción */}
             <motion.div
-              className="w-[90vw] h-[90vw] max-w-[256px] max-h-[422px] flex items-end justify-center bg-[#EDD4E1] rounded-full overflow-hidden z-10 "
-              variants={imageVariants}
-              initial="hidden"
-              animate="visible"
-              transition={{ delay: 0.2 }}
-            >
-              <Image
-                src="/images/clienta.png"
-                alt="Clienta satisfecha"
-                width={200}
-                height={300}
-                className="object-[80%] rounded-b-full z-10 mt-auto bg-[#EDD4E1] w-full"
-              />
-            </motion.div>
-            <motion.div
-              className="absolute bottom-0 left-0 lg:left-auto lg:right-1/3 bg-[#fefae0] p-3 shadow-lg flex items-center gap-3 z-20"
+              className="relative lg:absolute lg:bottom-0 lg:left-auto lg:right-1/3 bg-[#fefae0] p-3 shadow-lg flex items-center gap-3 z-20"
               variants={satisfactionCardVariants}
               initial="hidden"
               animate="visible"
