@@ -6,9 +6,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  images: {
-    unoptimized: true,
-  },
+  // Se ha eliminado la clave 'images: { unoptimized: true }' para habilitar la optimización.
 }
 
 export default nextConfig

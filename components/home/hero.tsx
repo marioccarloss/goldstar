@@ -130,6 +130,7 @@ export const Hero = () => {
                     alt="Fontanero profesional"
                     width={200}
                     height={300}
+                    priority
                     className="object-contain object-bottom"
                   />
                 </div>
@@ -172,6 +173,7 @@ export const Hero = () => {
                     alt="Fontanero profesional"
                     width={400}
                     height={600}
+                    priority
                     className="object-contain rounded-b-full relative z-20"
                   />
                   <div className="absolute inset-0 z-20 transform rotate-12 w-[120%]">
