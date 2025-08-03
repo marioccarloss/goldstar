@@ -1,70 +1,153 @@
-import Link from 'next/link'
-import { Logo } from '@/components/icons/logo'
+import Link from "next/link"
+import { Logo } from "@/components/icons/logo"
+import { ArrowRight, Facebook, Twitter, Linkedin, Instagram } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer className='bg-zinc-900 text-white'>
-      <div className='container mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left'>
-        <div>
-          <div className='flex justify-center md:justify-start mb-4'>
-            <Logo />
-          </div>
-          <p className='text-zinc-400 text-sm'>
-            Reliable & Fast Plumbing in Vancouver.
-          </p>
-        </div>
-        <div>
-          <h3 className='font-bold text-lg mb-4'>Quick Links</h3>
-          <ul className='space-y-2 text-sm'>
-            <li>
-              <Link
-                href='#'
-                className='text-zinc-300 hover:text-amber-400 transition-colors'
-              >
-                Home
+    <footer className="bg-black text-white">
+      <div className="container mx-auto px-6 lg:px-8">
+        {/* CTA Section */}
+        <div className="bg-[#F26322] p-8 my-12">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="text-center md:text-left">
+              <h2 className="text-4xl md:text-5xl font-bold">
+                Discuss Your
+                <br />
+                Needs with Us
+              </h2>
+            </div>
+            <div className="flex-grow text-center md:text-left md:pl-8">
+              <p className="max-w-md mx-auto md:mx-0">
+                Expert Solutions for Every Home Need — With Lasting Results & Guaranteed Satisfaction
+              </p>
+            </div>
+            <div>
+              <Link href="/contact">
+                <span className="flex items-center justify-center w-20 h-20 border-2 border-white rounded-full hover:bg-white hover:text-[#F26322] transition-colors duration-300">
+                  <ArrowRight className="w-8 h-8" />
+                  <span className="sr-only">Contact Us</span>
+                </span>
               </Link>
-            </li>
-            <li>
-              <Link
-                href='#'
-                className='text-zinc-300 hover:text-amber-400 transition-colors'
-              >
-                Services
-              </Link>
-            </li>
-            <li>
-              <Link
-                href='#'
-                className='text-zinc-300 hover:text-amber-400 transition-colors'
-              >
-                About Us
-              </Link>
-            </li>
-            <li>
-              <Link
-                href='#'
-                className='text-zinc-300 hover:text-amber-400 transition-colors'
-              >
-                Contact
-              </Link>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h3 className='font-bold text-lg mb-4'>Contact Us</h3>
-          <div className='text-zinc-300 text-sm space-y-1'>
-            <p>Vancouver, BC, Canada</p>
-            <p>contact@goldstarplumbing.ca</p>
-            <p>(604) 555-1234</p>
+            </div>
           </div>
         </div>
-      </div>
-      <div className='bg-black py-4'>
-        <div className='container mx-auto px-6 text-center text-zinc-500 text-xs'>
-          <p>
-            &copy; {new Date().getFullYear()} Gold Star Plumbing. All Rights
-            Reserved.
-          </p>
+
+        {/* Main Footer Content */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 py-12">
+          <div className="lg:col-span-2 text-center md:text-left">
+            <div className="inline-block mb-4">
+              <Logo />
+            </div>
+            <p className="text-zinc-400 text-sm mb-6 max-w-xs mx-auto md:mx-0">
+              Successfully powered countless plumbing projects with precision and care.
+            </p>
+            <p className="text-zinc-400 text-sm mb-2">Follow us:</p>
+            <div className="flex justify-center md:justify-start space-x-4">
+              <Link href="#" className="text-zinc-400 hover:text-white">
+                <Facebook />
+              </Link>
+              <Link href="#" className="text-zinc-400 hover:text-white">
+                <Twitter />
+              </Link>
+              <Link href="#" className="text-zinc-400 hover:text-white">
+                <Linkedin />
+              </Link>
+              <Link href="#" className="text-zinc-400 hover:text-white">
+                <Instagram />
+              </Link>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-bold mb-4">Company</h3>
+            <ul className="space-y-2 text-sm text-zinc-400">
+              <li>
+                <Link href="#" className="hover:text-white">
+                  Features
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-white">
+                  Contact Us
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:text-white">
+                  FAQs
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:text-white">
+                  Blog
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-bold mb-4">Services</h3>
+            <ul className="space-y-2 text-sm text-zinc-400">
+              <li>
+                <Link href="#" className="hover:text-white">
+                  Drainage
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:text-white">
+                  Heating
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:text-white">
+                  Renovations
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:text-white">
+                  Emergency
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-bold mb-4">Help</h3>
+            <ul className="space-y-2 text-sm text-zinc-400">
+              <li>
+                <Link href="#" className="hover:text-white">
+                  Tips & Tricks
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:text-white">
+                  Help Center
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:text-white">
+                  Support
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:text-white">
+                  24/7
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Sub Footer */}
+        <div className="border-t border-zinc-800 py-6 flex flex-col md:flex-row justify-between items-center text-sm text-zinc-400">
+          <p className="mb-4 md:mb-0">&copy; {new Date().getFullYear()} Gold Star Plumbing. All Rights Reserved.</p>
+          <div className="flex space-x-6">
+            <Link href="#" className="hover:text-white">
+              Terms & Condition
+            </Link>
+            <Link href="#" className="hover:text-white">
+              Privacy Policy
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
