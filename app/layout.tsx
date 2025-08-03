@@ -9,7 +9,8 @@ const geologica = Geologica({
   subsets: ["latin"],
   weight: ["400", "500", "700", "800"],
   display: "swap",
-  variable: "--font-geologica", // Usamos una variable CSS para la fuente
+  variable: "--font-geologica",
+  adjustFontFallback: false, // Soluciona el error de compilación
 })
 
 export const metadata: Metadata = {
