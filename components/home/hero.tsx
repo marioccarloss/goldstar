@@ -76,7 +76,7 @@ export const Hero = () => {
               </span>
             </motion.div>
             <motion.h1
-              className="font-extrabold leading-none max-w-[669px]"
+              className="font-extrabold leading-none max-w-[669px] ml-auto mr-auto lg:ml-0"
               style={{ fontSize: "clamp(2rem, 6vw, 88px)" }}
               variants={textItemVariants}
             >
