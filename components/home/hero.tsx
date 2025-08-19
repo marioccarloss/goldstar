@@ -97,20 +97,28 @@ export const Hero = () => {
               className='grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4 mt-4 self-center lg:self-start max-w-[300px] lg:max-w-[470px] w-full'
               variants={textItemVariants}
             >
-              <Button className='bg-white text-black hover:bg-gray-200 px-6 py-9 text-base shadow-lg rounded-none leading-none'>
-                <div className='text-left'>
-                  <div className='font-bold flex items-center text-[22px]'>
-                    Call Now <ArrowRight className='w-4 h-4 ml-2' />
+              <Button className='bg-white text-black hover:bg-gray-100 hover:shadow-2xl hover:scale-[1.02] px-6 py-9 text-base shadow-lg rounded-2xl leading-none transition-all duration-500 relative overflow-hidden group'>
+                <div className='absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-gray-100/20 group-hover:from-white/20 group-hover:to-gray-200/30 transition-all duration-500'></div>
+                <div className='text-left relative z-10'>
+                  <div className='font-bold flex items-center text-[22px] group-hover:translate-x-1 transition-transform duration-300'>
+                    Call Now{' '}
+                    <ArrowRight className='w-4 h-4 ml-2 group-hover:translate-x-1 group-hover:scale-110 transition-all duration-300' />
                   </div>
-                  <div className='text-xs font-normal'>No Hidden Fees</div>
+                  <div className='text-xs font-normal opacity-80 group-hover:opacity-100 group-hover:translate-y-[-1px] group-hover:translate-x-1 group-hover:text-gray-700 transition-all duration-300'>
+                    24/7 Available
+                  </div>
                 </div>
               </Button>
-              <Button className='bg-[#00b5e2] text-black hover:bg-[#00a1cb] px-6 py-9 text-base shadow-lg rounded-none leading-none'>
-                <div className='text-left'>
-                  <div className='font-bold flex items-center text-[22px]'>
-                    Book Online <ArrowRight className='w-4 h-4 ml-2' />
+              <Button className='bg-[#00b5e2] text-black hover:bg-[#0099cc] hover:shadow-2xl hover:scale-[1.02] px-6 py-9 text-base shadow-lg rounded-2xl leading-none transition-all duration-500 relative overflow-hidden group'>
+                <div className='absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-blue-600/20 group-hover:from-white/20 group-hover:to-blue-700/30 transition-all duration-500'></div>
+                <div className='text-left relative z-10'>
+                  <div className='font-bold flex items-center text-[22px] group-hover:translate-x-1 transition-transform duration-300'>
+                    Book Online{' '}
+                    <ArrowRight className='w-4 h-4 ml-2 group-hover:translate-x-1 group-hover:scale-110 transition-all duration-300' />
                   </div>
-                  <div className='text-xs font-normal'>Check Availability</div>
+                  <div className='text-xs font-normal opacity-80 group-hover:opacity-100 group-hover:translate-y-[-1px] group-hover:translate-x-1 group-hover:text-blue-800 transition-all duration-300'>
+                    Instant Booking
+                  </div>
                 </div>
               </Button>
             </motion.div>
