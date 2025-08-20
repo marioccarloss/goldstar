@@ -7,6 +7,6 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   // Eliminamos la configuración 'images: { unoptimized: true }' para activar la optimización
-}
+};
 
-export default nextConfig
+export default nextConfig;
