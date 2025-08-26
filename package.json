@@ -4,18 +4,18 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "check-all": "pnpm run format:check && pnpm run lint && pnpm run type-check",
+    "clean": "rm -rf .next node_modules/.cache",
     "dev": "next dev",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix",
+    "fix-all": "pnpm run format && pnpm run lint:fix && pnpm run type-check",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "type-check": "tsc --noEmit",
-    "check-all": "pnpm run format:check && pnpm run lint && pnpm run type-check",
-    "fix-all": "pnpm run format && pnpm run lint:fix && pnpm run type-check",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
     "pre-commit": "pnpm run fix-all",
     "setup": "pnpm install && pnpm run pre-commit",
-    "clean": "rm -rf .next node_modules/.cache",
-    "start": "next start"
+    "start": "next start",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",

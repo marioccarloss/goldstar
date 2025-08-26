@@ -1,14 +1,22 @@
-"use client";
+"use client"
 
-import { motion } from "framer-motion";
-import { Grip, Menu } from "lucide-react";
-import type { ReactNode } from "react";
-import { Logo } from "@/components/icons/logo";
-import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion"
+import { Grip, Menu } from "lucide-react"
+import type { ReactNode } from "react"
+import Link from "next/link"
+import { Logo } from "@/components/icons/logo"
+import { Button } from "@/components/ui/button"
 
-const NavLink = ({ children }: { children: ReactNode }) => (
-  <button className="text-lg text-white transition-colors hover:text-[#fec52c]">{children}</button>
-);
+const NavLink = ({ children, href }: { children: ReactNode; href?: string }) => {
+  if (href) {
+    return (
+      <Link href={href} className="text-lg text-white transition-colors hover:text-[#fec52c]">
+        {children}
+      </Link>
+    )
+  }
+  return <button className="text-lg text-white transition-colors hover:text-[#fec52c]">{children}</button>
+}
 
 export const Header = () => {
   return (
@@ -21,10 +29,10 @@ export const Header = () => {
       <nav className="mx-auto flex items-center justify-between bg-black px-6 py-6">
         <Logo />
         <div className="hidden items-center space-x-8 md:flex">
-          <NavLink>Home</NavLink>
-          <NavLink>Services</NavLink>
-          <NavLink>About</NavLink>
-          <NavLink>Contact</NavLink>
+          <NavLink href="/">Home</NavLink>
+          <NavLink href="/services">Services</NavLink>
+          <NavLink href="/about">About</NavLink>
+          <NavLink href="/contact">Contact</NavLink>
         </div>
         <div className="hidden md:block">
           <Grip className="h-8 w-8 text-white" />
@@ -36,5 +44,5 @@ export const Header = () => {
         </div>
       </nav>
     </motion.header>
-  );
-};
+  )
+}

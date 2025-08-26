@@ -17,26 +17,26 @@ A modern, responsive website for Gold Star Plumbing - providing reliable and fas
 
 1. **Clone and install dependencies:**
 
-   ```bash
+   \`\`\`bash
    git clone <repository-url>
    cd goldstar
    pnpm install
-   ```
+   \`\`\`
 
 2. **Run development server:**
 
-   ```bash
+   \`\`\`bash
    pnpm dev
-   ```
+   \`\`\`
 
 3. **Open your browser:**
    Visit [http://localhost:3000](http://localhost:3000)
 
 ### One-Command Setup
 
-```bash
+\`\`\`bash
 pnpm run setup
-```
+\`\`\`
 
 This command will install dependencies, format code, fix linting issues, and run type checking.
 
@@ -86,7 +86,7 @@ The project includes optimized VS Code settings that automatically:
 
 ## 🏗️ Project Structure
 
-```
+\`\`\`
 goldstar/
 ├── app/                    # Next.js App Router
 │   ├── globals.css        # Global styles
@@ -101,7 +101,7 @@ goldstar/
 ├── lib/                  # Utility functions
 ├── styles/               # Additional stylesheets
 └── public/               # Static assets
-```
+\`\`\`
 
 ## 🎨 Styling & Design
 
@@ -155,27 +155,27 @@ The website includes proper meta tags for browser theming:
 
 ### Manual Build
 
-```bash
+\`\`\`bash
 pnpm build
 pnpm start
-```
+\`\`\`
 
 ### Environment Variables
 
 Create a `.env.local` file for local development:
 
-```env
+\`\`\`env
 # Add your environment variables here
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
-```
+\`\`\`
 
 ## 🧪 Code Quality Pipeline
 
 ### Pre-commit Workflow
 
-```bash
+\`\`\`bash
 pnpm run pre-commit
-```
+\`\`\`
 
 This runs:
 

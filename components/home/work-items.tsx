@@ -1,15 +1,15 @@
-"use client";
+"use client"
 
-import { motion, useInView } from "framer-motion";
-import Image from "next/image";
-import { useRef } from "react";
+import { motion, useInView } from "framer-motion"
+import Image from "next/image"
+import { useRef } from "react"
 
 interface WorkItemData {
-  number: string;
-  title: string;
-  description: string;
-  image: string;
-  imageAlt: string;
+  number: string
+  title: string
+  description: string
+  image: string
+  imageAlt: string
 }
 
 const workItemsData: WorkItemData[] = [
@@ -17,28 +17,28 @@ const workItemsData: WorkItemData[] = [
     number: "01",
     title: "Trust",
     description: "Certified handyman pros for trusted, high-quality home repairs. Contact us today!",
-    image: "/images/fontanero.png", // Placeholder, replace with actual image from the screenshot
+    image: "/certified-handyman-with-uniform-and-credentials-ba.png", // Updated image to show certified professional with credentials/uniform for trust
     imageAlt: "A certified handyman ensuring trust.",
   },
   {
     number: "02",
     title: "Reliability",
     description: "Count on our reliable team for fast, on-time home repair service. Book now!",
-    image: "/images/plumbing-repair.jpg", // Placeholder, replace with actual image from the screenshot
-    imageAlt: "A reliable plumber fixing a sink.",
+    image: "/handyman-checking-watch-arriving-with-toolbox-punctu.png", // Updated reliability image to show handyman checking watch while arriving with toolbox
+    imageAlt: "A reliable handyman arriving on time with tools.",
   },
   {
     number: "03",
     title: "Expertise",
     description: "Expert handyman skills for precise, professional home fixes. Get started today!",
-    image: "/images/heating-service-1.jpg", // Placeholder, replace with actual image from the screenshot
+    image: "/expert-handyman-using-specialized-tools-showing-pr.png",
     imageAlt: "A handyman demonstrating expertise with a power tool.",
   },
-];
+]
 
 export function WorkItems() {
-  const animationRef = useRef(null);
-  const isInView = useInView(animationRef, { once: true, amount: 0.1 });
+  const animationRef = useRef(null)
+  const isInView = useInView(animationRef, { once: true, amount: 0.1 })
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -48,7 +48,7 @@ export function WorkItems() {
         staggerChildren: 0.2,
       },
     },
-  };
+  }
 
   const itemVariants = {
     hidden: { opacity: 0, y: 30 },
@@ -60,7 +60,7 @@ export function WorkItems() {
         ease: "easeOut",
       },
     },
-  };
+  }
 
   return (
     <section ref={animationRef} className="bg-white text-black">
@@ -108,7 +108,7 @@ export function WorkItems() {
                     <div className="flex justify-center md:col-span-3 md:justify-end">
                       <div className="relative h-28 w-40 overflow-hidden rounded-lg shadow-md sm:h-32 sm:w-48">
                         <Image
-                          src={item.image}
+                          src={item.image || "/placeholder.svg"}
                           alt={item.imageAlt}
                           fill
                           className="object-cover"
@@ -124,5 +124,5 @@ export function WorkItems() {
         </motion.div>
       </div>
     </section>
-  );
+  )
 }
