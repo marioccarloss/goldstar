@@ -300,9 +300,9 @@ export default function Services() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-12">
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="bg-white py-16">
+      <div className="bg-white pt-44 pb-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl md:text-6xl">Our Services</h1>
@@ -316,10 +316,7 @@ export default function Services() {
       {/* Services Categories */}
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         {serviceCategories.map((category, categoryIndex) => (
-          <div
-            key={category.number}
-            className={`mb-24 ${categoryIndex % 2 === 0 ? "" : "rounded-2xl bg-white p-8 shadow-sm"}`}
-          >
+          <div key={category.number} className={`mb-24 ${categoryIndex % 2 === 0 ? "" : "bg-white p-8 shadow-sm"}`}>
             {/* Category Header */}
             <div className="mb-12 flex items-start gap-8">
               <div className="flex-shrink-0">
@@ -338,11 +335,11 @@ export default function Services() {
                 return (
                   <div
                     key={serviceIndex}
-                    className="group rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-shadow duration-300 hover:shadow-md"
+                    className="group border border-gray-100 bg-white p-6 shadow-sm transition-shadow duration-300 hover:shadow-md"
                   >
                     <div className="flex items-start gap-4">
                       <div className="flex-shrink-0">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-yellow-100 transition-colors duration-300 group-hover:bg-yellow-200">
+                        <div className="flex h-12 w-12 items-center justify-center bg-yellow-100 transition-colors duration-300 group-hover:bg-yellow-200">
                           <IconComponent />
                         </div>
                       </div>
@@ -357,24 +354,6 @@ export default function Services() {
             </div>
           </div>
         ))}
-      </div>
-
-      {/* Call to Action */}
-      <div className="bg-gray-900 py-16">
-        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-          <h2 className="mb-4 text-3xl font-bold text-white">Ready to Get Started?</h2>
-          <p className="mx-auto mb-8 max-w-2xl text-xl text-gray-300">
-            Contact us today for a free consultation and let us help you with your next project.
-          </p>
-          <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <button className="rounded-lg bg-yellow-400 px-8 py-3 font-semibold text-gray-900 transition-colors duration-300 hover:bg-yellow-300">
-              Get Free Quote
-            </button>
-            <button className="rounded-lg border border-white px-8 py-3 font-semibold text-white transition-colors duration-300 hover:bg-white hover:text-gray-900">
-              Call Now
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );
