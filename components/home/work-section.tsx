@@ -542,7 +542,7 @@ export function WorkSection() {
 
   return (
     <section ref={ref} className="relative w-full bg-white py-24 lg:py-8">
-      <div className="mx-auto flex min-h-[120vh] w-full max-w-[1400px] items-center overflow-hidden px-6 2xl:px-[2px]">
+      <div className="mx-auto flex min-h-[100vh] w-full max-w-[1400px] items-center overflow-hidden px-6 2xl:px-[2px]">
         <div className="relative w-full pt-40">
           <h2
             className="pointer-events-none absolute top-10 left-1/2 z-0 w-full -translate-x-1/2 text-center leading-none font-extrabold text-gray-200"
