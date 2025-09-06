@@ -1,13 +1,33 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Star, ArrowRight } from "lucide-react";
-import Image from "next/image";
+import { BookingManager } from "@/components/booking/booking-manager";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { ArrowRight, Star } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
 import { Marquee } from "../marquee";
 
+interface BookingData {
+  name: string;
+  phone: string;
+  email: string;
+  service: string;
+  date: string;
+  timeSlot: string;
+  comments: string;
+}
+
 export const Hero = () => {
-  // Variantes de animación para el contenedor de texto
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
+
+  const handleBookingComplete = (booking: BookingData) => {
+    console.log("Booking completed:", booking);
+    alert(
+      `Thank you ${booking.name}! Your booking has been confirmed for ${booking.date} at ${booking.timeSlot.split(" - ")[0]}.`
+    );
+  };
+
   const textContainerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -26,7 +46,7 @@ export const Hero = () => {
       y: 0,
       opacity: 1,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 100,
         damping: 15,
       },
@@ -41,7 +61,7 @@ export const Hero = () => {
       opacity: 1,
       transition: {
         duration: 0.8,
-        ease: "easeOut",
+        ease: [0.25, 0.1, 0.25, 1] as const,
       },
     },
   };
@@ -51,7 +71,7 @@ export const Hero = () => {
     visible: {
       y: 0,
       opacity: 1,
-      transition: { duration: 0.8, ease: "easeOut", delay: 0.5 },
+      transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] as const, delay: 0.5 },
     },
   };
 
@@ -106,7 +126,10 @@ export const Hero = () => {
                   </div>
                 </div>
               </Button>
-              <Button className="group relative overflow-hidden rounded-2xl bg-[#00b5e2] px-6 py-9 text-base leading-none text-black shadow-lg transition-all duration-500 hover:scale-[1.02] hover:bg-[#0099cc] hover:shadow-2xl">
+              <Button
+                onClick={() => setIsBookingOpen(true)}
+                className="group relative overflow-hidden rounded-2xl bg-[#00b5e2] px-6 py-9 text-base leading-none text-black shadow-lg transition-all duration-500 hover:scale-[1.02] hover:bg-[#0099cc] hover:shadow-2xl"
+              >
                 <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-blue-600/20 transition-all duration-500 group-hover:from-white/20 group-hover:to-blue-700/30"></div>
                 <div className="relative z-10 text-left">
                   <div className="flex items-center text-[22px] font-bold transition-transform duration-300 group-hover:translate-x-1">
@@ -241,6 +264,13 @@ export const Hero = () => {
           </div>
         </div>
       </div>
+
+      {/* Booking Manager */}
+      <BookingManager
+        isOpen={isBookingOpen}
+        onClose={() => setIsBookingOpen(false)}
+        onBookingComplete={handleBookingComplete}
+      />
     </div>
   );
 };
