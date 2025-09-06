@@ -300,13 +300,15 @@ export default function Services() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f6be00]">
       {/* Hero Section */}
-      <div className="bg-white pt-44 pb-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="bg-[#f6be00] pt-44 pb-16">
+        <div className="mx-auto max-w-[1400px] px-6">
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl md:text-6xl">Our Services</h1>
-            <p className="mx-auto mt-6 max-w-2xl text-xl text-gray-600">
+            <h1 className="leading-none font-extrabold text-black" style={{ fontSize: "clamp(3rem, 6vw, 88px)" }}>
+              Our Services
+            </h1>
+            <p className="mx-auto mt-6 max-w-2xl text-black" style={{ fontSize: "clamp(1rem, 1.5vw, 22px)" }}>
               Comprehensive solutions for all your home improvement needs
             </p>
           </div>
@@ -314,17 +316,27 @@ export default function Services() {
       </div>
 
       {/* Services Categories */}
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1400px] px-6 py-16">
         {serviceCategories.map((category, categoryIndex) => (
-          <div key={category.number} className={`mb-24 ${categoryIndex % 2 === 0 ? "" : "bg-white p-8 shadow-sm"}`}>
+          <div
+            key={category.number}
+            className={`mb-24 ${categoryIndex % 2 === 0 ? "" : "border border-black bg-white p-8"}`}
+          >
             {/* Category Header */}
             <div className="mb-12 flex items-start gap-8">
               <div className="flex-shrink-0">
-                <span className="text-8xl leading-none font-bold text-gray-200">{category.number}</span>
+                <span className="text-8xl leading-none font-bold text-black/20">{category.number}</span>
               </div>
               <div className="flex-1 pt-4">
-                <h2 className="mb-4 text-4xl font-bold text-gray-900">{category.title}</h2>
-                <p className="max-w-2xl text-xl text-gray-600">{category.subtitle}</p>
+                <h2
+                  className="mb-4 leading-none font-extrabold text-black"
+                  style={{ fontSize: "clamp(2rem, 4vw, 48px)" }}
+                >
+                  {category.title}
+                </h2>
+                <p className="max-w-2xl text-black" style={{ fontSize: "clamp(1rem, 1.2vw, 18px)" }}>
+                  {category.subtitle}
+                </p>
               </div>
             </div>
 
@@ -335,17 +347,17 @@ export default function Services() {
                 return (
                   <div
                     key={serviceIndex}
-                    className="group border border-gray-100 bg-white p-6 shadow-sm transition-shadow duration-300 hover:shadow-md"
+                    className="group border border-black bg-white p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
                   >
                     <div className="flex items-start gap-4">
                       <div className="flex-shrink-0">
-                        <div className="flex h-12 w-12 items-center justify-center bg-yellow-100 transition-colors duration-300 group-hover:bg-yellow-200">
+                        <div className="flex h-12 w-12 items-center justify-center border border-black bg-[#d0f5da] transition-colors duration-300 group-hover:bg-[#f6be00]">
                           <IconComponent />
                         </div>
                       </div>
                       <div className="flex-1">
-                        <h3 className="mb-2 text-lg font-semibold text-gray-900">{service.title}</h3>
-                        <p className="text-sm leading-relaxed text-gray-600">{service.description}</p>
+                        <h3 className="mb-2 text-lg font-bold text-black">{service.title}</h3>
+                        <p className="text-sm leading-relaxed text-black/80">{service.description}</p>
                       </div>
                     </div>
                   </div>
