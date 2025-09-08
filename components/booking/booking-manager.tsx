@@ -1,23 +1,25 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-    AlertTriangle,
-    ArrowRight,
-    CheckCircle,
-    ChevronLeft,
-    ChevronRight,
-    Clock,
-    Droplets,
-    Home,
-    Mail,
-    Phone,
-    User,
-    Wrench,
-    X,
+  AlertTriangle,
+  ArrowRight,
+  CheckCircle,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Droplets,
+  Home,
+  Mail,
+  Phone,
+  User,
+  Wrench,
+  X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { db } from "../../lib/firebase";
+import { Button } from "../ui/button";
 
 interface BookingData {
   name: string;
@@ -227,33 +229,50 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
     comments: "",
   });
 
-  // Generate available time slots for a given date
-  const generateTimeSlots = (date: Date): TimeSlot[] => {
-    const slots: TimeSlot[] = [];
-    const startHour = 8;
-    const endHour = 18;
+  // Load available time slots from Firebase for a given date
+  const loadAvailableSlots = (date: Date) => {
+    const dateString = date.toISOString().split("T")[0];
+    const q = query(collection(db, "availability"), where("date", "==", dateString), where("isBooked", "==", false));
 
-    for (let hour = startHour; hour < endHour; hour++) {
-      const timeString = `${hour.toString().padStart(2, "0")}:00`;
-      const isAvailable = Math.random() > 0.3; // Simulate availability
-      const plumber = PLUMBERS[Math.floor(Math.random() * PLUMBERS.length)];
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const slots: TimeSlot[] = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const plumber = PLUMBERS.find((p) => p.name === data.plumber) || PLUMBERS[0];
+          slots.push({
+            id: doc.id,
+            time: data.time,
+            available: !data.isBooked,
+            plumberName: plumber.name,
+          });
+        });
+        // Sort client-side by time (HH:mm)
+        const toMinutes = (t: string) => {
+          const [h, m] = t.split(":").map(Number);
+          return h * 60 + m;
+        };
+        slots.sort((a, b) => toMinutes(a.time) - toMinutes(b.time));
+        setAvailableSlots(slots);
+      },
+      (error) => {
+        console.error("Error al cargar horarios disponibles:", error);
+        // Fallback: limpiar o mantener el estado actual
+        setAvailableSlots([]);
+      }
+    );
 
-      slots.push({
-        id: `${date.toISOString().split("T")[0]}-${timeString}`,
-        time: timeString,
-        available: isAvailable,
-        plumberName: isAvailable ? plumber.name : undefined,
-      });
-    }
-
-    return slots;
+    return unsubscribe;
   };
 
   // Update available slots when date changes
   useEffect(() => {
     if (selectedDate) {
-      const slots = generateTimeSlots(selectedDate);
-      setAvailableSlots(slots);
+      const unsubscribe = loadAvailableSlots(selectedDate);
+      return () => unsubscribe();
+    } else {
+      setAvailableSlots([]);
     }
   }, [selectedDate]);
 
@@ -348,31 +367,6 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
 
   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-  // Animation variants
-  const textContainerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const textItemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: "spring" as const,
-        stiffness: 100,
-        damping: 15,
-      },
-    },
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -444,17 +438,15 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
                               key={index}
                               onClick={() => {
                                 if (bookingData.service === service.title) {
-                                  setBookingData(prev => ({ ...prev, service: "" }));
+                                  setBookingData((prev) => ({ ...prev, service: "" }));
                                 } else {
-                                  setBookingData(prev => ({ ...prev, service: service.title }));
+                                  setBookingData((prev) => ({ ...prev, service: service.title }));
                                 }
                               }}
-                              className={`inline-flex items-center gap-2 px-4 py-2 border-2 rounded-full text-sm font-medium transition-all hover:shadow-md w-auto ${bookingData.service === service.title ? "border-black bg-white text-black shadow-lg" : "border-black/30 text-black hover:border-black/50"}`}
+                              className={`inline-flex w-auto items-center gap-2 rounded-full border-2 px-4 py-2 text-sm font-medium transition-all hover:shadow-md ${bookingData.service === service.title ? "border-black bg-white text-black shadow-lg" : "border-black/30 text-black hover:border-black/50"}`}
                             >
                               <span>{service.title}</span>
-                              {bookingData.service === service.title && (
-                                <X className="h-3 w-3" />
-                              )}
+                              {bookingData.service === service.title && <X className="h-3 w-3" />}
                             </button>
                           ))}
                         </div>
@@ -571,11 +563,12 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-black">
+                      <label htmlFor="name" className="mb-2 block text-sm font-medium text-black">
                         <User className="mr-1 inline h-4 w-4" />
                         Full Name *
                       </label>
                       <input
+                        id="name"
                         type="text"
                         name="name"
                         value={bookingData.name}
@@ -587,11 +580,12 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
                     </div>
 
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-black">
+                      <label htmlFor="phone" className="mb-2 block text-sm font-medium text-black">
                         <Phone className="mr-1 inline h-4 w-4" />
                         Phone Number *
                       </label>
                       <input
+                        id="phone"
                         type="tel"
                         name="phone"
                         value={bookingData.phone}
@@ -604,11 +598,12 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
                   </div>
 
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-black">
+                    <label htmlFor="email" className="mb-2 block text-sm font-medium text-black">
                       <Mail className="mr-1 inline h-4 w-4" />
                       Email Address
                     </label>
                     <input
+                      id="email"
                       type="email"
                       name="email"
                       value={bookingData.email}
@@ -619,8 +614,11 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
                   </div>
 
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-black">Additional Comments</label>
+                    <label htmlFor="comments" className="mb-2 block text-sm font-medium text-black">
+                      Additional Comments
+                    </label>
                     <textarea
+                      id="comments"
                       name="comments"
                       value={bookingData.comments}
                       onChange={handleInputChange}

@@ -88,19 +88,19 @@ The project includes optimized VS Code settings that automatically:
 
 \`\`\`
 goldstar/
-├── app/                    # Next.js App Router
-│   ├── globals.css        # Global styles
-│   ├── layout.tsx         # Root layout with theme color
-│   └── page.tsx           # Home page
-├── components/            # React components
-│   ├── home/             # Home page components
-│   ├── icons/            # SVG icon components
-│   ├── layout/           # Layout components (header, footer)
-│   └── ui/               # shadcn/ui components
-├── hooks/                # Custom React hooks
-├── lib/                  # Utility functions
-├── styles/               # Additional stylesheets
-└── public/               # Static assets
+├── app/ # Next.js App Router
+│ ├── globals.css # Global styles
+│ ├── layout.tsx # Root layout with theme color
+│ └── page.tsx # Home page
+├── components/ # React components
+│ ├── home/ # Home page components
+│ ├── icons/ # SVG icon components
+│ ├── layout/ # Layout components (header, footer)
+│ └── ui/ # shadcn/ui components
+├── hooks/ # Custom React hooks
+├── lib/ # Utility functions
+├── styles/ # Additional stylesheets
+└── public/ # Static assets
 \`\`\`
 
 ## 🎨 Styling & Design
@@ -165,7 +165,9 @@ pnpm start
 Create a `.env.local` file for local development:
 
 \`\`\`env
+
 # Add your environment variables here
+
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 \`\`\`
 

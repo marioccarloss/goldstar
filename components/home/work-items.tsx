@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import { motion, useInView } from "framer-motion"
-import Image from "next/image"
-import { useRef } from "react"
+import { motion, useInView } from "framer-motion";
+import Image from "next/image";
+import { useRef } from "react";
 
 interface WorkItemData {
-  number: string
-  title: string
-  description: string
-  image: string
-  imageAlt: string
+  number: string;
+  title: string;
+  description: string;
+  image: string;
+  imageAlt: string;
 }
 
 const workItemsData: WorkItemData[] = [
@@ -34,11 +34,11 @@ const workItemsData: WorkItemData[] = [
     image: "/expert-handyman-using-specialized-tools-showing-pr.png",
     imageAlt: "A handyman demonstrating expertise with a power tool.",
   },
-]
+];
 
 export function WorkItems() {
-  const animationRef = useRef(null)
-  const isInView = useInView(animationRef, { once: true, amount: 0.1 })
+  const animationRef = useRef(null);
+  const isInView = useInView(animationRef, { once: true, amount: 0.1 });
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -48,19 +48,7 @@ export function WorkItems() {
         staggerChildren: 0.2,
       },
     },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    },
-  }
+  };
 
   return (
     <section ref={animationRef} className="bg-white text-black">
@@ -96,7 +84,7 @@ export function WorkItems() {
           <div className="flow-root">
             <ul className="-my-8">
               {workItemsData.map((item) => (
-                <motion.li key={item.number} className="border-b border-gray-200 py-8" variants={itemVariants}>
+                <motion.li key={item.number} className="border-b border-gray-200 py-8">
                   <div className="grid grid-cols-1 items-center gap-y-6 md:grid-cols-12 md:gap-x-8">
                     <div className="text-2xl font-light text-gray-500 md:col-span-1">{item.number}</div>
                     <div className="md:col-span-3">
@@ -124,5 +112,5 @@ export function WorkItems() {
         </motion.div>
       </div>
     </section>
-  )
+  );
 }
