@@ -1,6 +1,6 @@
 "use client";
 
-import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { collection, onSnapshot, query, where, doc, runTransaction, serverTimestamp } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   AlertTriangle,
@@ -228,7 +228,8 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
     timeSlot: "",
     comments: "",
   });
-
+  const [saving, setSaving] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Formatea fecha localmente como YYYY-MM-DD para evitar problemas de zona horaria
   const formatLocalDate = (date: Date) => {
@@ -375,9 +376,61 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
     setBookingData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Add confirmation modal state
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    onBookingComplete?.(bookingData);
+    if (!isStepValid()) return;
+
+    try {
+      setSubmitError(null);
+      setSaving(true);
+
+      if (!selectedDate) throw new Error("Please select a date.");
+      const selectedSlot = availableSlots.find((s) => s.id === selectedTimeSlot && s.available);
+      if (!selectedSlot) throw new Error("Selected time is no longer available.");
+
+      const dateStr = formatLocalDate(selectedDate);
+      const timeStr = selectedSlot.time;
+      const bookingRef = doc(collection(db, "bookings"), `${dateStr}-${timeStr}`);
+
+      await runTransaction(db, async (tx) => {
+        const existing = await tx.get(bookingRef);
+        if (existing.exists()) {
+          throw new Error("This time has just been booked. Please choose another.");
+        }
+        tx.set(bookingRef, {
+          date: dateStr,
+          time: timeStr,
+          service: bookingData.service,
+          name: bookingData.name,
+          phone: bookingData.phone,
+          email: bookingData.email,
+          comments: bookingData.comments,
+          plumberName: selectedSlot.plumberName ?? null,
+          status: "pending",
+          createdAt: serverTimestamp(),
+        });
+      });
+
+      onBookingComplete?.({
+        ...bookingData,
+        date: dateStr,
+        timeSlot: `${timeStr} - ${selectedSlot.plumberName ?? ""}`,
+      });
+
+      // Show confirmation modal instead of closing immediately
+      setShowConfirmationModal(true);
+    } catch (err: any) {
+      setSubmitError(err?.message || "Failed to confirm booking. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleConfirmationClose = () => {
+    setShowConfirmationModal(false);
     onClose();
     // Reset form
     setCurrentStep(1);
@@ -620,75 +673,71 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
                 className="space-y-6"
               >
                 <h3 className="mb-4 text-xl font-semibold text-black">Contact Information</h3>
-
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
                       <label htmlFor="name" className="mb-2 block text-sm font-medium text-black">
                         <User className="mr-1 inline h-4 w-4" />
-                        Full Name *
+                        Full Name
                       </label>
                       <input
                         id="name"
-                        type="text"
                         name="name"
                         value={bookingData.name}
                         onChange={handleInputChange}
-                        required
+                        placeholder="John Doe"
                         className="h-12 w-full rounded-2xl border-2 border-black/30 bg-transparent px-4 text-black placeholder-black/60 transition-all duration-300 hover:border-black/50 focus:border-black focus:ring-0 focus:outline-none"
-                        placeholder="Your full name"
                       />
                     </div>
-
                     <div>
                       <label htmlFor="phone" className="mb-2 block text-sm font-medium text-black">
                         <Phone className="mr-1 inline h-4 w-4" />
-                        Phone Number *
+                        Phone Number
                       </label>
                       <input
                         id="phone"
-                        type="tel"
                         name="phone"
                         value={bookingData.phone}
                         onChange={handleInputChange}
-                        required
+                        placeholder="(555) 123-4567"
                         className="h-12 w-full rounded-2xl border-2 border-black/30 bg-transparent px-4 text-black placeholder-black/60 transition-all duration-300 hover:border-black/50 focus:border-black focus:ring-0 focus:outline-none"
-                        placeholder="+1 (604) 123-4567"
                       />
                     </div>
                   </div>
-
                   <div>
                     <label htmlFor="email" className="mb-2 block text-sm font-medium text-black">
                       <Mail className="mr-1 inline h-4 w-4" />
-                      Email Address
+                      Email (optional)
                     </label>
                     <input
                       id="email"
-                      type="email"
                       name="email"
                       value={bookingData.email}
                       onChange={handleInputChange}
+                      placeholder="john@example.com"
                       className="h-12 w-full rounded-2xl border-2 border-black/30 bg-transparent px-4 text-black placeholder-black/60 transition-all duration-300 hover:border-black/50 focus:border-black focus:ring-0 focus:outline-none"
-                      placeholder="your@email.com"
                     />
                   </div>
-
                   <div>
                     <label htmlFor="comments" className="mb-2 block text-sm font-medium text-black">
-                      Additional Comments
+                      Additional Details (optional)
                     </label>
                     <textarea
                       id="comments"
                       name="comments"
                       value={bookingData.comments}
                       onChange={handleInputChange}
+                      placeholder="Describe your issue briefly"
                       rows={3}
                       className="w-full resize-none rounded-2xl border-2 border-black/30 bg-transparent px-4 py-3 text-black placeholder-black/60 transition-all duration-300 hover:border-black/50 focus:border-black focus:ring-0 focus:outline-none"
-                      placeholder="Please describe the issue or any specific requirements..."
                     />
                   </div>
                 </div>
+                {submitError && (
+                  <div className="rounded-xl border-2 border-red-600 bg-red-50 p-3 text-sm text-red-700">
+                    {submitError}
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
@@ -726,7 +775,7 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
             ) : (
               <Button
                 onClick={handleSubmit}
-                disabled={!isStepValid()}
+                disabled={!isStepValid() || saving}
                 className="group relative h-12 overflow-hidden rounded-2xl bg-green-600 px-6 text-white shadow-lg transition-all duration-500 hover:scale-[1.02] hover:bg-green-700 hover:shadow-2xl disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-green-700/20 transition-all duration-500 group-hover:from-white/20 group-hover:to-green-800/30"></div>
@@ -741,6 +790,52 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
           </div>
         </div>
       </motion.div>
+
+      {/* Confirmation Modal */}
+      {showConfirmationModal && (
+        <div className="bg-opacity-50 fixed inset-0 z-[60] flex items-center justify-center bg-black">
+          <div className="relative mx-4 w-full max-w-md rounded-lg bg-white p-8 shadow-xl">
+            <div className="text-center">
+              {/* Animated Checkmark */}
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+                <div className="animate-bounce">
+                  <CheckCircle className="h-8 w-8 animate-pulse text-green-600" />
+                </div>
+              </div>
+
+              <h3 className="mb-2 text-xl font-semibold text-gray-900">¡Reserva Confirmada!</h3>
+
+              <p className="mb-6 text-gray-600">
+                Tu cita ha sido registrada exitosamente. Recibirás una confirmación pronto.
+              </p>
+
+              <div className="mb-6 rounded-lg bg-gray-50 p-4 text-left">
+                <div className="space-y-2 text-sm">
+                  <div>
+                    <strong>Servicio:</strong> {bookingData.service}
+                  </div>
+                  <div>
+                    <strong>Fecha:</strong> {selectedDate ? selectedDate.toLocaleDateString() : ""}
+                  </div>
+                  <div>
+                    <strong>Hora:</strong> {availableSlots.find((s) => s.id === selectedTimeSlot)?.time}
+                  </div>
+                  <div>
+                    <strong>Nombre:</strong> {bookingData.name}
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={handleConfirmationClose}
+                className="w-full rounded-lg bg-black px-4 py-2 text-white transition-colors hover:bg-gray-800"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

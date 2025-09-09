@@ -23,9 +23,6 @@ export const Hero = () => {
 
   const handleBookingComplete = (booking: BookingData) => {
     console.log("Booking completed:", booking);
-    alert(
-      `Thank you ${booking.name}! Your booking has been confirmed for ${booking.date} at ${booking.timeSlot.split(" - ")[0]}.`
-    );
   };
 
   const textContainerVariants = {
