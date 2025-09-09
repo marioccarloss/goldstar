@@ -228,12 +228,7 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
     timeSlot: "",
     comments: "",
   });
-  const [showDebug, setShowDebug] = useState(false);
-  const [debugData, setDebugData] = useState<{
-    dateString: string;
-    raw: any[];
-    slots: TimeSlot[];
-  } | null>(null);
+
 
   // Formatea fecha localmente como YYYY-MM-DD para evitar problemas de zona horaria
   const formatLocalDate = (date: Date) => {
@@ -245,19 +240,7 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
 
   // Genera horarios base SIEMPRE habilitados por defecto (coincide con /admin)
   const generateBaseTimes = (): string[] => {
-    return [
-      "08:00",
-      "09:00",
-      "10:00",
-      "11:00",
-      "12:00",
-      "13:00",
-      "14:00",
-      "15:00",
-      "16:00",
-      "17:00",
-      "18:00",
-    ];
+    return ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
   };
 
   // Determina si un slot ya pasó (no seleccionable hoy en adelante)
@@ -305,8 +288,6 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
         slots.sort((a, b) => toMinutes(a.time) - toMinutes(b.time));
 
         setAvailableSlots(slots);
-        console.log("[bookings-based] date:", dateString, "raw:", raw, "slots:", slots);
-        setDebugData({ dateString, raw, slots });
 
         // Auto-seleccionar el primer horario disponible si no hay uno seleccionado aún o si el actual ya no existe
         if (slots.length > 0) {
@@ -334,7 +315,6 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
           plumberName: PLUMBERS[idx % PLUMBERS.length].name,
         }));
         setAvailableSlots(slots);
-        setDebugData({ dateString, raw: [], slots });
       }
     );
 
@@ -483,7 +463,7 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
             ))}
           </div>
 
-          <div className="mt-2 text-center text-sm text-black/70">
+          <div className="mt-2 text-center text-sm text-[#f6be00]">
             {currentStep === 1 && "Select Service"}
             {currentStep === 2 && "Choose Date & Time"}
             {currentStep === 3 && "Contact Details"}
@@ -523,7 +503,7 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
                                   setBookingData((prev) => ({ ...prev, service: service.title }));
                                 }
                               }}
-                              className={`inline-flex w-auto items-center gap-2 rounded-full border-2 px-4 py-2 text-sm font-medium transition-all hover:shadow-md ${bookingData.service === service.title ? "border-black bg-white text-black shadow-lg" : "border-black/30 text-black hover:border-black/50"}`}
+                              className={`inline-flex w-auto items-center gap-2 rounded-full border-2 px-4 py-2 text-sm font-medium transition-all hover:shadow-md ${bookingData.service === service.title ? "border-black bg-black text-[#f6be00] shadow-lg" : "border-black/30 text-black hover:border-black/50"}`}
                             >
                               <span>{service.title}</span>
                               {bookingData.service === service.title && <X className="h-3 w-3" />}
@@ -605,35 +585,21 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
                     <h4 className="text-lg font-medium text-black">
                       Available times for {selectedDate.toLocaleDateString()}
                     </h4>
-                    {/* DEBUG: JSON de disponibilidad */}
-                    <div className="text-xs text-black/70">
-                      <button
-                        type="button"
-                        className="underline hover:text-black"
-                        onClick={() => setShowDebug((v) => !v)}
-                      >
-                        {showDebug ? "Ocultar JSON" : "Ver JSON de disponibilidad"}
-                      </button>
-                      {showDebug && debugData && (
-                        <pre className="mt-2 max-h-56 overflow-auto rounded-lg bg-black/5 p-2">
-{JSON.stringify(debugData, null, 2)}
-                        </pre>
-                      )}
-                    </div>
+
                     <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
                       {availableSlots.map((slot) => (
                         <button
                           key={slot.id}
                           onClick={() => slot.available && handleTimeSlotSelect(slot)}
                           disabled={!slot.available}
-                          className={`rounded-2xl border-2 p-4 text-left transition-all ${!slot.available ? "cursor-not-allowed border-black/20 bg-black/5 text-black/40" : selectedTimeSlot === slot.id ? "border-black bg-white text-black shadow-lg" : "border-black/30 text-black hover:border-black/50 hover:shadow-sm"}`}
+                          className={`rounded-2xl border-2 p-4 text-left transition-all ${!slot.available ? "cursor-not-allowed border-black/20 bg-black/5 text-black/40" : selectedTimeSlot === slot.id ? "border-black bg-black text-[#f6be00] shadow-lg" : "border-black/30 text-black hover:border-black/50"}`}
                         >
                           <div className="mb-1 flex items-center gap-2">
                             <Clock className="h-4 w-4" />
                             <span className="font-medium">{slot.time}</span>
                           </div>
                           {slot.available && slot.plumberName && (
-                            <div className="text-sm text-black/70">with {slot.plumberName}</div>
+                            <div className="text-sm text-[#f6be00]">with {slot.plumberName}</div>
                           )}
                           {!slot.available && <div className="text-sm text-black/40">Unavailable</div>}
                         </button>
