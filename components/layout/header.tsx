@@ -12,10 +12,10 @@ import { useState } from "react";
 const NavLink = ({ children, href, isActive }: { children: ReactNode; href?: string; isActive?: boolean }) => {
   if (href) {
     return (
-      <Link 
-        href={href} 
+      <Link
+        href={href}
         className={`text-lg transition-colors hover:text-[#fec52c] ${
-          isActive ? 'text-[#fec52c] font-semibold' : 'text-white'
+          isActive ? "font-semibold text-[#fec52c]" : "text-white"
         }`}
       >
         {children}
@@ -25,13 +25,23 @@ const NavLink = ({ children, href, isActive }: { children: ReactNode; href?: str
   return <button className="text-lg text-white transition-colors hover:text-[#fec52c]">{children}</button>;
 };
 
-const MobileNavLink = ({ children, href, onClick, isActive }: { children: ReactNode; href: string; onClick: () => void; isActive?: boolean }) => {
+const MobileNavLink = ({
+  children,
+  href,
+  onClick,
+  isActive,
+}: {
+  children: ReactNode;
+  href: string;
+  onClick: () => void;
+  isActive?: boolean;
+}) => {
   return (
     <Link
       href={href}
       onClick={onClick}
       className={`block transform leading-none font-bold transition-all duration-300 hover:translate-x-2 hover:text-[#f6be00] active:text-[#f6be00] ${
-        isActive ? 'text-[#f6be00]' : 'text-white'
+        isActive ? "text-[#f6be00]" : "text-white"
       }`}
       style={{ fontSize: "clamp(3rem, 6vw, 88px)" }}
     >
@@ -78,10 +88,18 @@ export const Header = () => {
             <Logo />
           </Link>
           <div className="hidden items-center space-x-8 md:flex">
-            <NavLink href="/" isActive={pathname === '/'}>Home</NavLink>
-            <NavLink href="/services" isActive={pathname === '/services'}>Services</NavLink>
-            <NavLink href="/about" isActive={pathname === '/about'}>About</NavLink>
-            <NavLink href="/contact" isActive={pathname === '/contact'}>Contact</NavLink>
+            <NavLink href="/" isActive={pathname === "/"}>
+              Home
+            </NavLink>
+            <NavLink href="/services" isActive={pathname === "/services"}>
+              Services
+            </NavLink>
+            <NavLink href="/about" isActive={pathname === "/about"}>
+              About
+            </NavLink>
+            <NavLink href="/contact" isActive={pathname === "/contact"}>
+              Contact
+            </NavLink>
           </div>
           <div className="hidden md:block">
             <Button variant="ghost" size="icon" onClick={toggleMobileMenu}>
@@ -120,7 +138,7 @@ export const Header = () => {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.1, duration: 0.5 }}
               >
-                <MobileNavLink href="/" onClick={closeMobileMenu} isActive={pathname === '/'}>
+                <MobileNavLink href="/" onClick={closeMobileMenu} isActive={pathname === "/"}>
                   Home
                 </MobileNavLink>
               </motion.div>
@@ -129,7 +147,7 @@ export const Header = () => {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
               >
-                <MobileNavLink href="/services" onClick={closeMobileMenu} isActive={pathname === '/services'}>
+                <MobileNavLink href="/services" onClick={closeMobileMenu} isActive={pathname === "/services"}>
                   Services
                 </MobileNavLink>
               </motion.div>
@@ -138,7 +156,7 @@ export const Header = () => {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
               >
-                <MobileNavLink href="/about" onClick={closeMobileMenu} isActive={pathname === '/about'}>
+                <MobileNavLink href="/about" onClick={closeMobileMenu} isActive={pathname === "/about"}>
                   About
                 </MobileNavLink>
               </motion.div>
@@ -147,7 +165,7 @@ export const Header = () => {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.5 }}
               >
-                <MobileNavLink href="/contact" onClick={closeMobileMenu} isActive={pathname === '/contact'}>
+                <MobileNavLink href="/contact" onClick={closeMobileMenu} isActive={pathname === "/contact"}>
                   Contact
                 </MobileNavLink>
               </motion.div>

@@ -793,7 +793,7 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
 
       {/* Confirmation Modal */}
       {showConfirmationModal && (
-        <div className="bg-opacity-50 fixed inset-0 z-[60] flex items-center justify-center bg-black">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50">
           <div className="relative mx-4 w-full max-w-md rounded-lg bg-white p-8 shadow-xl">
             <div className="text-center">
               {/* Animated Checkmark */}
