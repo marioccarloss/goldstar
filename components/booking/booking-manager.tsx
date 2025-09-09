@@ -228,38 +228,113 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
     timeSlot: "",
     comments: "",
   });
+  const [showDebug, setShowDebug] = useState(false);
+  const [debugData, setDebugData] = useState<{
+    dateString: string;
+    raw: any[];
+    slots: TimeSlot[];
+  } | null>(null);
 
-  // Load available time slots from Firebase for a given date
+  // Formatea fecha localmente como YYYY-MM-DD para evitar problemas de zona horaria
+  const formatLocalDate = (date: Date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
+
+  // Genera horarios base SIEMPRE habilitados por defecto (coincide con /admin)
+  const generateBaseTimes = (): string[] => {
+    return [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00",
+      "18:00",
+    ];
+  };
+
+  // Determina si un slot ya pasó (no seleccionable hoy en adelante)
+  const isPastSlot = (date: Date, time: string) => {
+    const dateString = formatLocalDate(date);
+    const slotDate = new Date(`${dateString}T${time}:00`);
+    return slotDate.getTime() < new Date().getTime();
+  };
+
+  // Load available time slots for a given date, defaulting to ALL enabled
   const loadAvailableSlots = (date: Date) => {
-    const dateString = date.toISOString().split("T")[0];
-    const q = query(collection(db, "availability"), where("date", "==", dateString), where("isBooked", "==", false));
+    const dateString = formatLocalDate(date);
+
+    // Suscribirse a los "bookings" del día para detectar bloqueos
+    const q = query(collection(db, "bookings"), where("date", "==", dateString));
 
     const unsubscribe = onSnapshot(
       q,
       (querySnapshot) => {
-        const slots: TimeSlot[] = [];
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          const plumber = PLUMBERS.find((p) => p.name === data.plumber) || PLUMBERS[0];
-          slots.push({
-            id: doc.id,
-            time: data.time,
-            available: !data.isBooked,
-            plumberName: plumber.name,
-          });
+        const raw = querySnapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+        // Conjunto de horas bloqueadas/ocupadas (cualquier doc con ese time cuenta como no disponible)
+        const blocked = new Set<string>();
+        raw.forEach((doc: any) => {
+          if (doc?.time) blocked.add(doc.time);
         });
-        // Sort client-side by time (HH:mm)
+
+        // Generar todos los horarios base, y marcar como no disponibles los bloqueados o pasados (si es el día de hoy)
+        const baseTimes = generateBaseTimes();
+        const slots: TimeSlot[] = baseTimes.map((time, idx) => {
+          const unavailable = blocked.has(time) || isPastSlot(date, time);
+          const plumber = PLUMBERS[idx % PLUMBERS.length];
+          return {
+            id: `${dateString}-${time}`,
+            time,
+            available: !unavailable,
+            plumberName: plumber.name,
+          };
+        });
+
+        // Ordenar por hora por si acaso
         const toMinutes = (t: string) => {
           const [h, m] = t.split(":").map(Number);
           return h * 60 + m;
         };
         slots.sort((a, b) => toMinutes(a.time) - toMinutes(b.time));
+
         setAvailableSlots(slots);
+        console.log("[bookings-based] date:", dateString, "raw:", raw, "slots:", slots);
+        setDebugData({ dateString, raw, slots });
+
+        // Auto-seleccionar el primer horario disponible si no hay uno seleccionado aún o si el actual ya no existe
+        if (slots.length > 0) {
+          setSelectedTimeSlot((curr) => {
+            const exists = curr && slots.some((s) => s.id === curr && s.available);
+            if (!exists) {
+              const first = slots.find((s) => s.available);
+              if (first) {
+                setBookingData((prev) => ({ ...prev, timeSlot: `${first.time} - ${first.plumberName ?? ""}` }));
+                return first.id;
+              }
+            }
+            return curr;
+          });
+        }
       },
       (error) => {
-        console.error("Error al cargar horarios disponibles:", error);
-        // Fallback: limpiar o mantener el estado actual
-        setAvailableSlots([]);
+        console.error("Error al cargar horarios:", error);
+        // Si hay error, al menos mostrar horarios base como disponibles
+        const baseTimes = generateBaseTimes();
+        const slots: TimeSlot[] = baseTimes.map((time, idx) => ({
+          id: `${dateString}-${time}`,
+          time,
+          available: !isPastSlot(date, time),
+          plumberName: PLUMBERS[idx % PLUMBERS.length].name,
+        }));
+        setAvailableSlots(slots);
+        setDebugData({ dateString, raw: [], slots });
       }
     );
 
@@ -269,10 +344,15 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
   // Update available slots when date changes
   useEffect(() => {
     if (selectedDate) {
+      // Reiniciar selección de horario al cambiar el día
+      setSelectedTimeSlot("");
+      setBookingData((prev) => ({ ...prev, timeSlot: "" }));
       const unsubscribe = loadAvailableSlots(selectedDate);
       return () => unsubscribe();
     } else {
       setAvailableSlots([]);
+      setSelectedTimeSlot("");
+      setBookingData((prev) => ({ ...prev, timeSlot: "" }));
     }
   }, [selectedDate]);
 
@@ -302,7 +382,7 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
 
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
-    setBookingData((prev) => ({ ...prev, date: date.toISOString().split("T")[0] }));
+    setBookingData((prev) => ({ ...prev, date: formatLocalDate(date) }));
   };
 
   const handleTimeSlotSelect = (slot: TimeSlot) => {
@@ -525,6 +605,21 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
                     <h4 className="text-lg font-medium text-black">
                       Available times for {selectedDate.toLocaleDateString()}
                     </h4>
+                    {/* DEBUG: JSON de disponibilidad */}
+                    <div className="text-xs text-black/70">
+                      <button
+                        type="button"
+                        className="underline hover:text-black"
+                        onClick={() => setShowDebug((v) => !v)}
+                      >
+                        {showDebug ? "Ocultar JSON" : "Ver JSON de disponibilidad"}
+                      </button>
+                      {showDebug && debugData && (
+                        <pre className="mt-2 max-h-56 overflow-auto rounded-lg bg-black/5 p-2">
+{JSON.stringify(debugData, null, 2)}
+                        </pre>
+                      )}
+                    </div>
                     <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
                       {availableSlots.map((slot) => (
                         <button
