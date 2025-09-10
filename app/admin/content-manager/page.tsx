@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Lock, Calendar, FileText } from "lucide-react";
+import { Lock, ChevronLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { User } from "firebase/auth";
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { auth } from "../../lib/firebase";
+import { auth } from "../../../lib/firebase";
 
-export default function AdminLanding() {
+export default function ContentManagerPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState<string | null>(null);
@@ -85,32 +85,20 @@ export default function AdminLanding() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-40">
-      <div className="mx-auto max-w-4xl px-4">
-        <div className="rounded-lg bg-white p-6 shadow-lg">
-          <div className="mb-6 flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">Panel de Administración</h1>
-            <button onClick={handleLogout} className="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">
-              Cerrar sesión
-            </button>
-          </div>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <Link href="/admin/booking-management" className="flex items-center gap-3 rounded-lg border p-4 hover:bg-gray-50">
-              <Calendar className="h-5 w-5 text-yellow-500" />
-              <div>
-                <p className="font-semibold">Gestión de Reservas</p>
-                <p className="text-sm text-gray-600">Bloquea y libera horarios</p>
-              </div>
-            </Link>
-            <Link href="/admin/content-manager" className="flex items-center gap-3 rounded-lg border p-4 hover:bg-gray-50">
-              <FileText className="h-5 w-5 text-yellow-500" />
-              <div>
-                <p className="font-semibold">Content Manager</p>
-                <p className="text-sm text-gray-600">Administrar contenido del sitio</p>
-              </div>
-            </Link>
-          </div>
+    <div className="min-h-screen bg-gray-50 pt-40 p-6">
+      <div className="mx-auto max-w-5xl">
+        <div className="mb-4">
+          <Link href="/admin" className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900">
+            <ChevronLeft className="mr-1 h-4 w-4" /> Volver al panel
+          </Link>
         </div>
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold">Content Manager</h1>
+          <button onClick={handleLogout} className="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">
+            Cerrar sesión
+          </button>
+        </div>
+        <p className="text-gray-600 mt-2">(Próximamente)</p>
       </div>
     </div>
   );
