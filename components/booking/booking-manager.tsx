@@ -35,7 +35,6 @@ interface TimeSlot {
   id: string;
   time: string;
   available: boolean;
-  plumberName?: string;
 }
 
 interface BookingManagerProps {
@@ -207,11 +206,6 @@ const SERVICE_CATEGORIES = [
   },
 ];
 
-const PLUMBERS = [
-  { id: "john", name: "John Smith", specialty: "Emergency & Repairs" },
-  { id: "mike", name: "Mike Johnson", specialty: "Renovations" },
-  { id: "sarah", name: "Sarah Wilson", specialty: "Installations" },
-];
 
 export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingManagerProps) => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -270,14 +264,12 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
 
         // Generar todos los horarios base, y marcar como no disponibles los bloqueados o pasados (si es el día de hoy)
         const baseTimes = generateBaseTimes();
-        const slots: TimeSlot[] = baseTimes.map((time, idx) => {
+        const slots: TimeSlot[] = baseTimes.map((time) => {
           const unavailable = blocked.has(time) || isPastSlot(date, time);
-          const plumber = PLUMBERS[idx % PLUMBERS.length];
           return {
             id: `${dateString}-${time}`,
             time,
             available: !unavailable,
-            plumberName: plumber.name,
           };
         });
 
@@ -297,7 +289,7 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
             if (!exists) {
               const first = slots.find((s) => s.available);
               if (first) {
-                setBookingData((prev) => ({ ...prev, timeSlot: `${first.time} - ${first.plumberName ?? ""}` }));
+                setBookingData((prev) => ({ ...prev, timeSlot: `${first.time}` }));
                 return first.id;
               }
             }
@@ -309,11 +301,10 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
         console.error("Error al cargar horarios:", error);
         // Si hay error, al menos mostrar horarios base como disponibles
         const baseTimes = generateBaseTimes();
-        const slots: TimeSlot[] = baseTimes.map((time, idx) => ({
+        const slots: TimeSlot[] = baseTimes.map((time) => ({
           id: `${dateString}-${time}`,
           time,
           available: !isPastSlot(date, time),
-          plumberName: PLUMBERS[idx % PLUMBERS.length].name,
         }));
         setAvailableSlots(slots);
       }
@@ -368,7 +359,7 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
 
   const handleTimeSlotSelect = (slot: TimeSlot) => {
     setSelectedTimeSlot(slot.id);
-    setBookingData((prev) => ({ ...prev, timeSlot: `${slot.time} - ${slot.plumberName}` }));
+    setBookingData((prev) => ({ ...prev, timeSlot: slot.time }));
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -408,7 +399,6 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
           phone: bookingData.phone,
           email: bookingData.email,
           comments: bookingData.comments,
-          plumberName: selectedSlot.plumberName ?? null,
           status: "pending",
           createdAt: serverTimestamp(),
         });
@@ -417,7 +407,7 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
       onBookingComplete?.({
         ...bookingData,
         date: dateStr,
-        timeSlot: `${timeStr} - ${selectedSlot.plumberName ?? ""}`,
+        timeSlot: timeStr,
       });
 
       // Show confirmation modal instead of closing immediately
@@ -651,9 +641,6 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
                             <Clock className="h-4 w-4" />
                             <span className="font-medium">{slot.time}</span>
                           </div>
-                          {slot.available && slot.plumberName && (
-                            <div className="text-sm text-[#f6be00]">with {slot.plumberName}</div>
-                          )}
                           {!slot.available && <div className="text-sm text-black/40">Unavailable</div>}
                         </button>
                       ))}

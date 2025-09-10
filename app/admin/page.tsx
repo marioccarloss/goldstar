@@ -23,6 +23,7 @@ export default function AdminPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedMobileDay, setSelectedMobileDay] = useState<Date>(new Date());
 
   // Calcula el inicio y fin de la semana visible usando useMemo para evitar recálculos innecesarios
   const startOfCurrentWeek = useMemo(() => startOfWeek(currentDate, { weekStartsOn: 1 }), [currentDate]);
@@ -54,11 +55,17 @@ export default function AdminPage() {
   }, [startOfCurrentWeek, endOfCurrentWeek]); // Este efecto se ejecuta cada vez que cambia la semana
 
   const handlePrevWeek = () => {
-    setCurrentDate((prevDate) => subDays(prevDate, 7));
+    const newDate = subDays(currentDate, 7);
+    setCurrentDate(newDate);
+    // Mantener el mismo día de la semana seleccionado en móvil al cambiar de semana
+    setSelectedMobileDay((prev) => subDays(prev, 7));
   };
 
   const handleNextWeek = () => {
-    setCurrentDate((prevDate) => addDays(prevDate, 7));
+    const newDate = addDays(currentDate, 7);
+    setCurrentDate(newDate);
+    // Mantener el mismo día de la semana seleccionado en móvil al cambiar de semana
+    setSelectedMobileDay((prev) => addDays(prev, 7));
   };
 
   // Genera un array con los 7 días de la semana actual
@@ -152,55 +159,134 @@ export default function AdminPage() {
           {loading ? (
             <div className="py-10 text-center text-gray-500">Cargando reservas...</div>
           ) : (
-            <div className="grid grid-cols-7 gap-px overflow-hidden rounded-lg border border-gray-200 bg-gray-200">
-              {/* Encabezados de los días */}
-              {weekDays.map((day) => (
-                <div
-                  key={day.toISOString()}
-                  className={`p-2 text-center font-bold ${
-                    isSameDay(day, new Date()) ? "bg-yellow-500 text-white" : "bg-gray-100"
-                  }`}
-                >
-                  <p className="hidden text-sm capitalize md:block">{format(day, "eeee", { locale: es })}</p>
-                  <p className="block text-sm capitalize md:hidden">{format(day, "eee", { locale: es })}</p>
-                  <p className="text-lg">{format(day, "d")}</p>
+            <>
+              {/* Vista escritorio/tablet: cuadrícula semanal */}
+              <div className="hidden md:grid grid-cols-7 gap-px overflow-hidden rounded-lg border border-gray-200 bg-gray-200">
+                {/* Encabezados de los días */}
+                {weekDays.map((day) => (
+                  <div
+                    key={day.toISOString()}
+                    className={`p-2 text-center font-bold ${
+                      isSameDay(day, new Date()) ? "bg-yellow-500 text-white" : "bg-gray-100"
+                    }`}
+                  >
+                    <p className="hidden text-sm capitalize md:block">{format(day, "eeee", { locale: es })}</p>
+                    <p className="block text-sm capitalize md:hidden">{format(day, "eee", { locale: es })}</p>
+                    <p className="text-lg">{format(day, "d")}</p>
+                  </div>
+                ))}
+
+                {/* Contenido de los horarios */}
+                {weekDays.map((day) => (
+                  <div key={format(day, "yyyy-MM-dd")} className="space-y-px bg-white">
+                    {workHours.map((hour) => {
+                      const slotDateTime = new Date(`${format(day, "yyyy-MM-dd")}T${hour}`);
+                      const isPast = isBefore(slotDateTime, new Date());
+                      const booked = isSlotBooked(day, hour);
+
+                      let slotClass = "bg-green-100 text-green-800"; // Disponible
+                      if (booked) {
+                        slotClass = "bg-red-200 text-red-800 cursor-not-allowed"; // Reservado
+                      } else if (isPast) {
+                        slotClass = "bg-gray-200 text-gray-500 cursor-not-allowed opacity-75"; // Pasado
+                      }
+
+                      return (
+                        <button
+                          key={hour}
+                          onClick={() => handleSlotClick(day, hour)}
+                          disabled={isPast}
+                          className={`m-1 rounded p-2 text-center text-xs font-medium transition-all duration-200 hover:scale-105 focus:ring-2 focus:ring-yellow-500 focus:outline-none ${slotClass} ${!isPast && !booked ? "hover:bg-yellow-100 hover:text-yellow-800" : ""}`}
+                          title={booked ? "Clic para liberar horario" : "Clic para bloquear horario"}
+                          aria-label={`${booked ? "Liberar" : "Bloquear"} ${hour} del ${format(day, "PPP", { locale: es })}`}
+                        >
+                          <div className="flex items-center justify-center gap-1">
+                            {booked && <X className="h-3 w-3" />}
+                            {!booked && !isPast && <Plus className="h-3 w-3 opacity-50" />}
+                            <span>{hour}</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+
+              {/* Vista móvil: selector horizontal de días + lista de horarios */}
+              <div className="md:hidden">
+                {/* Selector de días (scroll horizontal) */}
+                <div className="sticky top-20 z-10 -mx-6 border-b bg-white/80 px-6 py-3 backdrop-blur">
+                  <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+                    {weekDays.map((day) => {
+                      const isActive = isSameDay(day, selectedMobileDay);
+                      return (
+                        <button
+                          key={day.toISOString()}
+                          onClick={() => setSelectedMobileDay(day)}
+                          className={`flex-shrink-0 rounded-full border px-3 py-2 text-sm font-medium transition-colors ${
+                            isActive
+                              ? "border-yellow-500 bg-yellow-500 text-white shadow"
+                              : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                          }`}
+                          aria-pressed={isActive}
+                          aria-label={`Seleccionar ${format(day, "PPPP", { locale: es })}`}
+                        >
+                          <span className="capitalize">{format(day, "eee d", { locale: es })}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              ))}
 
-              {/* Contenido de los horarios */}
-              {weekDays.map((day) => (
-                <div key={format(day, "yyyy-MM-dd")} className="space-y-px bg-white">
+                {/* Lista de horarios del día seleccionado */}
+                <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {workHours.map((hour) => {
-                    const slotDateTime = new Date(`${format(day, "yyyy-MM-dd")}T${hour}`);
+                    const slotDateTime = new Date(`${format(selectedMobileDay, "yyyy-MM-dd")}T${hour}`);
                     const isPast = isBefore(slotDateTime, new Date());
-                    const booked = isSlotBooked(day, hour);
+                    const booked = isSlotBooked(selectedMobileDay, hour);
 
-                    let slotClass = "bg-green-100 text-green-800"; // Disponible
+                    let base = "rounded-lg p-3 text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-yellow-500";
+                    let styles = "bg-green-100 text-green-800";
+                    let title = booked ? "Clic para liberar horario" : "Clic para bloquear horario";
+
                     if (booked) {
-                      slotClass = "bg-red-200 text-red-800 cursor-not-allowed"; // Reservado
+                      styles = "bg-red-100 text-red-800";
                     } else if (isPast) {
-                      slotClass = "bg-gray-200 text-gray-500 cursor-not-allowed opacity-75"; // Pasado
+                      styles = "bg-gray-100 text-gray-500 opacity-70";
+                      title = "Horario pasado";
                     }
 
                     return (
                       <button
                         key={hour}
-                        onClick={() => handleSlotClick(day, hour)}
+                        onClick={() => handleSlotClick(selectedMobileDay, hour)}
                         disabled={isPast}
-                        className={`m-1 rounded p-2 text-center text-xs font-medium transition-all duration-200 hover:scale-105 focus:ring-2 focus:ring-yellow-500 focus:outline-none ${slotClass} ${!isPast && !booked ? "hover:bg-yellow-100 hover:text-yellow-800" : ""}`}
-                        title={booked ? "Clic para liberar horario" : "Clic para bloquear horario"}
+                        className={`${base} ${styles}`}
+                        title={title}
+                        aria-label={`${booked ? "Liberar" : "Bloquear"} ${hour} del ${format(
+                          selectedMobileDay,
+                          "PPP",
+                          { locale: es }
+                        )}`}
                       >
-                        <div className="flex items-center justify-center gap-1">
-                          {booked && <X className="h-3 w-3" />}
-                          {!booked && !isPast && <Plus className="h-3 w-3 opacity-50" />}
+                        <div className="flex items-center justify-center gap-2">
+                          {booked && <X className="h-4 w-4" />}
+                          {!booked && !isPast && <Plus className="h-4 w-4 opacity-60" />}
                           <span>{hour}</span>
                         </div>
                       </button>
                     );
                   })}
                 </div>
-              ))}
-            </div>
+
+                {/* Leyenda rápida */}
+                <div className="mt-4 flex items-center justify-center gap-3 text-xs text-gray-500">
+                  <div className="flex items-center gap-1"><span className="h-3 w-3 rounded bg-green-200"></span> Disponible</div>
+                  <div className="flex items-center gap-1"><span className="h-3 w-3 rounded bg-red-200"></span> Ocupado</div>
+                  <div className="flex items-center gap-1"><span className="h-3 w-3 rounded bg-gray-200"></span> Pasado</div>
+                </div>
+              </div>
+            </>
           )}
         </div>
       </div>
