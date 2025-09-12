@@ -1,3 +1,167 @@
+"use client";
+
+import { getContent } from "@/lib/content";
+import { useEffect, useState } from "react";
+import type { ComponentType } from "react";
+
+export default function Services() {
+  const [content, setContent] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      const contentData = await getContent();
+      setContent(contentData);
+    };
+
+    fetchContent();
+  }, []);
+
+  if (!content) {
+    return <div>Loading...</div>;
+  }
+
+  type ServiceItem = { title: string; icon: ComponentType<any>; description: string };
+  type ServiceCategory = { number: string | number; title: string; subtitle: string; services: ServiceItem[] };
+
+  // Datos de servicios de plomería
+  const plumbingIcons = [
+    PipeIcon,
+    WaterDropIcon,
+    ClockIcon,
+    WaterDropIcon,
+    WaterDropIcon,
+    WrenchIcon,
+    ShowerIcon,
+    WaterDropIcon,
+    ToiletIcon,
+  ];
+
+  const plumbingServices = content.services.plumbingServices.map((s: any, idx: number) => ({
+    title: s.title,
+    icon: plumbingIcons[idx] ?? PipeIcon,
+    description: s.description,
+  }));
+
+  // Datos de servicios de drenaje
+  const drainageIcons = [DrainIcon, CleaningIcon, SewerIcon, WrenchIcon, MaintenanceIcon, PipeIcon, InspectionIcon];
+  const drainageServices = content.services.drainageServices.map((s: any, idx: number) => ({
+    title: s.title,
+    icon: drainageIcons[idx] ?? DrainIcon,
+    description: s.description,
+  }));
+
+  // Datos de servicios de calefacción
+  const heatingIcons = [
+    BoilerIcon,
+    WrenchIcon,
+    MaintenanceIcon,
+    RadiatorIcon,
+    ThermostatIcon,
+    HeatPumpIcon,
+    FurnaceIcon,
+  ];
+  const heatingServices = content.services.heatingServices.map((s: any, idx: number) => ({
+    title: s.title,
+    icon: heatingIcons[idx] ?? BoilerIcon,
+    description: s.description,
+  }));
+
+  // Datos de servicios de renovaciones
+  const renovationIcons = [BathtubIcon, KitchenIcon, WrenchIcon, WrenchIcon, WrenchIcon, KitchenIcon];
+  const homeRenovationServices = content.services.homeRenovationServices.map((s: any, idx: number) => ({
+    title: s.title,
+    icon: renovationIcons[idx] ?? WrenchIcon,
+    description: s.description,
+  }));
+
+  const serviceCategories: ServiceCategory[] = content.services.categories.map((c: any, idx: number) => ({
+    number: c.number,
+    title: c.title,
+    subtitle: c.subtitle,
+    services:
+      idx === 0
+        ? plumbingServices
+        : idx === 1
+          ? drainageServices
+          : idx === 2
+            ? heatingServices
+            : homeRenovationServices,
+  }));
+
+  return (
+    <div className="min-h-screen bg-[#f6be00]">
+      {/* Hero Section */}
+      <div className="bg-[#f6be00] pt-44 pb-16">
+        <div className="mx-auto max-w-[1400px] px-6">
+          <div className="text-center">
+            <h1 className="leading-none font-extrabold text-black" style={{ fontSize: "clamp(3rem, 6vw, 88px)" }}>
+              {content.services.hero.title}
+            </h1>
+            <p className="mx-auto mt-6 max-w-2xl text-black" style={{ fontSize: "clamp(1rem, 1.5vw, 22px)" }}>
+              {content.services.hero.subtitle}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Services Categories */}
+      <div className="mx-auto max-w-[1400px] px-6 py-16">
+        {serviceCategories.map((category: ServiceCategory, categoryIndex: number) => (
+          <div
+            key={category.number}
+            className={`mb-24 ${categoryIndex % 2 === 0 ? "" : "border border-black bg-white p-8"}`}
+          >
+            {/* Category Header */}
+            <div className="mb-12 flex items-start gap-8">
+              <div className="flex-shrink-0">
+                <span className="text-8xl leading-none font-bold text-black/20">{category.number}</span>
+              </div>
+              <div className="flex-1 pt-4">
+                <h2
+                  className="mb-4 leading-none font-extrabold text-black"
+                  style={{ fontSize: "clamp(2rem, 4vw, 48px)" }}
+                >
+                  {category.title}
+                </h2>
+                <p className="max-w-2xl text-black" style={{ fontSize: "clamp(1rem, 1.2vw, 18px)" }}>
+                  {category.subtitle}
+                </p>
+              </div>
+            </div>
+
+            {/* Services Grid */}
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {category.services.map((service: ServiceItem, serviceIndex: number) => {
+                const IconComponent = service.icon;
+                return (
+                  <div
+                    key={serviceIndex}
+                    className="group bg-white border border-black p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0">
+                        <div className="flex h-12 w-12 items-center justify-center border border-black bg-[#d0f5da] transition-colors duration-300 group-hover:bg-[#f6be00]">
+                          <IconComponent />
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="mb-2 text-lg font-bold text-black">{service.title}</h3>
+                        <p className="text-sm leading-relaxed text-black/80">{service.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Datos de servicios de plomería
+
 // Iconos SVG para servicios de plomería
 const PipeIcon = () => (
   <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
@@ -19,7 +183,7 @@ const WrenchIcon = () => (
 
 const ShowerIcon = () => (
   <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M9 17H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8-4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8-4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zM7 5h10v2H7V5zm12 10V9c0-1.1-.9-2-2-2H7c-1.1 0-2 .9-2 2v6h14z" />
+    <path d="M9 17H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8-4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8-4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z" />
   </svg>
 );
 
@@ -88,7 +252,7 @@ const BoilerIcon = () => (
 
 const RadiatorIcon = () => (
   <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M4 6h16v2H4V6zm0 4h16v2H4v-2zm0 4h16v2H4v-2zm0 4h16v2H4v-2z" />
+    <path d="M4 6h16v2H4V6zm0 4h16v2H4v-2zm0 4h16v2H4v-2zm0 4h16v2H4v-2zm0 4h16v2H4v-2z" />
   </svg>
 );
 
@@ -109,264 +273,3 @@ const FurnaceIcon = () => (
     <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" />
   </svg>
 );
-
-// Datos de servicios de plomería
-const plumbingServices = [
-  {
-    title: "Repiping",
-    icon: PipeIcon,
-    description: "Complete pipe replacement and installation services",
-  },
-  {
-    title: "Hot Water Tank",
-    icon: WaterDropIcon,
-    description: "Water heater repair and installation",
-  },
-  {
-    title: "Emergency Plumbing",
-    icon: ClockIcon,
-    description: "24/7 emergency plumbing services",
-  },
-  {
-    title: "Water Main Repair",
-    icon: WaterDropIcon,
-    description: "Main water line repair and replacement",
-  },
-  {
-    title: "Leaks Detection",
-    icon: WaterDropIcon,
-    description: "Professional leak detection and repair",
-  },
-  {
-    title: "Plumbing Maintenance",
-    icon: WrenchIcon,
-    description: "Regular maintenance and inspection",
-  },
-  {
-    title: "Shower Repair",
-    icon: ShowerIcon,
-    description: "Shower installation and repair services",
-  },
-  {
-    title: "Faucet Repair",
-    icon: WaterDropIcon,
-    description: "Faucet repair and replacement",
-  },
-  {
-    title: "Toilet Repairs",
-    icon: ToiletIcon,
-    description: "Toilet repair and installation services",
-  },
-];
-
-// Datos de servicios de drenaje
-const drainageServices = [
-  {
-    title: "Drain Tile System",
-    icon: DrainIcon,
-    description: "Professional drain tile installation and repair services",
-  },
-  {
-    title: "Drain Cleaning",
-    icon: CleaningIcon,
-    description: "High-pressure drain cleaning and unclogging",
-  },
-  {
-    title: "Drainage Sewer Installation",
-    icon: SewerIcon,
-    description: "Complete sewer line installation and replacement",
-  },
-  {
-    title: "Drainage Repair",
-    icon: WrenchIcon,
-    description: "Expert drainage system repair and maintenance",
-  },
-  {
-    title: "Hydro Jet Drain Maintenance",
-    icon: MaintenanceIcon,
-    description: "Advanced hydro jetting for drain maintenance",
-  },
-  {
-    title: "Trenchless Pipe Repair",
-    icon: PipeIcon,
-    description: "Modern trenchless pipe repair technology",
-  },
-  {
-    title: "Sewer Inspection",
-    icon: InspectionIcon,
-    description: "Professional sewer line inspection services",
-  },
-];
-
-// Datos de servicios de calefacción
-const heatingServices = [
-  {
-    title: "Boiler Installation",
-    icon: BoilerIcon,
-    description: "Professional boiler installation and setup services",
-  },
-  {
-    title: "Boiler Maintenance",
-    icon: WrenchIcon,
-    description: "Regular boiler maintenance and servicing",
-  },
-  {
-    title: "Boiler Repair",
-    icon: MaintenanceIcon,
-    description: "Expert boiler repair and troubleshooting",
-  },
-  {
-    title: "Radiator Services",
-    icon: RadiatorIcon,
-    description: "Radiator installation, repair, and maintenance",
-  },
-  {
-    title: "Thermostat Installation",
-    icon: ThermostatIcon,
-    description: "Smart thermostat installation and programming",
-  },
-  {
-    title: "Heat Pump Services",
-    icon: HeatPumpIcon,
-    description: "Heat pump installation and maintenance",
-  },
-  {
-    title: "Furnace Services",
-    icon: FurnaceIcon,
-    description: "Complete furnace installation and repair",
-  },
-];
-
-// Datos de servicios de renovaciones
-const homeRenovationServices = [
-  {
-    title: "Bathroom Renovations",
-    icon: BathtubIcon,
-    description: "Complete bathroom remodeling and renovation services",
-  },
-  {
-    title: "Kitchen Renovations",
-    icon: KitchenIcon,
-    description: "Full kitchen design and renovation solutions",
-  },
-  {
-    title: "Flooring Installation",
-    icon: WrenchIcon,
-    description: "Professional flooring installation and replacement",
-  },
-  {
-    title: "Tile Installation",
-    icon: WrenchIcon,
-    description: "Expert tile installation for all areas",
-  },
-  {
-    title: "Painting Services",
-    icon: WrenchIcon,
-    description: "Interior and exterior painting services",
-  },
-  {
-    title: "Cabinet Installation",
-    icon: KitchenIcon,
-    description: "Custom cabinet design and installation",
-  },
-];
-
-export default function Services() {
-  const serviceCategories = [
-    {
-      number: "01",
-      title: "Plumbing Services",
-      subtitle: "Professional plumbing solutions for your home and business",
-      services: plumbingServices,
-    },
-    {
-      number: "02",
-      title: "Drainage Services",
-      subtitle: "Expert drainage and sewer solutions for optimal flow",
-      services: drainageServices,
-    },
-    {
-      number: "03",
-      title: "Heating Services",
-      subtitle: "Complete heating system installation and maintenance",
-      services: heatingServices,
-    },
-    {
-      number: "04",
-      title: "Home Renovations",
-      subtitle: "Transform your space with our renovation expertise",
-      services: homeRenovationServices,
-    },
-  ];
-
-  return (
-    <div className="min-h-screen bg-[#f6be00]">
-      {/* Hero Section */}
-      <div className="bg-[#f6be00] pt-44 pb-16">
-        <div className="mx-auto max-w-[1400px] px-6">
-          <div className="text-center">
-            <h1 className="leading-none font-extrabold text-black" style={{ fontSize: "clamp(3rem, 6vw, 88px)" }}>
-              Our Services
-            </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-black" style={{ fontSize: "clamp(1rem, 1.5vw, 22px)" }}>
-              Comprehensive solutions for all your home improvement needs
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Services Categories */}
-      <div className="mx-auto max-w-[1400px] px-6 py-16">
-        {serviceCategories.map((category, categoryIndex) => (
-          <div
-            key={category.number}
-            className={`mb-24 ${categoryIndex % 2 === 0 ? "" : "border border-black bg-white p-8"}`}
-          >
-            {/* Category Header */}
-            <div className="mb-12 flex items-start gap-8">
-              <div className="flex-shrink-0">
-                <span className="text-8xl leading-none font-bold text-black/20">{category.number}</span>
-              </div>
-              <div className="flex-1 pt-4">
-                <h2
-                  className="mb-4 leading-none font-extrabold text-black"
-                  style={{ fontSize: "clamp(2rem, 4vw, 48px)" }}
-                >
-                  {category.title}
-                </h2>
-                <p className="max-w-2xl text-black" style={{ fontSize: "clamp(1rem, 1.2vw, 18px)" }}>
-                  {category.subtitle}
-                </p>
-              </div>
-            </div>
-
-            {/* Services Grid */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {category.services.map((service, serviceIndex) => {
-                const IconComponent = service.icon;
-                return (
-                  <div
-                    key={serviceIndex}
-                    className="group border border-black bg-white p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0">
-                        <div className="flex h-12 w-12 items-center justify-center border border-black bg-[#d0f5da] transition-colors duration-300 group-hover:bg-[#f6be00]">
-                          <IconComponent />
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="mb-2 text-lg font-bold text-black">{service.title}</h3>
-                        <p className="text-sm leading-relaxed text-black/80">{service.description}</p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}

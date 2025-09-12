@@ -1,296 +1,18 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { getContent } from "@/lib/content";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import type React from "react";
-import { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ArrowUpRight } from "../icons/arrow-up-right";
+import { X, Wrench, Droplets, AlertTriangle, Home } from "lucide-react";
+import Link from "next/link";
 
-// Iconos SVG para servicios de plomería
-const PipeIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M20 8h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v4H4c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2zM10 4h4v4h-4V4zm10 14H4v-6h16v6z" />
-  </svg>
-);
-
-const WaterDropIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M12 2c-5.33 4.55-8 8.48-8 11.8 0 4.98 3.8 8.2 8 8.2s8-3.22 8-8.2C20 10.48 17.33 6.55 12 2z" />
-  </svg>
-);
-
-const WrenchIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z" />
-  </svg>
-);
-
-const ShowerIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M9 17H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8-4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8-4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zM7 5h10v2H7V5zm12 10V9c0-1.1-.9-2-2-2H7c-1.1 0-2 .9-2 2v6h14z" />
-  </svg>
-);
-
-const ToiletIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M5 8V6c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2v2h1v11c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V8h1zm2-2v2h10V6H7zm11 4H6v9h12v-9z" />
-  </svg>
-);
-
-const ClockIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z" />
-  </svg>
-);
-
-// Iconos adicionales para renovaciones
-const BathtubIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M7 7V5c0-1.1.9-2 2-2s2 .9 2 2v2h6c1.1 0 2 .9 2 2v8c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V9c0-1.1.9-2 2-2h2zm2-2v2h2V5H9zm10 4H5v8h14V9z" />
-  </svg>
-);
-
-const KitchenIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M18 2.01L6 2c-1.1 0-2 .89-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.11-.9-1.99-2-1.99zM18 20H6V4h2v7l2-1 2 1V4h6v16z" />
-  </svg>
-);
-
-// Iconos para servicios de drenaje
-const DrainIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M9 17H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8-4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8-4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z" />
-  </svg>
-);
-
-const SewerIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-  </svg>
-);
-
-const CleaningIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M19.36 2.72L20.78 4.14l-1.06 1.06-1.42-1.42L19.36 2.72zm-14.14 0l1.06 1.06-1.42 1.42L3.8 4.14L5.22 2.72zM12 6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6 2.69-6 6-6zm0 2c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm6.36 10.36l1.42 1.42-1.06 1.06-1.42-1.42 1.06-1.06zm-12.72 0l1.06 1.06-1.42 1.42-1.06-1.06 1.42-1.42z" />
-  </svg>
-);
-
-const InspectionIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
-  </svg>
-);
-
-const MaintenanceIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z" />
-  </svg>
-);
-
-// Iconos para servicios de calefacción
-const BoilerIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-  </svg>
-);
-
-const RadiatorIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M4 6h16v2H4V6zm0 4h16v2H4v-2zm0 4h16v2H4v-2zm0 4h16v2H4v-2z" />
-  </svg>
-);
-
-const ThermostatIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M15 13V5c0-1.66-1.34-3-3-3S9 3.34 9 5v8c-1.21.91-2 2.37-2 4 0 2.76 2.24 5 5 5s5-2.24 5-5c0-1.63-.79-3.09-2-4zm-4-2V5c0-.55.45-1 1-1s1 .45 1 1v6h-2z" />
-  </svg>
-);
-
-const HeatPumpIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M12 2l3.09 6.26L22 9l-5.91.74L12 16l-4.09-6.26L2 9l6.91-.74L12 2zm0 2.18L10.46 7.9l-4.24.53 4.24.53L12 12.82l1.54-3.86 4.24-.53-4.24-.53L12 4.18z" />
-  </svg>
-);
-
-const FurnaceIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" />
-  </svg>
-);
-
-// Datos de servicios de plomería
-const plumbingServices = [
-  {
-    title: "Repiping",
-    icon: PipeIcon,
-    description: "Complete pipe replacement and installation services",
-  },
-  {
-    title: "Hot Water Tank",
-    icon: WaterDropIcon,
-    description: "Water heater repair and installation",
-  },
-  {
-    title: "Emergency Plumbing",
-    icon: ClockIcon,
-    description: "24/7 emergency plumbing services",
-  },
-  {
-    title: "Water Main Repair",
-    icon: WaterDropIcon,
-    description: "Main water line repair and replacement",
-  },
-  {
-    title: "Leaks Detection",
-    icon: WaterDropIcon,
-    description: "Professional leak detection and repair",
-  },
-  {
-    title: "Plumbing Maintenance",
-    icon: WrenchIcon,
-    description: "Regular maintenance and inspection",
-  },
-  {
-    title: "Shower Repair",
-    icon: ShowerIcon,
-    description: "Shower installation and repair services",
-  },
-  {
-    title: "Faucet Repair",
-    icon: WaterDropIcon,
-    description: "Faucet repair and replacement",
-  },
-  {
-    title: "Toilet Repairs",
-    icon: ToiletIcon,
-    description: "Toilet repair and installation services",
-  },
-];
-
-// Datos de servicios de drenaje
-const drainageServices = [
-  {
-    title: "Drain Tile System",
-    icon: DrainIcon,
-    description: "Professional drain tile installation and repair services",
-  },
-  {
-    title: "Drain Cleaning",
-    icon: CleaningIcon,
-    description: "High-pressure drain cleaning and unclogging",
-  },
-  {
-    title: "Drainage Sewer Installation",
-    icon: SewerIcon,
-    description: "Complete sewer line installation and replacement",
-  },
-  {
-    title: "Drainage Repair",
-    icon: WrenchIcon,
-    description: "Expert drainage system repair and maintenance",
-  },
-  {
-    title: "Hydro Jet Drain Maintenance",
-    icon: MaintenanceIcon,
-    description: "Advanced hydro jetting for drain maintenance",
-  },
-  {
-    title: "Trenchless Pipe Repair",
-    icon: PipeIcon,
-    description: "Modern trenchless pipe repair technology",
-  },
-  {
-    title: "Sewer Inspection",
-    icon: InspectionIcon,
-    description: "Professional sewer line inspection services",
-  },
-];
-
-// Datos de servicios de calefacción
-const heatingServices = [
-  {
-    title: "Boiler Installation",
-    icon: BoilerIcon,
-    description: "Professional boiler installation and setup services",
-  },
-  {
-    title: "Boiler Maintenance",
-    icon: WrenchIcon,
-    description: "Regular boiler maintenance and servicing",
-  },
-  {
-    title: "Boiler Repair",
-    icon: MaintenanceIcon,
-    description: "Expert boiler repair and troubleshooting",
-  },
-  {
-    title: "Radiator Services",
-    icon: RadiatorIcon,
-    description: "Radiator installation, repair, and maintenance",
-  },
-  {
-    title: "Thermostat Installation",
-    icon: ThermostatIcon,
-    description: "Smart thermostat installation and programming",
-  },
-  {
-    title: "Heat Pump Services",
-    icon: HeatPumpIcon,
-    description: "Heat pump installation and maintenance",
-  },
-  {
-    title: "Furnace Services",
-    icon: FurnaceIcon,
-    description: "Complete furnace installation and repair",
-  },
-];
-
-// Datos de servicios de renovaciones
-const homeRenovationServices = [
-  {
-    title: "Bathroom Renovations",
-    icon: BathtubIcon,
-    description: "Complete bathroom remodeling and renovation services",
-  },
-  {
-    title: "Kitchen Renovations",
-    icon: KitchenIcon,
-    description: "Full kitchen design and renovation solutions",
-  },
-  {
-    title: "Flooring Installation",
-    icon: WrenchIcon,
-    description: "Professional flooring installation and replacement",
-  },
-  {
-    title: "Tile Installation",
-    icon: WrenchIcon,
-    description: "Expert tile installation for all areas",
-  },
-  {
-    title: "Painting Services",
-    icon: WrenchIcon,
-    description: "Interior and exterior painting services",
-  },
-  {
-    title: "Cabinet Installation",
-    icon: KitchenIcon,
-    description: "Custom cabinet design and installation",
-  },
-];
-
-const GridItem = ({
-  className,
-  children,
-  onClick,
-}: {
-  className?: string;
-  children: React.ReactNode;
-  onClick?: () => void;
-}) => {
+// Item base reutilizable
+function GridItem({ className, children, onClick }: { className?: string; children: React.ReactNode; onClick?: () => void }) {
   return (
     <div
-      className={`group relative h-full cursor-pointer overflow-hidden rounded-2xl shadow-lg transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl ${className}`}
+      className={`group relative h-full cursor-pointer overflow-hidden shadow-2xl transition-all duration-700 hover:scale-[1.03] hover:shadow-3xl hover:-translate-y-1 ${className}`}
       onClick={onClick}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -301,392 +23,330 @@ const GridItem = ({
       role="button"
       tabIndex={0}
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-black/0 via-black/0 to-black/20 transition-all duration-500 group-hover:from-black/10 group-hover:via-black/5 group-hover:to-black/30"></div>
+
+
+      {/* Subtle border glow */}
+      <div className="absolute inset-0 border border-white/10 group-hover:border-white/20 transition-colors duration-500"></div>
+
+      {/* Animated corner accents */}
+      <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-white/30 opacity-0 group-hover:opacity-100 transition-all duration-500 transform -translate-x-2 -translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0"></div>
+      <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-white/30 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-2 translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0"></div>
+
       {children}
     </div>
   );
-};
+}
 
-const TextBlock = ({ title, className }: { title: string; className?: string }) => {
+function TextBlock({ title, subtitle, className }: { title: string; subtitle?: string; className?: string }) {
   return (
-    <div className={`relative flex h-full flex-col items-center justify-center p-8 text-white ${className}`}>
-      <ArrowUpRight className="absolute top-6 right-6 transition-transform duration-300 group-hover:translate-x-1 group-hover:translate-y-[-1px] group-hover:scale-110" />
-      <div className="space-y-3 text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
-          <div className="h-8 w-8 rounded-full bg-white/30"></div>
+    <div className={`relative flex h-full flex-col items-center justify-center p-8 text-white overflow-hidden ${className}`}>
+      {/* Geometric background pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-4 left-4 w-16 h-16 border-2 border-white/30 rotate-45"></div>
+        <div className="absolute bottom-4 right-4 w-12 h-12 border border-white/20 rounded-full"></div>
+        <div className="absolute top-1/2 left-8 w-8 h-8 bg-white/20 transform -translate-y-1/2 rotate-12"></div>
+      </div>
+
+      {/* Animated arrow */}
+      <div className="absolute right-6 top-6 group-hover:scale-110 transition-all duration-500">
+        <div className="relative">
+          <ArrowUpRight className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+          <div className="absolute inset-0 bg-white/20 rounded-full blur-xl scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
-        <h3 className="text-xl leading-tight font-bold md:text-2xl lg:text-3xl">{title}</h3>
-        <div className="mx-auto h-0.5 w-12 bg-white/40"></div>
+      </div>
+
+      <div className="relative z-10 space-y-4 text-center">
+        {/* Enhanced icon with glow effect */}
+        <div className="mx-auto relative">
+          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm border border-white/30 shadow-2xl">
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-white/40 to-white/20 shadow-inner"></div>
+          </div>
+          <div className="absolute inset-0 rounded-2xl bg-white/10 blur-xl scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        </div>
+
+        {/* Enhanced typography */}
+        <div className="space-y-2">
+          <h3 className="text-xl font-black leading-tight md:text-2xl lg:text-3xl tracking-tight">
+            {title.split(' ').map((word, i) => (
+              <span key={i} className="inline-block transform group-hover:scale-105 transition-transform duration-300" style={{transitionDelay: `${i * 50}ms`}}>
+                {word}{i < title.split(' ').length - 1 ? ' ' : ''}
+              </span>
+            ))}
+          </h3>
+          {subtitle && (
+            <p className="text-sm/5 md:text-base/6 text-white/90 font-medium tracking-wide">{subtitle}</p>
+          )}
+        </div>
+
+        {/* Animated underline */}
+        <div className="relative mx-auto w-16">
+          <div className="h-0.5 w-full bg-white/40 rounded-full"></div>
+          <div className="absolute inset-0 h-0.5 bg-white/80 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+        </div>
       </div>
     </div>
   );
-};
+}
 
-const PlumbingServicesGrid = ({ onBack }: { onBack: () => void }) => {
+// Overlay genérico para listas de servicios
+function CategoryOverlay({ title, services, onBack, bgClass }: { title: string; services: { title: string; description?: string }[]; onBack: () => void; bgClass: string }) {
+  // Determinar el icono basado en el título
+  const getIcon = () => {
+    if (title.toLowerCase().includes('plumbing')) return Wrench;
+    if (title.toLowerCase().includes('drainage')) return Droplets;
+    if (title.toLowerCase().includes('heating')) return AlertTriangle;
+    if (title.toLowerCase().includes('renovation')) return Home;
+    return Wrench;
+  };
+
+  const IconComponent = getIcon();
+
+  // Determinar el enlace de servicio basado en el título
+  const getServiceLink = () => {
+    if (title.toLowerCase().includes('plumbing')) return '/services/plumbing';
+    if (title.toLowerCase().includes('drainage')) return '/services/drainage';
+    if (title.toLowerCase().includes('heating')) return '/services/heating';
+    if (title.toLowerCase().includes('renovation')) return '/services/renovations';
+    return '/services';
+  };
+
   return (
-    <div className="h-auto min-h-[100vh] w-full px-10 py-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-3xl font-bold text-[#F6BE00]">Plumbing Services</h2>
-        <button
-          onClick={onBack}
-          className="flex items-center gap-2 text-gray-600 transition-colors hover:text-gray-800"
-        >
-          <ArrowUpRight className="h-6 w-6 rotate-[225deg]" />
-          <span className="text-sm font-medium">Back to Categories</span>
-        </button>
-      </div>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {plumbingServices.map((service, index) => (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        className="relative flex h-[95vh] w-full max-w-4xl flex-col bg-[#f6be00] shadow-2xl"
+      >
+        {/* Header */}
+        <div className="flex-shrink-0 border-b border-black/10 bg-[#f6be00] p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <IconComponent className="h-6 w-6 text-black" />
+              <h2 className="text-2xl font-bold text-black">{title}</h2>
+            </div>
+            <button
+              onClick={onBack}
+              className="rounded-full p-2 transition-colors hover:bg-black/10"
+            >
+              <X className="h-6 w-6 text-black" />
+            </button>
+          </div>
+          <p className="mt-2 text-black/70">Professional services for your home and business</p>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-6">
           <motion.div
-            key={service.title}
-            className="group relative min-h-[200px] overflow-hidden rounded-2xl bg-[#F6BE00] p-8 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
+            className="space-y-4"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/10 transition-all duration-500 group-hover:from-white/10 group-hover:to-black/20"></div>
-            <div className="relative z-10 flex flex-col items-center space-y-4 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/30">
-                <div className="text-white">
-                  <service.icon />
-                </div>
-              </div>
-              <h3 className="text-xl leading-tight font-bold text-white">{service.title}</h3>
-              <div className="h-0.5 w-12 bg-white/40 transition-all duration-300 group-hover:w-16"></div>
-              <p className="text-sm leading-relaxed text-white/90">{service.description}</p>
+            <h3 className="mb-6 text-xl font-semibold text-black">Available Services</h3>
+            <div className="grid gap-4 md:grid-cols-2">
+              {services.map((service, index) => (
+                <motion.div
+                  key={service.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="group cursor-pointer border-2 border-black/20 bg-white/90 p-4 transition-all duration-300 hover:border-black hover:bg-white hover:shadow-lg"
+                >
+                  <h4 className="mb-2 font-semibold text-black group-hover:text-[#f6be00] transition-colors">
+                    {service.title}
+                  </h4>
+                  {service.description ? (
+                    <p className="text-sm text-black/70">{service.description}</p>
+                  ) : (
+                    <p className="text-sm text-black/50">Professional service available</p>
+                  )}
+                  <div className="mt-3 flex items-center justify-between">
+                    <span className="text-xs font-medium text-black/50">Expert Service</span>
+                    <ArrowUpRight className="h-4 w-4 text-black/40 transition-transform group-hover:rotate-45 group-hover:text-[#f6be00]" />
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-};
+        </div>
 
-const DrainageServicesGrid = ({ onBack }: { onBack: () => void }) => {
-  return (
-    <div className="h-auto min-h-[100vh] w-full px-10 py-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-3xl font-bold text-[#4A6B4D]">Drainage Services</h2>
-        <button
-          onClick={onBack}
-          className="flex items-center gap-2 text-gray-600 transition-colors hover:text-gray-800"
-        >
-          <ArrowUpRight className="h-6 w-6 rotate-[225deg]" />
-          <span className="text-sm font-medium">Back to Categories</span>
-        </button>
-      </div>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {drainageServices.map((service, index) => (
-          <motion.div
-            key={service.title}
-            className="group relative min-h-[200px] overflow-hidden rounded-2xl bg-[#4A6B4D] p-8 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/10 transition-all duration-500 group-hover:from-white/10 group-hover:to-black/20"></div>
-            <div className="relative z-10 flex flex-col items-center space-y-4 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/30">
-                <div className="text-white">
-                  <service.icon />
-                </div>
-              </div>
-              <h3 className="text-xl leading-tight font-bold text-white">{service.title}</h3>
-              <div className="h-0.5 w-12 bg-white/40 transition-all duration-300 group-hover:w-16"></div>
-              <p className="text-sm leading-relaxed text-white/90">{service.description}</p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+        {/* Footer */}
+         <div className="flex-shrink-0 border-t border-black/10 bg-[#f6be00] p-6">
+          <div className="flex items-center justify-center">
+            <Link
+               href="/services"
+               className="bg-black px-6 py-2 text-sm font-medium text-[#f6be00] transition-all hover:bg-black/90 hover:shadow-lg"
+             >
+              View All Services
+            </Link>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
-};
-
-const HeatingServicesGrid = ({ onBack }: { onBack: () => void }) => {
-  return (
-    <div className="h-auto min-h-[100vh] w-full px-10 py-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-3xl font-bold text-[#E85D2A]">Heating Services</h2>
-        <button
-          onClick={onBack}
-          className="flex items-center gap-2 text-gray-600 transition-colors hover:text-gray-800"
-        >
-          <ArrowUpRight className="h-6 w-6 rotate-[225deg]" />
-          <span className="text-sm font-medium">Back to Categories</span>
-        </button>
-      </div>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {heatingServices.map((service, index) => (
-          <motion.div
-            key={service.title}
-            className="group relative min-h-[200px] overflow-hidden rounded-2xl bg-[#E85D2A] p-8 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/10 transition-all duration-500 group-hover:from-white/10 group-hover:to-black/20"></div>
-            <div className="relative z-10 flex flex-col items-center space-y-4 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/30">
-                <div className="text-white">
-                  <service.icon />
-                </div>
-              </div>
-              <h3 className="text-xl leading-tight font-bold text-white">{service.title}</h3>
-              <div className="h-0.5 w-12 bg-white/40 transition-all duration-300 group-hover:w-16"></div>
-              <p className="text-sm leading-relaxed text-white/90">{service.description}</p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-const HomeRenovationServicesGrid = ({ onBack }: { onBack: () => void }) => {
-  return (
-    <div className="h-auto min-h-[100vh] w-full px-10 py-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-3xl font-bold text-[#4285F4]">Home Renovation Services</h2>
-        <button
-          onClick={onBack}
-          className="flex items-center gap-2 text-gray-600 transition-colors hover:text-gray-800"
-        >
-          <ArrowUpRight className="h-6 w-6 rotate-[225deg]" />
-          <span className="text-sm font-medium">Back to Categories</span>
-        </button>
-      </div>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {homeRenovationServices.map((service, index) => (
-          <motion.div
-            key={service.title}
-            className="group relative min-h-[200px] overflow-hidden rounded-2xl bg-[#4285F4] p-8 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/10 transition-all duration-500 group-hover:from-white/10 group-hover:to-black/20"></div>
-            <div className="relative z-10 flex flex-col items-center space-y-4 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/30">
-                <div className="text-white">
-                  <service.icon />
-                </div>
-              </div>
-              <h3 className="text-xl leading-tight font-bold text-white">{service.title}</h3>
-              <div className="h-0.5 w-12 bg-white/40 transition-all duration-300 group-hover:w-16"></div>
-              <p className="text-sm leading-relaxed text-white/90">{service.description}</p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-};
+}
 
 export function WorkSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
-  const [showPlumbingServices, setShowPlumbingServices] = useState(false);
-  const [showHomeRenovationServices, setShowHomeRenovationServices] = useState(false);
-  const [showDrainageServices, setShowDrainageServices] = useState(false);
-  const [showHeatingServices, setShowHeatingServices] = useState(false);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
+  // Estado UI
+  const [showPlumbing, setShowPlumbing] = useState(false);
+  const [showDrainage, setShowDrainage] = useState(false);
+  const [showHeating, setShowHeating] = useState(false);
+  const [showRenovation, setShowRenovation] = useState(false);
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-      },
-    },
-  };
+  // Contenido Firestore
+  const [content, setContent] = useState<any>(null);
+  useEffect(() => {
+    const fetchContent = async () => {
+      const data = await getContent();
+      setContent(data);
+    };
+    fetchContent();
+  }, []);
 
-  const _slideVariants = {
-    initial: { x: 0 },
-    slideLeft: { x: "-100%" },
-    slideRight: { x: "100%" },
-  };
+  const categories = content?.services?.categories || [];
+  const plumbingServices = content?.services?.plumbingServices || [];
+  const drainageServices = content?.services?.drainageServices || [];
+  const heatingServices = content?.services?.heatingServices || [];
+  const renovationServices = content?.services?.homeRenovationServices || [];
 
-  const handlePlumbingClick = () => {
-    setShowPlumbingServices(true);
-  };
+  const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.08 } } };
+  const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
 
-  const handleHomeRenovationClick = () => {
-    setShowHomeRenovationServices(true);
-  };
-
-  const handleDrainageClick = () => {
-    setShowDrainageServices(true);
-  };
-
-  const handleHeatingClick = () => {
-    setShowHeatingServices(true);
-  };
-
-  const handleBackClick = () => {
-    setShowPlumbingServices(false);
-    setShowHomeRenovationServices(false);
-    setShowDrainageServices(false);
-    setShowHeatingServices(false);
-  };
+  const anyOverlayOpen = showPlumbing || showDrainage || showHeating || showRenovation;
 
   return (
-    <section ref={ref} className="relative w-full bg-white py-24 lg:py-8">
-      <div className="mx-auto flex min-h-[100vh] w-full max-w-[1400px] items-center overflow-hidden px-6 2xl:px-[2px]">
-        <div className="relative w-full pt-40">
-          <h2
-            className="pointer-events-none absolute top-10 left-1/2 z-0 w-full -translate-x-1/2 text-center leading-none font-extrabold text-gray-200"
-            style={{ fontSize: "clamp(4rem, 15vw, 12rem)" }}
-          >
-            WE WORK
-          </h2>
+    <section className="relative bg-gradient-to-br from-[#f6be00] via-[#f6be00] to-[#e6ae00] py-20 overflow-hidden" ref={ref}>
+      {/* Animated background elements */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-20 left-10 w-96 h-96 bg-white rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-80 h-80 bg-white rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white rounded-full blur-3xl opacity-30 animate-pulse" style={{animationDelay: '4s'}}></div>
+      </div>
 
-          {/* Contenedor principal con swipe */}
-          <div className="relative w-full">
-            {/* Grid original */}
+      {/* Geometric pattern overlay */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-32 left-20 w-4 h-4 bg-black rotate-45"></div>
+        <div className="absolute top-48 right-32 w-6 h-6 border-2 border-black rounded-full"></div>
+        <div className="absolute bottom-40 left-40 w-8 h-8 bg-black transform rotate-12"></div>
+        <div className="absolute bottom-60 right-20 w-5 h-5 border border-black rotate-45"></div>
+      </div>
+
+      <div className="relative mx-auto max-w-[1400px] px-6">
+        <div className="relative min-h-[100vh] overflow-hidden">
+          {/* Rejilla estilo mosaico (visible cuando no hay overlay) */}
+          <div className={anyOverlayOpen ? "pointer-events-none opacity-0 transition-opacity duration-300" : "opacity-100 transition-opacity duration-300"}>
             <motion.div
-              className="grid auto-rows-auto grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4"
+              className="grid grid-cols-1 gap-6 md:grid-cols-6 lg:grid-cols-12 auto-rows-[140px] md:auto-rows-[160px]"
               variants={containerVariants}
               initial="hidden"
               animate={isInView ? "visible" : "hidden"}
-              style={{
-                transform:
-                  showPlumbingServices || showHomeRenovationServices || showDrainageServices || showHeatingServices
-                    ? "translateX(-110%)"
-                    : "translateX(0)",
-                transition: "transform 0.5s ease-in-out",
-              }}
             >
-              <motion.div className="col-span-1 flex flex-col gap-4" variants={itemVariants}>
-                <GridItem className="min-h-[200px] bg-[#F6BE00]" onClick={handlePlumbingClick}>
-                  <TextBlock title="Plumbing Services" />
-                </GridItem>
-                <GridItem className="min-h-[200px]">
-                  <Image
-                    src="/images/plumbing-repair-2.jpg"
-                    alt="Plumbing repair 2"
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-300 hover:scale-105"
-                  />
-                </GridItem>
-                <GridItem className="min-h-[200px] bg-[#4A6B4D]" onClick={handleDrainageClick}>
-                  <TextBlock title="Drainge Services" />
+              {/* FILA 1 - Plumbing */}
+              {/* Plumbing - bloque de texto */}
+              <motion.div variants={itemVariants} className="col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
+                <GridItem className="bg-[#E85D2A]" onClick={() => setShowPlumbing(true)}>
+                  <TextBlock title={categories[0]?.title || "Plumbing"} subtitle={categories[0]?.subtitle} />
                 </GridItem>
               </motion.div>
-              <motion.div className="col-span-1 flex flex-col gap-4" variants={itemVariants}>
-                <GridItem className="min-h-[416px]">
-                  <Image
-                    src="/images/plumbing-repair.jpg"
-                    alt="Plumbing repair"
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-300 hover:scale-105"
-                  />
-                </GridItem>
-                <GridItem className="min-h-[200px]">
-                  <Image
-                    src="/images/drainge-service.jpg"
-                    alt="Placeholder image"
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-300 hover:scale-105"
-                  />
+
+              {/* Plumbing - imagen */}
+              <motion.div variants={itemVariants} className="col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
+                <GridItem onClick={() => setShowPlumbing(true)}>
+                  <div className="relative h-full w-full">
+                    <Image src="/images/plumbing-repair.jpg" alt="Plumbing" fill className="object-cover" />
+                  </div>
                 </GridItem>
               </motion.div>
-              <motion.div className="col-span-1 flex flex-col gap-4" variants={itemVariants}>
-                <GridItem className="min-h-[200px]">
-                  <Image
-                    src="/images/home-renovations.jpg"
-                    alt="Placeholder image"
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-300 hover:scale-105"
-                  />
-                </GridItem>
-                <GridItem className="min-h-[200px] bg-[#4285F4]" onClick={handleHomeRenovationClick}>
-                  <TextBlock title="Home Renovations" />
-                </GridItem>
-                <GridItem className="min-h-[200px]">
-                  <Image
-                    src="/images/heating-service-2.jpg"
-                    alt="Placeholder image"
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-300 hover:scale-105"
-                  />
+
+              {/* Drainage - bloque de texto */}
+              <motion.div variants={itemVariants} className="col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
+                <GridItem className="bg-[#4A6B4D]" onClick={() => setShowDrainage(true)}>
+                  <TextBlock title={categories[1]?.title || "Drainage"} subtitle={categories[1]?.subtitle} />
                 </GridItem>
               </motion.div>
-              <motion.div className="col-span-1 flex flex-col gap-4" variants={itemVariants}>
-                <GridItem className="min-h-[416px]">
-                  <Image
-                    src="/images/heating-service-1.jpg"
-                    alt="Placeholder image"
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-300 hover:scale-105"
-                  />
-                </GridItem>
-                <GridItem className="min-h-[200px] bg-[#E85D2A]" onClick={handleHeatingClick}>
-                  <TextBlock title="Heating Services" />
+
+              {/* Drainage - imagen */}
+              <motion.div variants={itemVariants} className="col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
+                <GridItem onClick={() => setShowDrainage(true)}>
+                  <div className="relative h-full w-full">
+                    <Image src="/images/drainge-service.jpg" alt="Drainage service" fill className="object-cover" />
+                  </div>
                 </GridItem>
               </motion.div>
-            </motion.div>
 
-            {/* Grid de servicios de plomería */}
-            <motion.div
-              className="absolute top-0 left-0 h-auto min-h-full w-full"
-              style={{
-                transform: showPlumbingServices ? "translateX(0)" : "translateX(100%)",
-                transition: "transform 0.5s ease-in-out",
-              }}
-            >
-              <PlumbingServicesGrid onBack={handleBackClick} />
-            </motion.div>
+              {/* FILA 2 - Heating */}
+              {/* Heating - bloque de texto */}
+              <motion.div variants={itemVariants} className="col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
+                <GridItem className="bg-[#0f3d3b]" onClick={() => setShowHeating(true)}>
+                  <TextBlock title={categories[2]?.title || "Heating"} subtitle={categories[2]?.subtitle} />
+                </GridItem>
+              </motion.div>
 
-            {/* Grid de servicios de renovaciones */}
-            <motion.div
-              className="absolute top-0 left-0 h-auto min-h-full w-full"
-              style={{
-                transform: showHomeRenovationServices ? "translateX(0)" : "translateX(100%)",
-                transition: "transform 0.5s ease-in-out",
-              }}
-            >
-              <HomeRenovationServicesGrid onBack={handleBackClick} />
-            </motion.div>
+              {/* Heating - imagen */}
+              <motion.div variants={itemVariants} className="col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
+                <GridItem onClick={() => setShowHeating(true)}>
+                  <div className="relative h-full w-full">
+                    <Image src="/images/heating-service-1.jpg" alt="Heating service" fill className="object-cover" />
+                  </div>
+                </GridItem>
+              </motion.div>
 
-            {/* Grid de servicios de drenaje */}
-            <motion.div
-              className="absolute top-0 left-0 h-auto min-h-full w-full"
-              style={{
-                transform: showDrainageServices ? "translateX(0)" : "translateX(100%)",
-                transition: "transform 0.5s ease-in-out",
-              }}
-            >
-              <DrainageServicesGrid onBack={handleBackClick} />
-            </motion.div>
+              {/* Renovations - bloque de texto */}
+              <motion.div variants={itemVariants} className="col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
+                <GridItem className="bg-[#4285F4]" onClick={() => setShowRenovation(true)}>
+                  <TextBlock title={categories[3]?.title || "Home Renovations"} subtitle={categories[3]?.subtitle} />
+                </GridItem>
+              </motion.div>
 
-            {/* Grid de servicios de calefacción */}
-            <motion.div
-              className="absolute top-0 left-0 h-auto min-h-full w-full"
-              style={{
-                transform: showHeatingServices ? "translateX(0)" : "translateX(100%)",
-                transition: "transform 0.5s ease-in-out",
-              }}
-            >
-              <HeatingServicesGrid onBack={handleBackClick} />
+              {/* Renovations - imagen */}
+              <motion.div variants={itemVariants} className="col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
+                <GridItem onClick={() => setShowRenovation(true)}>
+                  <div className="relative h-full w-full">
+                    <Image src="/images/home-renovations.jpg" alt="Home renovations" fill className="object-cover" />
+                  </div>
+                </GridItem>
+              </motion.div>
             </motion.div>
           </div>
+
+          {/* Overlays */}
+          <AnimatePresence>
+            {showPlumbing && (
+              <CategoryOverlay
+                title={categories[0]?.title || "Plumbing Services"}
+                services={plumbingServices}
+                onBack={() => setShowPlumbing(false)}
+                bgClass="bg-[#f6be00]"
+              />
+            )}
+            {showDrainage && (
+              <CategoryOverlay
+                title={categories[1]?.title || "Drainage Services"}
+                services={drainageServices}
+                onBack={() => setShowDrainage(false)}
+                bgClass="bg-[#4A6B4D]"
+              />
+            )}
+            {showHeating && (
+              <CategoryOverlay
+                title={categories[2]?.title || "Heating Services"}
+                services={heatingServices}
+                onBack={() => setShowHeating(false)}
+                bgClass="bg-[#E85D2A]"
+              />
+            )}
+            {showRenovation && (
+              <CategoryOverlay
+                title={categories[3]?.title || "Home Renovations"}
+                services={renovationServices}
+                onBack={() => setShowRenovation(false)}
+                bgClass="bg-[#4285F4]"
+              />
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </section>

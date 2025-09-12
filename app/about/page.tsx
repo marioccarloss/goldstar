@@ -1,11 +1,28 @@
 "use client";
 
+import { getContent } from "@/lib/content";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 export default function AboutPage() {
+  const [content, setContent] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      const contentData = await getContent();
+      setContent(contentData);
+    };
+
+    fetchContent();
+  }, []);
+
+  if (!content) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="min-h-screen bg-white">
-      <div className="mx-auto mt-20 max-w-[1430px] px-6 py-16 py-20 sm:py-24 2xl:px-4">
+      <div className="mx-auto mt-20 max-w-[1430px] px-6 py-20 sm:py-24 2xl:px-4">
         <motion.div
           className="relative min-h-[500px] overflow-visible bg-gradient-to-br from-[#F6BE00] to-[#FFA500] md:min-h-[600px]"
           initial={{ opacity: 0, y: 50 }}
@@ -47,9 +64,8 @@ export default function AboutPage() {
                 animate={{ x: 0, y: 0, opacity: 1, rotate: 0 }}
                 transition={{ duration: 1, delay: 0.9, ease: "easeOut" }}
               >
-                <div className="text-3xl font-bold text-[#8B2F8B] md:text-4xl lg:text-5xl">15+</div>
                 <div className="text-sm font-medium whitespace-nowrap text-[#8B2F8B] md:text-base">
-                  Years of Excellence
+                  {content.about.stats.years}
                 </div>
               </motion.div>
 
@@ -60,7 +76,9 @@ export default function AboutPage() {
                 transition={{ duration: 1, delay: 1.1, ease: "easeOut" }}
               >
                 <div className="text-3xl font-bold text-[#8B4513] md:text-4xl lg:text-5xl">500+</div>
-                <div className="text-sm font-medium whitespace-nowrap text-[#8B4513] md:text-base">Happy Customers</div>
+                <div className="text-sm font-medium whitespace-nowrap text-[#8B4513] md:text-base">
+                  {content.about.stats.customers}
+                </div>
               </motion.div>
 
               <motion.div
@@ -71,7 +89,7 @@ export default function AboutPage() {
               >
                 <div className="text-3xl font-bold text-[#1E5A8A] md:text-4xl lg:text-5xl">24/7</div>
                 <div className="text-sm font-medium whitespace-nowrap text-[#1E5A8A] md:text-base">
-                  Emergency Service
+                  {content.about.stats.emergency}
                 </div>
               </motion.div>
             </div>
@@ -82,7 +100,7 @@ export default function AboutPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.5 }}
             >
-              Your trusted plumbing professionals, delivering reliable solutions for every home repair need in Vancouver
+              {content.about.hero.tagline}
             </motion.p>
           </div>
         </motion.div>
@@ -101,11 +119,11 @@ export default function AboutPage() {
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, delay: 1.8 }}
             >
-              Why Choose{" "}
-              <span className="bg-gradient-to-r from-[#F6BE00] to-[#FFA500] bg-clip-text text-transparent">
-                Gold Star
-              </span>
-              ?
+              {content.about.whyChoose.titlePrefix}{" "}
+               <span className="bg-gradient-to-r from-[#F6BE00] to-[#FFA500] bg-clip-text text-transparent">
+                {content.about.whyChoose.titleBrand}
+               </span>
+               ?
             </motion.h2>
             <motion.div
               className="mx-auto h-1 w-24 bg-gradient-to-r from-[#F6BE00] to-[#FFA500]"
@@ -136,11 +154,9 @@ export default function AboutPage() {
                 </div>
 
                 <h3 className="mb-4 text-2xl font-bold text-[color:var(--trust-primary)] transition-colors duration-300 group-hover:text-[color:var(--trust-secondary)] lg:text-3xl">
-                  Trust
+                                  {content.about.whyChoose.pillars[0].title}
                 </h3>
-                <p className="text-lg leading-relaxed text-gray-600">
-                  Certified handyman pros for trusted, high-quality home repairs. Contact us today!
-                </p>
+                                <p className="text-lg leading-relaxed text-gray-600">{content.about.whyChoose.pillars[0].description}</p>
               </div>
             </motion.div>
 
@@ -163,11 +179,9 @@ export default function AboutPage() {
                 </div>
 
                 <h3 className="mb-4 text-2xl font-bold text-[color:var(--reliability-primary)] transition-colors duration-300 group-hover:text-[color:var(--reliability-secondary)] lg:text-3xl">
-                  Reliability
+                  {content.about.whyChoose.pillars[1].title}
                 </h3>
-                <p className="text-lg leading-relaxed text-gray-600">
-                  Count on our reliable team for fast, on-time home repair service. Book now!
-                </p>
+                <p className="text-lg leading-relaxed text-gray-600">{content.about.whyChoose.pillars[1].description}</p>
               </div>
             </motion.div>
 
@@ -190,11 +204,9 @@ export default function AboutPage() {
                 </div>
 
                 <h3 className="mb-4 text-2xl font-bold text-[color:var(--expertise-primary)] transition-colors duration-300 group-hover:text-[color:var(--expertise-secondary)] lg:text-3xl">
-                  Expertise
+                                  {content.about.whyChoose.pillars[2].title}
                 </h3>
-                <p className="text-lg leading-relaxed text-gray-600">
-                  Expert handyman skills for precise, professional home fixes. Get started today!
-                </p>
+                                <p className="text-lg leading-relaxed text-gray-600">{content.about.whyChoose.pillars[2].description}</p>
               </div>
             </motion.div>
           </div>

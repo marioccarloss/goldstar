@@ -206,7 +206,6 @@ const SERVICE_CATEGORIES = [
   },
 ];
 
-
 export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingManagerProps) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);

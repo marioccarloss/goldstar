@@ -3,8 +3,9 @@
 import { Button } from "@/components/ui/button";
 import { motion, Variants } from "framer-motion";
 import { ArrowRight, Facebook, Instagram, Linkedin, Mail, MapPin, Phone, Twitter } from "lucide-react";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Toaster, toast } from "sonner";
+import { getContent } from "@/lib/content";
 
 interface FormData {
   name: string;
@@ -30,18 +31,32 @@ export default function Contact() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [honeypot, setHoneypot] = useState(""); // Honeypot field
+  const [content, setContent] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      const contentData = await getContent();
+      setContent(contentData);
+    };
+
+    fetchContent();
+  }, []);
+
+  if (!content) {
+    return <div>Loading...</div>;
+  }
 
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
+      newErrors.name = content.contact.form.errors.nameRequired;
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = content.contact.form.errors.emailRequired;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Enter a valid email";
+      newErrors.email = content.contact.form.errors.emailInvalid;
     }
 
     return newErrors;
@@ -63,7 +78,7 @@ export default function Contact() {
       // Form submission logic would go here
       setTimeout(() => {
         setIsSubmitting(false);
-        toast.success("Message sent successfully!");
+        toast.success(content.contact.form.toast.success);
         setFormData({ name: "", email: "", phone: "", message: "" });
       }, 2000);
     }
@@ -120,7 +135,7 @@ export default function Contact() {
                 style={{ fontSize: "clamp(2.5rem, 5vw, 72px)" }}
                 variants={textItemVariants}
               >
-                Contact Us
+                {content.contact.hero.title}
               </motion.h1>
 
               <motion.p
@@ -128,28 +143,28 @@ export default function Contact() {
                 style={{ fontSize: "clamp(1rem, 1.5vw, 22px)" }}
                 variants={textItemVariants}
               >
-                We're here to help 24/7. Contact us for reliable and fast plumbing services in Vancouver.
+                {content.contact.hero.subtitle}
               </motion.p>
 
               {/* Contact Info */}
               <motion.div className="flex flex-wrap gap-4 md:mx-auto lg:mx-0 lg:flex-col" variants={textItemVariants}>
                 <div className="flex items-center gap-3">
                   <Phone className="h-6 w-6 text-black" />
-                  <span className="text-lg font-medium">+1-416-555-0123</span>
+                  <span className="text-lg font-medium">{content.contact.info.phone}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Mail className="h-6 w-6 text-black" />
-                  <span className="text-lg font-medium">info@goldstarplumbing.com</span>
+                  <span className="text-lg font-medium">{content.contact.info.email}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <MapPin className="h-6 w-6 text-black" />
-                  <span className="text-lg font-medium">Vancouver, BC, Canada</span>
+                  <span className="text-lg font-medium">{content.contact.info.location}</span>
                 </div>
               </motion.div>
 
               {/* Social Media */}
               <motion.div className="flex flex-col gap-4" variants={textItemVariants}>
-                <h3 className="text-xl font-bold">Follow Us</h3>
+                <h3 className="text-xl font-bold">{content.contact.info.followUs}</h3>
                 <div className="mx-auto flex gap-4 lg:mx-0">
                   <a
                     href="https://facebook.com"
@@ -209,7 +224,7 @@ export default function Contact() {
                 {/* Name */}
                 <motion.div className="flex flex-col gap-2" variants={textItemVariants}>
                   <label htmlFor="name" className="text-lg font-semibold">
-                    Name *
+                    {content.contact.form.labels.name}
                   </label>
                   <input
                     type="text"
@@ -222,7 +237,7 @@ export default function Contact() {
                         ? "border-red-500 focus:border-red-500"
                         : "border-black/30 hover:border-black/50 focus:border-black"
                     }`}
-                    placeholder="Your full name"
+                    placeholder={content.contact.form.placeholders.name}
                     required
                   />
                   {errors.name && <span className="text-sm font-medium text-red-600">{errors.name}</span>}
@@ -231,7 +246,7 @@ export default function Contact() {
                 {/* Email */}
                 <motion.div className="flex flex-col gap-2" variants={textItemVariants}>
                   <label htmlFor="email" className="text-lg font-semibold">
-                    Email *
+                    {content.contact.form.labels.email}
                   </label>
                   <input
                     type="email"
@@ -244,7 +259,7 @@ export default function Contact() {
                         ? "border-red-500 focus:border-red-500"
                         : "border-black/30 hover:border-black/50 focus:border-black"
                     }`}
-                    placeholder="you@email.com"
+                    placeholder={content.contact.form.placeholders.email}
                     required
                   />
                   {errors.email && <span className="text-sm font-medium text-red-600">{errors.email}</span>}
@@ -253,7 +268,7 @@ export default function Contact() {
                 {/* Phone */}
                 <motion.div className="flex flex-col gap-2" variants={textItemVariants}>
                   <label htmlFor="phone" className="text-lg font-semibold">
-                    Phone
+                    {content.contact.form.labels.phone}
                   </label>
                   <input
                     type="tel"
@@ -262,14 +277,14 @@ export default function Contact() {
                     value={formData.phone}
                     onChange={handleChange}
                     className={`h-16 rounded-2xl border-2 border-black/30 bg-transparent px-6 text-lg font-medium text-black placeholder-black/60 transition-all duration-300 hover:border-black/50 focus:border-black focus:ring-0 focus:outline-none`}
-                    placeholder="+1 (555) 123-4567"
+                    placeholder={content.contact.form.placeholders.phone}
                   />
                 </motion.div>
 
                 {/* Message */}
                 <motion.div className="flex flex-col gap-2" variants={textItemVariants}>
                   <label htmlFor="message" className="text-lg font-semibold">
-                    Message
+                    {content.contact.form.labels.message}
                   </label>
                   <textarea
                     id="message"
@@ -278,7 +293,7 @@ export default function Contact() {
                     onChange={handleChange}
                     rows={4}
                     className="resize-none rounded-2xl border-2 border-black/30 bg-transparent px-6 py-4 text-lg font-medium text-black placeholder-black/60 transition-all duration-300 hover:border-black/50 focus:border-black focus:ring-0 focus:outline-none"
-                    placeholder="Tell us about your project or plumbing issue..."
+                    placeholder={content.contact.form.placeholders.message}
                   />
                 </motion.div>
 

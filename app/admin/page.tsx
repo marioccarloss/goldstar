@@ -38,7 +38,7 @@ export default function AdminLanding() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 p-6">
         <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
           <div className="mb-6 flex items-center gap-3">
             <Lock className="h-6 w-6 text-yellow-500" />
@@ -74,7 +74,10 @@ export default function AdminLanding() {
               />
             </div>
             {authError && <p className="text-sm text-red-600">{authError}</p>}
-            <button type="submit" className="mt-2 w-full rounded-lg bg-black px-4 py-2.5 font-semibold text-white transition-colors hover:bg-gray-800">
+            <button
+              type="submit"
+              className="mt-2 w-full rounded-lg bg-black px-4 py-2.5 font-semibold text-white transition-colors hover:bg-gray-800"
+            >
               Ingresar
             </button>
             <p className="text-xs text-gray-500">Acceso protegido con Firebase Authentication.</p>
@@ -90,19 +93,28 @@ export default function AdminLanding() {
         <div className="rounded-lg bg-white p-6 shadow-lg">
           <div className="mb-6 flex items-center justify-between">
             <h1 className="text-2xl font-bold text-gray-900">Panel de Administración</h1>
-            <button onClick={handleLogout} className="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">
+            <button
+              onClick={handleLogout}
+              className="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
+            >
               Cerrar sesión
             </button>
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <Link href="/admin/booking-management" className="flex items-center gap-3 rounded-lg border p-4 hover:bg-gray-50">
+            <Link
+              href="/admin/booking-management"
+              className="flex items-center gap-3 rounded-lg border p-4 hover:bg-gray-50"
+            >
               <Calendar className="h-5 w-5 text-yellow-500" />
               <div>
                 <p className="font-semibold">Gestión de Reservas</p>
                 <p className="text-sm text-gray-600">Bloquea y libera horarios</p>
               </div>
             </Link>
-            <Link href="/admin/content-manager" className="flex items-center gap-3 rounded-lg border p-4 hover:bg-gray-50">
+            <Link
+              href="/admin/content-manager"
+              className="flex items-center gap-3 rounded-lg border p-4 hover:bg-gray-50"
+            >
               <FileText className="h-5 w-5 text-yellow-500" />
               <div>
                 <p className="font-semibold">Content Manager</p>

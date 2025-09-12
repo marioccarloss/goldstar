@@ -1,8 +1,9 @@
 "use client";
 
+import { getContent } from "@/lib/content";
 import { motion, useInView } from "framer-motion";
 import Image from "next/image";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface WorkItemData {
   number: string;
@@ -12,31 +13,38 @@ interface WorkItemData {
   imageAlt: string;
 }
 
-const workItemsData: WorkItemData[] = [
-  {
-    number: "01",
-    title: "Trust",
-    description: "Certified handyman pros for trusted, high-quality home repairs. Contact us today!",
-    image: "/certified-handyman-with-uniform-and-credentials-ba.png", // Updated image to show certified professional with credentials/uniform for trust
-    imageAlt: "A certified handyman ensuring trust.",
-  },
-  {
-    number: "02",
-    title: "Reliability",
-    description: "Count on our reliable team for fast, on-time home repair service. Book now!",
-    image: "/handyman-checking-watch-arriving-with-toolbox-punctu.png", // Updated reliability image to show handyman checking watch while arriving with toolbox
-    imageAlt: "A reliable handyman arriving on time with tools.",
-  },
-  {
-    number: "03",
-    title: "Expertise",
-    description: "Expert handyman skills for precise, professional home fixes. Get started today!",
-    image: "/expert-handyman-using-specialized-tools-showing-pr.png",
-    imageAlt: "A handyman demonstrating expertise with a power tool.",
-  },
-];
-
 export function WorkItems() {
+  const [content, setContent] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const c = await getContent();
+      setContent(c);
+    };
+    fetchData();
+  }, []);
+
+  if (!content) {
+    return <div>Loading...</div>;
+  }
+
+  const workItemsData: WorkItemData[] = content.home.choose.items.map((i: any, idx: number) => ({
+    number: i.number,
+    title: i.title,
+    description: i.description,
+    image:
+      idx === 0
+        ? "/certified-handyman-with-uniform-and-credentials-ba.png"
+        : idx === 1
+          ? "/handyman-checking-watch-arriving-with-toolbox-punctu.png"
+          : "/expert-handyman-using-specialized-tools-showing-pr.png",
+    imageAlt: i.imageAlt,
+  }));
+
+  return <WorkItemsComponent workItemsData={workItemsData} content={content} />;
+}
+
+function WorkItemsComponent({ workItemsData, content }: { workItemsData: WorkItemData[]; content: any }) {
   const animationRef = useRef(null);
   const isInView = useInView(animationRef, { once: true, amount: 0.1 });
 
@@ -62,15 +70,15 @@ export function WorkItems() {
           <div className="mx-auto max-w-[1000px] text-left">
             <div className="mb-4 flex items-center gap-x-3">
               <div className="h-3 w-3 bg-black" />
-              <p className="text-sm font-semibold tracking-widest text-black">WHY CHOOSE US</p>
+              <p className="text-sm font-semibold tracking-widest text-black">{content.home.choose.badge}</p>
             </div>
             <h2
               className="text-4xl leading-none font-bold text-black sm:text-5xl md:text-6xl"
               style={{ lineHeight: "1.2" }}
             >
-              Every Home Task
+              {content.home.choose.title.l1}
               <br />
-              Done Right
+              {content.home.choose.title.l2}
             </h2>
           </div>
         </motion.div>
