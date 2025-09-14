@@ -95,12 +95,24 @@ export default function ContactClient({ initialContent }: { initialContent?: any
     const newErrors = validateForm();
     setErrors(newErrors);
     if (Object.keys(newErrors).length === 0) {
-      setIsSubmitting(true);
-      setTimeout(() => {
-        setIsSubmitting(false);
+      try {
+        setIsSubmitting(true);
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...formData, website: honeypot }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data?.error || "Error sending message");
+        }
         toast.success(content.contact.form.toast.success);
         setFormData({ name: "", email: "", phone: "", message: "" });
-      }, 2000);
+      } catch (err: any) {
+        toast.error(err?.message || "Something went wrong");
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
