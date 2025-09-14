@@ -19,18 +19,24 @@ interface BookingData {
   comments: string;
 }
 
-export const Hero = () => {
+type HeroProps = {
+  initialContent?: any;
+};
+
+export const Hero = ({ initialContent }: HeroProps) => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [content, setContent] = useState<any>(null);
+  const [content, setContent] = useState<any>(initialContent ?? null);
 
   useEffect(() => {
-    const fetchContent = async () => {
-      const contentData = await getContent();
-      setContent(contentData);
-    };
-
-    fetchContent();
-  }, []);
+    // Si no recibimos contenido inicial desde el servidor, lo cargamos en cliente
+    if (!initialContent) {
+      const fetchContent = async () => {
+        const contentData = await getContent();
+        setContent(contentData);
+      };
+      fetchContent();
+    }
+  }, [initialContent]);
 
   const handleBookingComplete = (booking: BookingData) => {
     console.log("Booking completed:", booking);
@@ -83,9 +89,8 @@ export const Hero = () => {
     },
   };
 
-  if (!content) {
-    return <div>Loading...</div>;
-  }
+  // Mientras se obtiene el contenido en cliente (primera visita), mostramos una estructura mínima del Hero
+  // para que no bloquee el LCP. Cuando llegue el contenido, se hidrata el texto.
 
   return (
     <div className="flex min-h-svh w-full items-center overflow-x-hidden bg-[#f6be00] px-6 text-black">
@@ -103,21 +108,21 @@ export const Hero = () => {
               variants={textItemVariants}
             >
               <Star className="hidden h-5 w-5 text-[#eb9b4a] lg:block" fill="#eb9b4a" />
-              <span className="text-xs font-medium text-black lg:text-sm">{content.home.hero.badge}</span>
+              <span className="text-xs font-medium text-black lg:text-sm">{content?.home?.hero?.badge ?? ""}</span>
             </motion.div>
             <motion.h1
               className="mr-auto ml-auto max-w-[669px] leading-none font-extrabold lg:ml-0"
               style={{ fontSize: "clamp(3rem, 6vw, 88px)" }}
               variants={textItemVariants}
             >
-              {content.home.hero.title.l1} <br /> {content.home.hero.title.l2} <br /> {content.home.hero.title.l3}
+              {content?.home?.hero?.title?.l1 ?? ""} <br /> {content?.home?.hero?.title?.l2 ?? ""} <br /> {content?.home?.hero?.title?.l3 ?? ""}
             </motion.h1>
             <motion.p
               className="mx-auto max-w-[380px] lg:mx-0 lg:max-w-[521px]"
               style={{ fontSize: "clamp(1rem, 1.5vw, 22px)" }}
               variants={textItemVariants}
             >
-              {content.home.hero.description}
+              {content?.home?.hero?.description ?? ""}
             </motion.p>
             <motion.div
               className="mt-4 grid w-full max-w-[300px] grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4 self-center lg:max-w-[470px] lg:self-start"

@@ -56,7 +56,7 @@ function TextBlock({ title, subtitle, className }: { title: string; subtitle?: s
       </div>
 
       {/* Animated arrow */}
-      <div className="absolute top-6 right-6 transition-all duration-500 group-hover:scale-110">
+      <div className="absolute top-6 right-6 transition-all duration-500">
         <div className="relative">
           <ArrowUpRight className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
           <div className="absolute inset-0 scale-150 rounded-full bg-white/20 opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-100"></div>
@@ -200,7 +200,7 @@ function CategoryOverlay({
   );
 }
 
-export function WorkSection() {
+export function WorkSection({ initialContent }: { initialContent?: any }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
 
@@ -210,15 +210,17 @@ export function WorkSection() {
   const [showHeating, setShowHeating] = useState(false);
   const [showRenovation, setShowRenovation] = useState(false);
 
-  // Contenido Firestore
-  const [content, setContent] = useState<any>(null);
+  // Contenido Firestore (usar SSR si viene, sino fallback en cliente)
+  const [content, setContent] = useState<any>(initialContent ?? null);
   useEffect(() => {
-    const fetchContent = async () => {
-      const data = await getContent();
-      setContent(data);
-    };
-    fetchContent();
-  }, []);
+    if (!initialContent) {
+      const fetchContent = async () => {
+        const data = await getContent();
+        setContent(data);
+      };
+      fetchContent();
+    }
+  }, [initialContent]);
 
   const categories = content?.services?.categories || [];
   const plumbingServices = content?.services?.plumbingServices || [];

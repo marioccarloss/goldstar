@@ -13,22 +13,20 @@ interface WorkItemData {
   imageAlt: string;
 }
 
-export function WorkItems() {
-  const [content, setContent] = useState<any>(null);
+export function WorkItems({ initialContent }: { initialContent?: any }) {
+  const [content, setContent] = useState<any>(initialContent ?? null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const c = await getContent();
-      setContent(c);
-    };
-    fetchData();
-  }, []);
+    if (!initialContent) {
+      const fetchData = async () => {
+        const c = await getContent();
+        setContent(c);
+      };
+      fetchData();
+    }
+  }, [initialContent]);
 
-  if (!content) {
-    return <div>Loading...</div>;
-  }
-
-  const workItemsData: WorkItemData[] = content.home.choose.items.map((i: any, idx: number) => ({
+  const workItemsData: WorkItemData[] = (content?.home?.choose?.items ?? []).map((i: any, idx: number) => ({
     number: i.number,
     title: i.title,
     description: i.description,
@@ -70,15 +68,15 @@ function WorkItemsComponent({ workItemsData, content }: { workItemsData: WorkIte
           <div className="mx-auto max-w-[1000px] text-left">
             <div className="mb-4 flex items-center gap-x-3">
               <div className="h-3 w-3 bg-black" />
-              <p className="text-sm font-semibold tracking-widest text-black">{content.home.choose.badge}</p>
+              <p className="text-sm font-semibold tracking-widest text-black">{content?.home?.choose?.badge}</p>
             </div>
             <h2
               className="text-4xl leading-none font-bold text-black sm:text-5xl md:text-6xl"
               style={{ lineHeight: "1.2" }}
             >
-              {content.home.choose.title.l1}
+              {content?.home?.choose?.title?.l1}
               <br />
-              {content.home.choose.title.l2}
+              {content?.home?.choose?.title?.l2}
             </h2>
           </div>
         </motion.div>
