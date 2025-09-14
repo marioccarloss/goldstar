@@ -1,8 +1,8 @@
 "use client";
 
 import { getContent } from "@/lib/content";
-import { useEffect, useState } from "react";
 import type { ComponentType } from "react";
+import { useEffect, useState } from "react";
 
 export default function Services() {
   const [content, setContent] = useState<any>(null);
@@ -136,7 +136,7 @@ export default function Services() {
                 return (
                   <div
                     key={serviceIndex}
-                    className="group bg-white border border-black p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+                    className="group border border-black bg-white p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
                   >
                     <div className="flex items-start gap-4">
                       <div className="flex-shrink-0">

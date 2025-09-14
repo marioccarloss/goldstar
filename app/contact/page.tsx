@@ -1,11 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { getContent } from "@/lib/content";
 import { motion, Variants } from "framer-motion";
 import { ArrowRight, Facebook, Instagram, Linkedin, Mail, MapPin, Phone, Twitter } from "lucide-react";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { Toaster, toast } from "sonner";
-import { getContent } from "@/lib/content";
+import { toast, Toaster } from "sonner";
 
 interface FormData {
   name: string;

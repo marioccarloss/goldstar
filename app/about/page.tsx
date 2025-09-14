@@ -120,10 +120,10 @@ export default function AboutPage() {
               transition={{ duration: 0.8, delay: 1.8 }}
             >
               {content.about.whyChoose.titlePrefix}{" "}
-               <span className="bg-gradient-to-r from-[#F6BE00] to-[#FFA500] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#F6BE00] to-[#FFA500] bg-clip-text text-transparent">
                 {content.about.whyChoose.titleBrand}
-               </span>
-               ?
+              </span>
+              ?
             </motion.h2>
             <motion.div
               className="mx-auto h-1 w-24 bg-gradient-to-r from-[#F6BE00] to-[#FFA500]"
@@ -154,9 +154,11 @@ export default function AboutPage() {
                 </div>
 
                 <h3 className="mb-4 text-2xl font-bold text-[color:var(--trust-primary)] transition-colors duration-300 group-hover:text-[color:var(--trust-secondary)] lg:text-3xl">
-                                  {content.about.whyChoose.pillars[0].title}
+                  {content.about.whyChoose.pillars[0].title}
                 </h3>
-                                <p className="text-lg leading-relaxed text-gray-600">{content.about.whyChoose.pillars[0].description}</p>
+                <p className="text-lg leading-relaxed text-gray-600">
+                  {content.about.whyChoose.pillars[0].description}
+                </p>
               </div>
             </motion.div>
 
@@ -181,7 +183,9 @@ export default function AboutPage() {
                 <h3 className="mb-4 text-2xl font-bold text-[color:var(--reliability-primary)] transition-colors duration-300 group-hover:text-[color:var(--reliability-secondary)] lg:text-3xl">
                   {content.about.whyChoose.pillars[1].title}
                 </h3>
-                <p className="text-lg leading-relaxed text-gray-600">{content.about.whyChoose.pillars[1].description}</p>
+                <p className="text-lg leading-relaxed text-gray-600">
+                  {content.about.whyChoose.pillars[1].description}
+                </p>
               </div>
             </motion.div>
 
@@ -204,9 +208,11 @@ export default function AboutPage() {
                 </div>
 
                 <h3 className="mb-4 text-2xl font-bold text-[color:var(--expertise-primary)] transition-colors duration-300 group-hover:text-[color:var(--expertise-secondary)] lg:text-3xl">
-                                  {content.about.whyChoose.pillars[2].title}
+                  {content.about.whyChoose.pillars[2].title}
                 </h3>
-                                <p className="text-lg leading-relaxed text-gray-600">{content.about.whyChoose.pillars[2].description}</p>
+                <p className="text-lg leading-relaxed text-gray-600">
+                  {content.about.whyChoose.pillars[2].description}
+                </p>
               </div>
             </motion.div>
           </div>

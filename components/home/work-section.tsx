@@ -1,18 +1,26 @@
 "use client";
 
 import { getContent } from "@/lib/content";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
+import { AlertTriangle, Droplets, Home, Wrench, X } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowUpRight } from "../icons/arrow-up-right";
-import { X, Wrench, Droplets, AlertTriangle, Home } from "lucide-react";
-import Link from "next/link";
 
 // Item base reutilizable
-function GridItem({ className, children, onClick }: { className?: string; children: React.ReactNode; onClick?: () => void }) {
+function GridItem({
+  className,
+  children,
+  onClick,
+}: {
+  className?: string;
+  children: React.ReactNode;
+  onClick?: () => void;
+}) {
   return (
     <div
-      className={`group relative h-full cursor-pointer overflow-hidden shadow-2xl transition-all duration-700 hover:scale-[1.03] hover:shadow-3xl hover:-translate-y-1 ${className}`}
+      className={`group hover:shadow-3xl relative h-full cursor-pointer overflow-hidden shadow-2xl transition-all duration-700 hover:-translate-y-1 hover:scale-[1.03] ${className}`}
       onClick={onClick}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -23,14 +31,12 @@ function GridItem({ className, children, onClick }: { className?: string; childr
       role="button"
       tabIndex={0}
     >
-
-
       {/* Subtle border glow */}
-      <div className="absolute inset-0 border border-white/10 group-hover:border-white/20 transition-colors duration-500"></div>
+      <div className="absolute inset-0 border border-white/10 transition-colors duration-500 group-hover:border-white/20"></div>
 
       {/* Animated corner accents */}
-      <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-white/30 opacity-0 group-hover:opacity-100 transition-all duration-500 transform -translate-x-2 -translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0"></div>
-      <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-white/30 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-2 translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0"></div>
+      <div className="absolute top-4 left-4 h-8 w-8 -translate-x-2 -translate-y-2 transform border-t-2 border-l-2 border-white/30 opacity-0 transition-all duration-500 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100"></div>
+      <div className="absolute right-4 bottom-4 h-8 w-8 translate-x-2 translate-y-2 transform border-r-2 border-b-2 border-white/30 opacity-0 transition-all duration-500 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100"></div>
 
       {children}
     </div>
@@ -39,49 +45,54 @@ function GridItem({ className, children, onClick }: { className?: string; childr
 
 function TextBlock({ title, subtitle, className }: { title: string; subtitle?: string; className?: string }) {
   return (
-    <div className={`relative flex h-full flex-col items-center justify-center p-8 text-white overflow-hidden ${className}`}>
+    <div
+      className={`relative flex h-full flex-col items-center justify-center overflow-hidden p-8 text-white ${className}`}
+    >
       {/* Geometric background pattern */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-4 left-4 w-16 h-16 border-2 border-white/30 rotate-45"></div>
-        <div className="absolute bottom-4 right-4 w-12 h-12 border border-white/20 rounded-full"></div>
-        <div className="absolute top-1/2 left-8 w-8 h-8 bg-white/20 transform -translate-y-1/2 rotate-12"></div>
+        <div className="absolute top-4 left-4 h-16 w-16 rotate-45 border-2 border-white/30"></div>
+        <div className="absolute right-4 bottom-4 h-12 w-12 rounded-full border border-white/20"></div>
+        <div className="absolute top-1/2 left-8 h-8 w-8 -translate-y-1/2 rotate-12 transform bg-white/20"></div>
       </div>
 
       {/* Animated arrow */}
-      <div className="absolute right-6 top-6 group-hover:scale-110 transition-all duration-500">
+      <div className="absolute top-6 right-6 transition-all duration-500 group-hover:scale-110">
         <div className="relative">
           <ArrowUpRight className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
-          <div className="absolute inset-0 bg-white/20 rounded-full blur-xl scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div className="absolute inset-0 scale-150 rounded-full bg-white/20 opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-100"></div>
         </div>
       </div>
 
       <div className="relative z-10 space-y-4 text-center">
         {/* Enhanced icon with glow effect */}
-        <div className="mx-auto relative">
-          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm border border-white/30 shadow-2xl">
+        <div className="relative mx-auto">
+          <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-white/30 bg-white/20 shadow-2xl backdrop-blur-sm">
             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-white/40 to-white/20 shadow-inner"></div>
           </div>
-          <div className="absolute inset-0 rounded-2xl bg-white/10 blur-xl scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div className="absolute inset-0 scale-110 rounded-2xl bg-white/10 opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100"></div>
         </div>
 
         {/* Enhanced typography */}
         <div className="space-y-2">
-          <h3 className="text-xl font-black leading-tight md:text-2xl lg:text-3xl tracking-tight">
-            {title.split(' ').map((word, i) => (
-              <span key={i} className="inline-block transform group-hover:scale-105 transition-transform duration-300" style={{transitionDelay: `${i * 50}ms`}}>
-                {word}{i < title.split(' ').length - 1 ? ' ' : ''}
+          <h3 className="text-xl leading-tight font-black tracking-tight md:text-2xl lg:text-3xl">
+            {title.split(" - ").map((word, i) => (
+              <span
+                key={i}
+                className="inline-block transform transition-transform duration-300 group-hover:scale-105"
+                style={{ transitionDelay: `${i * 50}ms` }}
+              >
+                {word}
+                {i < title.split(" ").length - 1 ? " " : ""}
               </span>
             ))}
           </h3>
-          {subtitle && (
-            <p className="text-sm/5 md:text-base/6 text-white/90 font-medium tracking-wide">{subtitle}</p>
-          )}
+          {subtitle && <p className="text-sm/5 font-medium tracking-wide text-white/90 md:text-base/6">{subtitle}</p>}
         </div>
 
         {/* Animated underline */}
         <div className="relative mx-auto w-16">
-          <div className="h-0.5 w-full bg-white/40 rounded-full"></div>
-          <div className="absolute inset-0 h-0.5 bg-white/80 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+          <div className="h-0.5 w-full rounded-full bg-white/40"></div>
+          <div className="absolute inset-0 h-0.5 origin-left scale-x-0 rounded-full bg-white/80 transition-transform duration-500 group-hover:scale-x-100"></div>
         </div>
       </div>
     </div>
@@ -89,13 +100,23 @@ function TextBlock({ title, subtitle, className }: { title: string; subtitle?: s
 }
 
 // Overlay genérico para listas de servicios
-function CategoryOverlay({ title, services, onBack, bgClass }: { title: string; services: { title: string; description?: string }[]; onBack: () => void; bgClass: string }) {
+function CategoryOverlay({
+  title,
+  services,
+  onBack,
+  bgClass,
+}: {
+  title: string;
+  services: { title: string; description?: string }[];
+  onBack: () => void;
+  bgClass: string;
+}) {
   // Determinar el icono basado en el título
   const getIcon = () => {
-    if (title.toLowerCase().includes('plumbing')) return Wrench;
-    if (title.toLowerCase().includes('drainage')) return Droplets;
-    if (title.toLowerCase().includes('heating')) return AlertTriangle;
-    if (title.toLowerCase().includes('renovation')) return Home;
+    if (title.toLowerCase().includes("plumbing")) return Wrench;
+    if (title.toLowerCase().includes("drainage")) return Droplets;
+    if (title.toLowerCase().includes("heating")) return AlertTriangle;
+    if (title.toLowerCase().includes("renovation")) return Home;
     return Wrench;
   };
 
@@ -103,11 +124,11 @@ function CategoryOverlay({ title, services, onBack, bgClass }: { title: string; 
 
   // Determinar el enlace de servicio basado en el título
   const getServiceLink = () => {
-    if (title.toLowerCase().includes('plumbing')) return '/services/plumbing';
-    if (title.toLowerCase().includes('drainage')) return '/services/drainage';
-    if (title.toLowerCase().includes('heating')) return '/services/heating';
-    if (title.toLowerCase().includes('renovation')) return '/services/renovations';
-    return '/services';
+    if (title.toLowerCase().includes("plumbing")) return "/services/plumbing";
+    if (title.toLowerCase().includes("drainage")) return "/services/drainage";
+    if (title.toLowerCase().includes("heating")) return "/services/heating";
+    if (title.toLowerCase().includes("renovation")) return "/services/renovations";
+    return "/services";
   };
 
   return (
@@ -125,10 +146,7 @@ function CategoryOverlay({ title, services, onBack, bgClass }: { title: string; 
               <IconComponent className="h-6 w-6 text-black" />
               <h2 className="text-2xl font-bold text-black">{title}</h2>
             </div>
-            <button
-              onClick={onBack}
-              className="rounded-full p-2 transition-colors hover:bg-black/10"
-            >
+            <button onClick={onBack} className="rounded-full p-2 transition-colors hover:bg-black/10">
               <X className="h-6 w-6 text-black" />
             </button>
           </div>
@@ -137,11 +155,7 @@ function CategoryOverlay({ title, services, onBack, bgClass }: { title: string; 
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-4"
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
             <h3 className="mb-6 text-xl font-semibold text-black">Available Services</h3>
             <div className="grid gap-4 md:grid-cols-2">
               {services.map((service, index) => (
@@ -152,7 +166,7 @@ function CategoryOverlay({ title, services, onBack, bgClass }: { title: string; 
                   transition={{ delay: index * 0.1 }}
                   className="group cursor-pointer border-2 border-black/20 bg-white/90 p-4 transition-all duration-300 hover:border-black hover:bg-white hover:shadow-lg"
                 >
-                  <h4 className="mb-2 font-semibold text-black group-hover:text-[#f6be00] transition-colors">
+                  <h4 className="mb-2 font-semibold text-black transition-colors group-hover:text-[#f6be00]">
                     {service.title}
                   </h4>
                   {service.description ? (
@@ -171,12 +185,12 @@ function CategoryOverlay({ title, services, onBack, bgClass }: { title: string; 
         </div>
 
         {/* Footer */}
-         <div className="flex-shrink-0 border-t border-black/10 bg-[#f6be00] p-6">
+        <div className="flex-shrink-0 border-t border-black/10 bg-[#f6be00] p-6">
           <div className="flex items-center justify-center">
             <Link
-               href="/services"
-               className="bg-black px-6 py-2 text-sm font-medium text-[#f6be00] transition-all hover:bg-black/90 hover:shadow-lg"
-             >
+              href="/services"
+              className="bg-black px-6 py-2 text-sm font-medium text-[#f6be00] transition-all hover:bg-black/90 hover:shadow-lg"
+            >
               View All Services
             </Link>
           </div>
@@ -218,28 +232,43 @@ export function WorkSection() {
   const anyOverlayOpen = showPlumbing || showDrainage || showHeating || showRenovation;
 
   return (
-    <section className="relative bg-gradient-to-br from-[#f6be00] via-[#f6be00] to-[#e6ae00] py-20 overflow-hidden" ref={ref}>
+    <section
+      className="relative overflow-hidden bg-gradient-to-br from-[#f6be00] via-[#f6be00] to-[#e6ae00] py-20"
+      ref={ref}
+    >
       {/* Animated background elements */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-white rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-80 h-80 bg-white rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white rounded-full blur-3xl opacity-30 animate-pulse" style={{animationDelay: '4s'}}></div>
+        <div className="absolute top-20 left-10 h-96 w-96 animate-pulse rounded-full bg-white blur-3xl"></div>
+        <div
+          className="absolute right-10 bottom-20 h-80 w-80 animate-pulse rounded-full bg-white blur-3xl"
+          style={{ animationDelay: "2s" }}
+        ></div>
+        <div
+          className="absolute top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 transform animate-pulse rounded-full bg-white opacity-30 blur-3xl"
+          style={{ animationDelay: "4s" }}
+        ></div>
       </div>
 
       {/* Geometric pattern overlay */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-32 left-20 w-4 h-4 bg-black rotate-45"></div>
-        <div className="absolute top-48 right-32 w-6 h-6 border-2 border-black rounded-full"></div>
-        <div className="absolute bottom-40 left-40 w-8 h-8 bg-black transform rotate-12"></div>
-        <div className="absolute bottom-60 right-20 w-5 h-5 border border-black rotate-45"></div>
+        <div className="absolute top-32 left-20 h-4 w-4 rotate-45 bg-black"></div>
+        <div className="absolute top-48 right-32 h-6 w-6 rounded-full border-2 border-black"></div>
+        <div className="absolute bottom-40 left-40 h-8 w-8 rotate-12 transform bg-black"></div>
+        <div className="absolute right-20 bottom-60 h-5 w-5 rotate-45 border border-black"></div>
       </div>
 
       <div className="relative mx-auto max-w-[1400px] px-6">
         <div className="relative min-h-[100vh] overflow-hidden">
           {/* Rejilla estilo mosaico (visible cuando no hay overlay) */}
-          <div className={anyOverlayOpen ? "pointer-events-none opacity-0 transition-opacity duration-300" : "opacity-100 transition-opacity duration-300"}>
+          <div
+            className={
+              anyOverlayOpen
+                ? "pointer-events-none opacity-0 transition-opacity duration-300"
+                : "opacity-100 transition-opacity duration-300"
+            }
+          >
             <motion.div
-              className="grid grid-cols-1 gap-6 md:grid-cols-6 lg:grid-cols-12 auto-rows-[140px] md:auto-rows-[160px]"
+              className="grid auto-rows-[140px] grid-cols-1 gap-6 md:auto-rows-[160px] md:grid-cols-6 lg:grid-cols-12"
               variants={containerVariants}
               initial="hidden"
               animate={isInView ? "visible" : "hidden"}
