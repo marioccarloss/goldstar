@@ -43,8 +43,18 @@ export function WorkItems({ initialContent }: { initialContent?: any }) {
 }
 
 function WorkItemsComponent({ workItemsData, content }: { workItemsData: WorkItemData[]; content: any }) {
-  const animationRef = useRef(null);
-  const isInView = useInView(animationRef, { once: true, amount: 0.1 });
+  // Use the list container as reference for in-view (triggers earlier)
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const isInView = useInView(listRef, { once: true, amount: 0.01 });
+
+  // Force visible on small screens so it never looks like it "didn't load"
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768); // < md
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -57,12 +67,12 @@ function WorkItemsComponent({ workItemsData, content }: { workItemsData: WorkIte
   };
 
   return (
-    <section ref={animationRef} className="bg-white text-black">
+    <section className="bg-white text-black">
       <div className="mx-auto max-w-[1430px] px-6 py-16 sm:py-24 2xl:px-4">
         <motion.div
           className="bg-[#F97316] px-4 py-12 sm:px-8"
           initial={{ opacity: 0, y: -50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          animate={isMobile ? { opacity: 1, y: 0 } : isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
           <div className="mx-auto max-w-[1000px] text-left">
@@ -82,10 +92,11 @@ function WorkItemsComponent({ workItemsData, content }: { workItemsData: WorkIte
         </motion.div>
 
         <motion.div
+          ref={listRef}
           className="mt-12"
           variants={containerVariants}
           initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
+          animate={isMobile ? "visible" : isInView ? "visible" : "hidden"}
         >
           <div className="flow-root">
             <ul className="-my-8">
