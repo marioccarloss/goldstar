@@ -86,15 +86,15 @@ export default function ContentManagerPage() {
 
   // Manejar edición de texto
   const handleTextEdit = (path: string, value: string) => {
-    const pathArray = path.split('.');
+    const pathArray = path.split(".");
     const newContent = { ...editedContent };
     let current = newContent;
-    
+
     for (let i = 0; i < pathArray.length - 1; i++) {
       if (!current[pathArray[i]]) current[pathArray[i]] = {};
       current = current[pathArray[i]];
     }
-    
+
     current[pathArray[pathArray.length - 1]] = value;
     setEditedContent(newContent);
   };
@@ -180,9 +180,7 @@ export default function ContentManagerPage() {
           <div className="flex items-center justify-between rounded-xl bg-white p-6 shadow-sm">
             <div>
               <h2 className="text-xl font-semibold">Gestionar Contenido del Sitio</h2>
-              <p className="mt-1 text-sm text-gray-600">
-                Edita el contenido de todas las páginas desde un solo lugar.
-              </p>
+              <p className="mt-1 text-sm text-gray-600">Edita el contenido de todas las páginas desde un solo lugar.</p>
             </div>
             <div className="flex gap-3">
               <button
@@ -201,14 +199,14 @@ export default function ContentManagerPage() {
                     }}
                     className="rounded-md bg-gray-500 px-4 py-2 text-sm font-medium text-white hover:bg-gray-600"
                   >
-                    <X className="mr-1 h-4 w-4 inline" /> Cancelar
+                    <X className="mr-1 inline h-4 w-4" /> Cancelar
                   </button>
                   <button
                     onClick={saveContent}
                     disabled={loading}
                     className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-70"
                   >
-                    <Save className="mr-1 h-4 w-4 inline" /> Guardar
+                    <Save className="mr-1 inline h-4 w-4" /> Guardar
                   </button>
                 </>
               )}
@@ -216,18 +214,18 @@ export default function ContentManagerPage() {
           </div>
 
           {opStatus && (
-            <div className="rounded-md bg-blue-50 border border-blue-200 p-4">
+            <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
               <p className="text-sm text-blue-800">{opStatus}</p>
             </div>
           )}
 
           {/* Acordeones de contenido */}
           {contentPreview && (
-            <div className="rounded-xl bg-white shadow-sm overflow-hidden">
+            <div className="overflow-hidden rounded-xl bg-white shadow-sm">
               <Accordion.Root type="single" collapsible className="w-full">
                 {/* Página Home */}
                 <Accordion.Item value="home" className="border-b border-gray-200">
-                  <Accordion.Trigger className="flex w-full items-center justify-between p-6 text-left hover:bg-gray-50 transition-colors">
+                  <Accordion.Trigger className="flex w-full items-center justify-between p-6 text-left transition-colors hover:bg-gray-50">
                     <div className="flex items-center gap-3">
                       <Home className="h-5 w-5 text-yellow-600" />
                       <span className="text-lg font-semibold">Página Principal (Home)</span>
@@ -241,40 +239,123 @@ export default function ContentManagerPage() {
                       ▼
                     </motion.div>
                   </Accordion.Trigger>
-                  <Accordion.Content className="overflow-hidden data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">
-                    <div className="p-6 pt-0 space-y-4">
+                  <Accordion.Content className="data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp overflow-hidden">
+                    <div className="space-y-4 p-6 pt-0">
                       {contentPreview.home && (
                         <Accordion.Root type="single" collapsible>
                           {/* Hero Section */}
-                          <Accordion.Item value="home-hero" className="border border-gray-100 rounded-lg">
+                          <Accordion.Item value="home-hero" className="rounded-lg border border-gray-100">
                             <Accordion.Trigger className="flex w-full items-center justify-between p-4 text-left hover:bg-gray-50">
                               <span className="font-medium">Sección Hero</span>
                               <span className="text-gray-400">▼</span>
                             </Accordion.Trigger>
-                            <Accordion.Content className="p-4 pt-0 space-y-3">
-                              {contentPreview.home.hero && Object.entries(contentPreview.home.hero).map(([key, value]) => (
-                                <div key={key} className="space-y-2">
-                                  <label className="text-sm font-medium text-gray-700 capitalize">{key.replace(/([A-Z])/g, ' $1')}</label>
-                                  {editingSection === `home.hero.${key}` ? (
-                                    <textarea
-                                      value={editedContent.home?.hero?.[key] || ''}
-                                      onChange={(e) => handleTextEdit(`home.hero.${key}`, e.target.value)}
-                                      className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                                      rows={3}
-                                    />
-                                  ) : (
-                                    <div className="flex items-start justify-between p-3 bg-gray-50 rounded-md">
-                                      <span className="text-sm text-gray-800">{String(value)}</span>
-                                      <button
-                                        onClick={() => setEditingSection(`home.hero.${key}`)}
-                                        className="ml-2 p-1 text-gray-400 hover:text-gray-600"
-                                      >
-                                        <Edit3 className="h-4 w-4" />
-                                      </button>
+                            <Accordion.Content className="space-y-3 p-4 pt-0">
+                              {contentPreview.home.hero &&
+                                Object.entries(contentPreview.home.hero).map(([key, value]) => {
+                                  const label = key.replace(/([A-Z])/g, " $1");
+                                  const pathBase = `home.hero.${key}`;
+                                  const isObj = typeof value === "object" && value !== null;
+
+                                  if (isObj) {
+                                    if (Array.isArray(value)) {
+                                      return (
+                                        <div key={key} className="space-y-2">
+                                          <label className="text-sm font-medium text-gray-700 capitalize">
+                                            {label}
+                                          </label>
+                                          <div className="space-y-2">
+                                            {value.map((item: any, idx: number) => (
+                                              <div
+                                                key={idx}
+                                                className="flex items-start justify-between rounded-md bg-gray-50 p-3"
+                                              >
+                                                {editingSection === `${pathBase}.${idx}` ? (
+                                                  <textarea
+                                                    value={editedContent.home?.hero?.[key]?.[idx] ?? ""}
+                                                    onChange={(e) =>
+                                                      handleTextEdit(`${pathBase}.${idx}`, e.target.value)
+                                                    }
+                                                    className="w-full rounded-md border border-gray-300 p-3 focus:border-transparent focus:ring-2 focus:ring-yellow-500"
+                                                    rows={2}
+                                                  />
+                                                ) : (
+                                                  <>
+                                                    <span className="text-sm text-gray-800">{String(item)}</span>
+                                                    <button
+                                                      onClick={() => setEditingSection(`${pathBase}.${idx}`)}
+                                                      className="ml-2 p-1 text-gray-400 hover:text-gray-600"
+                                                    >
+                                                      <Edit3 className="h-4 w-4" />
+                                                    </button>
+                                                  </>
+                                                )}
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      );
+                                    }
+
+                                    // Nested object
+                                    return (
+                                      <div key={key} className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-700 capitalize">{label}</label>
+                                        {Object.entries(value as Record<string, any>).map(([subKey, subVal]) => (
+                                          <div key={subKey} className="space-y-1">
+                                            <span className="text-xs text-gray-500 capitalize">
+                                              {subKey.replace(/([A-Z])/g, " $1")}
+                                            </span>
+                                            {editingSection === `${pathBase}.${subKey}` ? (
+                                              <textarea
+                                                value={editedContent.home?.hero?.[key]?.[subKey] ?? ""}
+                                                onChange={(e) =>
+                                                  handleTextEdit(`${pathBase}.${subKey}`, e.target.value)
+                                                }
+                                                className="w-full rounded-md border border-gray-300 p-3 focus:border-transparent focus:ring-2 focus:ring-yellow-500"
+                                                rows={2}
+                                              />
+                                            ) : (
+                                              <div className="flex items-start justify-between rounded-md bg-gray-50 p-3">
+                                                <span className="text-sm text-gray-800">{String(subVal)}</span>
+                                                <button
+                                                  onClick={() => setEditingSection(`${pathBase}.${subKey}`)}
+                                                  className="ml-2 p-1 text-gray-400 hover:text-gray-600"
+                                                >
+                                                  <Edit3 className="h-4 w-4" />
+                                                </button>
+                                              </div>
+                                            )}
+                                          </div>
+                                        ))}
+                                      </div>
+                                    );
+                                  }
+
+                                  // Primitive values
+                                  return (
+                                    <div key={key} className="space-y-2">
+                                      <label className="text-sm font-medium text-gray-700 capitalize">{label}</label>
+                                      {editingSection === pathBase ? (
+                                        <textarea
+                                          value={editedContent.home?.hero?.[key] ?? ""}
+                                          onChange={(e) => handleTextEdit(pathBase, e.target.value)}
+                                          className="w-full rounded-md border border-gray-300 p-3 focus:border-transparent focus:ring-2 focus:ring-yellow-500"
+                                          rows={3}
+                                        />
+                                      ) : (
+                                        <div className="flex items-start justify-between rounded-md bg-gray-50 p-3">
+                                          <span className="text-sm text-gray-800">{String(value)}</span>
+                                          <button
+                                            onClick={() => setEditingSection(pathBase)}
+                                            className="ml-2 p-1 text-gray-400 hover:text-gray-600"
+                                          >
+                                            <Edit3 className="h-4 w-4" />
+                                          </button>
+                                        </div>
+                                      )}
                                     </div>
-                                  )}
-                                </div>
-                              ))}
+                                  );
+                                })}
                             </Accordion.Content>
                           </Accordion.Item>
                         </Accordion.Root>
@@ -284,157 +365,214 @@ export default function ContentManagerPage() {
                 </Accordion.Item>
 
                 {/* Página Services */}
-                 <Accordion.Item value="services" className="border-b border-gray-200">
-                   <Accordion.Trigger className="flex w-full items-center justify-between p-6 text-left hover:bg-gray-50 transition-colors">
-                     <div className="flex items-center gap-3">
-                       <FileText className="h-5 w-5 text-blue-600" />
-                       <span className="text-lg font-semibold">Página de Servicios</span>
-                     </div>
-                     <motion.div
-                       className="text-gray-400"
-                       animate={{ rotate: 0 }}
-                       whileHover={{ rotate: 180 }}
-                       transition={{ duration: 0.2 }}
-                     >
-                       ▼
-                     </motion.div>
-                   </Accordion.Trigger>
-                   <Accordion.Content className="overflow-hidden data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">
-                     <div className="p-6 pt-0 space-y-4">
-                       {contentPreview.services && (
-                         <Accordion.Root type="single" collapsible>
-                           {/* Hero Section */}
-                           <Accordion.Item value="services-hero" className="border border-gray-100 rounded-lg mb-2">
-                             <Accordion.Trigger className="flex w-full items-center justify-between p-4 text-left hover:bg-gray-50">
-                               <span className="font-medium">Sección Hero</span>
-                               <span className="text-gray-400">▼</span>
-                             </Accordion.Trigger>
-                             <Accordion.Content className="p-4 pt-0 space-y-3">
-                               {contentPreview.services.hero && Object.entries(contentPreview.services.hero).map(([key, value]) => (
-                                 <div key={key} className="space-y-2">
-                                   <label className="text-sm font-medium text-gray-700 capitalize">{key.replace(/([A-Z])/g, ' $1')}</label>
-                                   {editingSection === `services.hero.${key}` ? (
-                                     <textarea
-                                       value={editedContent.services?.hero?.[key] || ''}
-                                       onChange={(e) => handleTextEdit(`services.hero.${key}`, e.target.value)}
-                                       className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                                       rows={3}
-                                     />
-                                   ) : (
-                                     <div className="flex items-start justify-between p-3 bg-gray-50 rounded-md">
-                                       <span className="text-sm text-gray-800">{String(value)}</span>
-                                       <button
-                                         onClick={() => setEditingSection(`services.hero.${key}`)}
-                                         className="ml-2 p-1 text-gray-400 hover:text-gray-600"
-                                       >
-                                         <Edit3 className="h-4 w-4" />
-                                       </button>
-                                     </div>
-                                   )}
-                                 </div>
-                               ))}
-                             </Accordion.Content>
-                           </Accordion.Item>
+                <Accordion.Item value="services" className="border-b border-gray-200">
+                  <Accordion.Trigger className="flex w-full items-center justify-between p-6 text-left transition-colors hover:bg-gray-50">
+                    <div className="flex items-center gap-3">
+                      <FileText className="h-5 w-5 text-blue-600" />
+                      <span className="text-lg font-semibold">Página de Servicios</span>
+                    </div>
+                    <motion.div
+                      className="text-gray-400"
+                      animate={{ rotate: 0 }}
+                      whileHover={{ rotate: 180 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      ▼
+                    </motion.div>
+                  </Accordion.Trigger>
+                  <Accordion.Content className="data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp overflow-hidden">
+                    <div className="space-y-4 p-6 pt-0">
+                      {contentPreview.services && (
+                        <Accordion.Root type="single" collapsible>
+                          {/* Hero Section */}
+                          <Accordion.Item value="services-hero" className="mb-2 rounded-lg border border-gray-100">
+                            <Accordion.Trigger className="flex w-full items-center justify-between p-4 text-left hover:bg-gray-50">
+                              <span className="font-medium">Sección Hero</span>
+                              <span className="text-gray-400">▼</span>
+                            </Accordion.Trigger>
+                            <Accordion.Content className="space-y-3 p-4 pt-0">
+                              {contentPreview.services.hero &&
+                                Object.entries(contentPreview.services.hero).map(([key, value]) => (
+                                  <div key={key} className="space-y-2">
+                                    <label className="text-sm font-medium text-gray-700 capitalize">
+                                      {key.replace(/([A-Z])/g, " $1")}
+                                    </label>
+                                    {editingSection === `services.hero.${key}` ? (
+                                      <textarea
+                                        value={editedContent.services?.hero?.[key] || ""}
+                                        onChange={(e) => handleTextEdit(`services.hero.${key}`, e.target.value)}
+                                        className="w-full rounded-md border border-gray-300 p-3 focus:border-transparent focus:ring-2 focus:ring-yellow-500"
+                                        rows={3}
+                                      />
+                                    ) : (
+                                      <div className="flex items-start justify-between rounded-md bg-gray-50 p-3">
+                                        <span className="text-sm text-gray-800">{String(value)}</span>
+                                        <button
+                                          onClick={() => setEditingSection(`services.hero.${key}`)}
+                                          className="ml-2 p-1 text-gray-400 hover:text-gray-600"
+                                        >
+                                          <Edit3 className="h-4 w-4" />
+                                        </button>
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                            </Accordion.Content>
+                          </Accordion.Item>
 
-                           {/* Categorías de Servicios */}
-                           <Accordion.Item value="services-categories" className="border border-gray-100 rounded-lg">
-                             <Accordion.Trigger className="flex w-full items-center justify-between p-4 text-left hover:bg-gray-50">
-                               <span className="font-medium">Categorías de Servicios</span>
-                               <span className="text-gray-400">▼</span>
-                             </Accordion.Trigger>
-                             <Accordion.Content className="p-4 pt-0 space-y-3">
-                               {contentPreview.services.categories && Object.entries(contentPreview.services.categories).map(([categoryKey, categoryData]) => (
-                                 <div key={categoryKey} className="border border-gray-200 rounded-lg">
-                                   <Accordion.Root type="single" collapsible>
-                                     <Accordion.Item value={`category-${categoryKey}`}>
-                                       <Accordion.Trigger className="flex w-full items-center justify-between p-3 text-left hover:bg-gray-50 rounded-t-lg">
-                                         <span className="font-medium text-blue-700 capitalize">{categoryKey.replace(/([A-Z])/g, ' $1')}</span>
-                                         <span className="text-gray-400">▼</span>
-                                       </Accordion.Trigger>
-                                       <Accordion.Content className="p-3 pt-0 space-y-3">
-                                         {typeof categoryData === 'object' && categoryData !== null && (
-                                           <>
-                                             {/* Información de la categoría */}
-                                             {Object.entries(categoryData as Record<string, any>).filter(([key]) => key !== 'services').map(([key, value]) => (
-                                               <div key={key} className="space-y-2">
-                                                 <label className="text-sm font-medium text-gray-700 capitalize">{key.replace(/([A-Z])/g, ' $1')}</label>
-                                                 {editingSection === `services.categories.${categoryKey}.${key}` ? (
-                                                   <textarea
-                                                     value={editedContent.services?.categories?.[categoryKey]?.[key] || ''}
-                                                     onChange={(e) => handleTextEdit(`services.categories.${categoryKey}.${key}`, e.target.value)}
-                                                     className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                                                     rows={2}
-                                                   />
-                                                 ) : (
-                                                   <div className="flex items-start justify-between p-3 bg-gray-50 rounded-md">
-                                                     <span className="text-sm text-gray-800">{String(value)}</span>
-                                                     <button
-                                                       onClick={() => setEditingSection(`services.categories.${categoryKey}.${key}`)}
-                                                       className="ml-2 p-1 text-gray-400 hover:text-gray-600"
-                                                     >
-                                                       <Edit3 className="h-4 w-4" />
-                                                     </button>
-                                                   </div>
-                                                 )}
-                                               </div>
-                                             ))}
-                                             
-                                             {/* Servicios de la categoría */}
-                                             {(categoryData as any).services && (
-                                               <div className="mt-4 pt-4 border-t border-gray-200">
-                                                 <h4 className="text-sm font-semibold text-gray-800 mb-3">Servicios en esta categoría:</h4>
-                                                 <div className="space-y-3">
-                                                   {Object.entries((categoryData as any).services).map(([serviceKey, serviceData]) => (
-                                                     <div key={serviceKey} className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                                                       <div className="flex items-center justify-between mb-2">
-                                                         <span className="font-medium text-blue-800 capitalize">{serviceKey.replace(/([A-Z])/g, ' $1')}</span>
-                                                       </div>
-                                                       {typeof serviceData === 'object' && serviceData !== null && Object.entries(serviceData as Record<string, any>).map(([serviceField, serviceValue]) => (
-                                                         <div key={serviceField} className="space-y-2 mt-2">
-                                                           <label className="text-xs font-medium text-gray-600 capitalize">{serviceField.replace(/([A-Z])/g, ' $1')}</label>
-                                                           {editingSection === `services.categories.${categoryKey}.services.${serviceKey}.${serviceField}` ? (
-                                                             <textarea
-                                                               value={editedContent.services?.categories?.[categoryKey]?.services?.[serviceKey]?.[serviceField] || ''}
-                                                               onChange={(e) => handleTextEdit(`services.categories.${categoryKey}.services.${serviceKey}.${serviceField}`, e.target.value)}
-                                                               className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-xs"
-                                                               rows={2}
-                                                             />
-                                                           ) : (
-                                                             <div className="flex items-start justify-between p-2 bg-white rounded-md border">
-                                                               <span className="text-xs text-gray-700">{String(serviceValue)}</span>
-                                                               <button
-                                                                 onClick={() => setEditingSection(`services.categories.${categoryKey}.services.${serviceKey}.${serviceField}`)}
-                                                                 className="ml-2 p-1 text-gray-400 hover:text-gray-600"
-                                                               >
-                                                                 <Edit3 className="h-3 w-3" />
-                                                               </button>
-                                                             </div>
-                                                           )}
-                                                         </div>
-                                                       ))}
-                                                     </div>
-                                                   ))}
-                                                 </div>
-                                               </div>
-                                             )}
-                                           </>
-                                         )}
-                                       </Accordion.Content>
-                                     </Accordion.Item>
-                                   </Accordion.Root>
-                                 </div>
-                               ))}
-                             </Accordion.Content>
-                           </Accordion.Item>
-                         </Accordion.Root>
-                       )}
-                     </div>
-                   </Accordion.Content>
-                 </Accordion.Item>
+                          {/* Categorías de Servicios */}
+                          <Accordion.Item value="services-categories" className="rounded-lg border border-gray-100">
+                            <Accordion.Trigger className="flex w-full items-center justify-between p-4 text-left hover:bg-gray-50">
+                              <span className="font-medium">Categorías de Servicios</span>
+                              <span className="text-gray-400">▼</span>
+                            </Accordion.Trigger>
+                            <Accordion.Content className="space-y-3 p-4 pt-0">
+                              {contentPreview.services.categories &&
+                                Object.entries(contentPreview.services.categories).map(
+                                  ([categoryKey, categoryData]) => (
+                                    <div key={categoryKey} className="rounded-lg border border-gray-200">
+                                      <Accordion.Root type="single" collapsible>
+                                        <Accordion.Item value={`category-${categoryKey}`}>
+                                          <Accordion.Trigger className="flex w-full items-center justify-between rounded-t-lg p-3 text-left hover:bg-gray-50">
+                                            <span className="font-medium text-blue-700 capitalize">
+                                              {categoryKey.replace(/([A-Z])/g, " $1")}
+                                            </span>
+                                            <span className="text-gray-400">▼</span>
+                                          </Accordion.Trigger>
+                                          <Accordion.Content className="space-y-3 p-3 pt-0">
+                                            {typeof categoryData === "object" && categoryData !== null && (
+                                              <>
+                                                {/* Información de la categoría */}
+                                                {Object.entries(categoryData as Record<string, any>)
+                                                  .filter(([key]) => key !== "services")
+                                                  .map(([key, value]) => (
+                                                    <div key={key} className="space-y-2">
+                                                      <label className="text-sm font-medium text-gray-700 capitalize">
+                                                        {key.replace(/([A-Z])/g, " $1")}
+                                                      </label>
+                                                      {editingSection ===
+                                                      `services.categories.${categoryKey}.${key}` ? (
+                                                        <textarea
+                                                          value={
+                                                            editedContent.services?.categories?.[categoryKey]?.[key] ||
+                                                            ""
+                                                          }
+                                                          onChange={(e) =>
+                                                            handleTextEdit(
+                                                              `services.categories.${categoryKey}.${key}`,
+                                                              e.target.value
+                                                            )
+                                                          }
+                                                          className="w-full rounded-md border border-gray-300 p-3 focus:border-transparent focus:ring-2 focus:ring-yellow-500"
+                                                          rows={2}
+                                                        />
+                                                      ) : (
+                                                        <div className="flex items-start justify-between rounded-md bg-gray-50 p-3">
+                                                          <span className="text-sm text-gray-800">{String(value)}</span>
+                                                          <button
+                                                            onClick={() =>
+                                                              setEditingSection(
+                                                                `services.categories.${categoryKey}.${key}`
+                                                              )
+                                                            }
+                                                            className="ml-2 p-1 text-gray-400 hover:text-gray-600"
+                                                          >
+                                                            <Edit3 className="h-4 w-4" />
+                                                          </button>
+                                                        </div>
+                                                      )}
+                                                    </div>
+                                                  ))}
+
+                                                {/* Servicios de la categoría */}
+                                                {(categoryData as any).services && (
+                                                  <div className="mt-4 border-t border-gray-200 pt-4">
+                                                    <h4 className="mb-3 text-sm font-semibold text-gray-800">
+                                                      Servicios en esta categoría:
+                                                    </h4>
+                                                    <div className="space-y-3">
+                                                      {Object.entries((categoryData as any).services).map(
+                                                        ([serviceKey, serviceData]) => (
+                                                          <div
+                                                            key={serviceKey}
+                                                            className="rounded-lg border border-blue-200 bg-blue-50 p-3"
+                                                          >
+                                                            <div className="mb-2 flex items-center justify-between">
+                                                              <span className="font-medium text-blue-800 capitalize">
+                                                                {serviceKey.replace(/([A-Z])/g, " $1")}
+                                                              </span>
+                                                            </div>
+                                                            {typeof serviceData === "object" &&
+                                                              serviceData !== null &&
+                                                              Object.entries(serviceData as Record<string, any>).map(
+                                                                ([serviceField, serviceValue]) => (
+                                                                  <div key={serviceField} className="mt-2 space-y-2">
+                                                                    <label className="text-xs font-medium text-gray-600 capitalize">
+                                                                      {serviceField.replace(/([A-Z])/g, " $1")}
+                                                                    </label>
+                                                                    {editingSection ===
+                                                                    `services.categories.${categoryKey}.services.${serviceKey}.${serviceField}` ? (
+                                                                      <textarea
+                                                                        value={
+                                                                          editedContent.services?.categories?.[
+                                                                            categoryKey
+                                                                          ]?.services?.[serviceKey]?.[serviceField] ||
+                                                                          ""
+                                                                        }
+                                                                        onChange={(e) =>
+                                                                          handleTextEdit(
+                                                                            `services.categories.${categoryKey}.services.${serviceKey}.${serviceField}`,
+                                                                            e.target.value
+                                                                          )
+                                                                        }
+                                                                        className="w-full rounded-md border border-gray-300 p-2 text-xs focus:border-transparent focus:ring-2 focus:ring-yellow-500"
+                                                                        rows={2}
+                                                                      />
+                                                                    ) : (
+                                                                      <div className="flex items-start justify-between rounded-md border bg-white p-2">
+                                                                        <span className="text-xs text-gray-700">
+                                                                          {String(serviceValue)}
+                                                                        </span>
+                                                                        <button
+                                                                          onClick={() =>
+                                                                            setEditingSection(
+                                                                              `services.categories.${categoryKey}.services.${serviceKey}.${serviceField}`
+                                                                            )
+                                                                          }
+                                                                          className="ml-2 p-1 text-gray-400 hover:text-gray-600"
+                                                                        >
+                                                                          <Edit3 className="h-3 w-3" />
+                                                                        </button>
+                                                                      </div>
+                                                                    )}
+                                                                  </div>
+                                                                )
+                                                              )}
+                                                          </div>
+                                                        )
+                                                      )}
+                                                    </div>
+                                                  </div>
+                                                )}
+                                              </>
+                                            )}
+                                          </Accordion.Content>
+                                        </Accordion.Item>
+                                      </Accordion.Root>
+                                    </div>
+                                  )
+                                )}
+                            </Accordion.Content>
+                          </Accordion.Item>
+                        </Accordion.Root>
+                      )}
+                    </div>
+                  </Accordion.Content>
+                </Accordion.Item>
 
                 {/* Página About */}
                 <Accordion.Item value="about" className="border-b border-gray-200">
-                  <Accordion.Trigger className="flex w-full items-center justify-between p-6 text-left hover:bg-gray-50 transition-colors">
+                  <Accordion.Trigger className="flex w-full items-center justify-between p-6 text-left transition-colors hover:bg-gray-50">
                     <div className="flex items-center gap-3">
                       <Users className="h-5 w-5 text-green-600" />
                       <span className="text-lg font-semibold">Página Acerca de</span>
@@ -448,30 +586,36 @@ export default function ContentManagerPage() {
                       ▼
                     </motion.div>
                   </Accordion.Trigger>
-                  <Accordion.Content className="overflow-hidden data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">
-                    <div className="p-6 pt-0 space-y-4">
+                  <Accordion.Content className="data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp overflow-hidden">
+                    <div className="space-y-4 p-6 pt-0">
                       {contentPreview.about && (
                         <Accordion.Root type="single" collapsible>
                           {Object.entries(contentPreview.about).map(([sectionKey, sectionValue]) => (
-                            <Accordion.Item key={sectionKey} value={`about-${sectionKey}`} className="border border-gray-100 rounded-lg mb-2">
+                            <Accordion.Item
+                              key={sectionKey}
+                              value={`about-${sectionKey}`}
+                              className="mb-2 rounded-lg border border-gray-100"
+                            >
                               <Accordion.Trigger className="flex w-full items-center justify-between p-4 text-left hover:bg-gray-50">
-                                <span className="font-medium capitalize">{sectionKey.replace(/([A-Z])/g, ' $1')}</span>
+                                <span className="font-medium capitalize">{sectionKey.replace(/([A-Z])/g, " $1")}</span>
                                 <span className="text-gray-400">▼</span>
                               </Accordion.Trigger>
-                              <Accordion.Content className="p-4 pt-0 space-y-3">
-                                {typeof sectionValue === 'object' && sectionValue !== null ? (
+                              <Accordion.Content className="space-y-3 p-4 pt-0">
+                                {typeof sectionValue === "object" && sectionValue !== null ? (
                                   Object.entries(sectionValue as Record<string, any>).map(([key, value]) => (
                                     <div key={key} className="space-y-2">
-                                      <label className="text-sm font-medium text-gray-700 capitalize">{key.replace(/([A-Z])/g, ' $1')}</label>
+                                      <label className="text-sm font-medium text-gray-700 capitalize">
+                                        {key.replace(/([A-Z])/g, " $1")}
+                                      </label>
                                       {editingSection === `about.${sectionKey}.${key}` ? (
                                         <textarea
-                                          value={editedContent.about?.[sectionKey]?.[key] || ''}
+                                          value={editedContent.about?.[sectionKey]?.[key] || ""}
                                           onChange={(e) => handleTextEdit(`about.${sectionKey}.${key}`, e.target.value)}
-                                          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                                          className="w-full rounded-md border border-gray-300 p-3 focus:border-transparent focus:ring-2 focus:ring-yellow-500"
                                           rows={3}
                                         />
                                       ) : (
-                                        <div className="flex items-start justify-between p-3 bg-gray-50 rounded-md">
+                                        <div className="flex items-start justify-between rounded-md bg-gray-50 p-3">
                                           <span className="text-sm text-gray-800">{String(value)}</span>
                                           <button
                                             onClick={() => setEditingSection(`about.${sectionKey}.${key}`)}
@@ -485,16 +629,18 @@ export default function ContentManagerPage() {
                                   ))
                                 ) : (
                                   <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700 capitalize">{sectionKey.replace(/([A-Z])/g, ' $1')}</label>
+                                    <label className="text-sm font-medium text-gray-700 capitalize">
+                                      {sectionKey.replace(/([A-Z])/g, " $1")}
+                                    </label>
                                     {editingSection === `about.${sectionKey}` ? (
                                       <textarea
-                                        value={editedContent.about?.[sectionKey] || ''}
+                                        value={editedContent.about?.[sectionKey] || ""}
                                         onChange={(e) => handleTextEdit(`about.${sectionKey}`, e.target.value)}
-                                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                                        className="w-full rounded-md border border-gray-300 p-3 focus:border-transparent focus:ring-2 focus:ring-yellow-500"
                                         rows={3}
                                       />
                                     ) : (
-                                      <div className="flex items-start justify-between p-3 bg-gray-50 rounded-md">
+                                      <div className="flex items-start justify-between rounded-md bg-gray-50 p-3">
                                         <span className="text-sm text-gray-800">{String(sectionValue)}</span>
                                         <button
                                           onClick={() => setEditingSection(`about.${sectionKey}`)}
@@ -517,7 +663,7 @@ export default function ContentManagerPage() {
 
                 {/* Página Contact */}
                 <Accordion.Item value="contact" className="">
-                  <Accordion.Trigger className="flex w-full items-center justify-between p-6 text-left hover:bg-gray-50 transition-colors">
+                  <Accordion.Trigger className="flex w-full items-center justify-between p-6 text-left transition-colors hover:bg-gray-50">
                     <div className="flex items-center gap-3">
                       <Phone className="h-5 w-5 text-purple-600" />
                       <span className="text-lg font-semibold">Página de Contacto</span>
@@ -531,38 +677,53 @@ export default function ContentManagerPage() {
                       ▼
                     </motion.div>
                   </Accordion.Trigger>
-                  <Accordion.Content className="overflow-hidden data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">
-                    <div className="p-6 pt-0 space-y-4">
+                  <Accordion.Content className="data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp overflow-hidden">
+                    <div className="space-y-4 p-6 pt-0">
                       {contentPreview.contact && (
                         <Accordion.Root type="single" collapsible>
                           {Object.entries(contentPreview.contact).map(([sectionKey, sectionValue]) => (
-                            <Accordion.Item key={sectionKey} value={`contact-${sectionKey}`} className="border border-gray-100 rounded-lg mb-2">
+                            <Accordion.Item
+                              key={sectionKey}
+                              value={`contact-${sectionKey}`}
+                              className="mb-2 rounded-lg border border-gray-100"
+                            >
                               <Accordion.Trigger className="flex w-full items-center justify-between p-4 text-left hover:bg-gray-50">
-                                <span className="font-medium capitalize">{sectionKey.replace(/([A-Z])/g, ' $1')}</span>
+                                <span className="font-medium capitalize">{sectionKey.replace(/([A-Z])/g, " $1")}</span>
                                 <span className="text-gray-400">▼</span>
                               </Accordion.Trigger>
-                              <Accordion.Content className="p-4 pt-0 space-y-3">
-                                {typeof sectionValue === 'object' && sectionValue !== null ? (
+                              <Accordion.Content className="space-y-3 p-4 pt-0">
+                                {typeof sectionValue === "object" && sectionValue !== null ? (
                                   Object.entries(sectionValue as Record<string, any>).map(([key, value]) => (
                                     <div key={key} className="space-y-2">
-                                      <label className="text-sm font-medium text-gray-700 capitalize">{key.replace(/([A-Z])/g, ' $1')}</label>
-                                      {typeof value === 'object' && value !== null ? (
-                                        <div className="pl-4 space-y-2">
+                                      <label className="text-sm font-medium text-gray-700 capitalize">
+                                        {key.replace(/([A-Z])/g, " $1")}
+                                      </label>
+                                      {typeof value === "object" && value !== null ? (
+                                        <div className="space-y-2 pl-4">
                                           {Object.entries(value as Record<string, any>).map(([subKey, subValue]) => (
                                             <div key={subKey} className="space-y-2">
-                                              <label className="text-xs font-medium text-gray-600 capitalize">{subKey.replace(/([A-Z])/g, ' $1')}</label>
+                                              <label className="text-xs font-medium text-gray-600 capitalize">
+                                                {subKey.replace(/([A-Z])/g, " $1")}
+                                              </label>
                                               {editingSection === `contact.${sectionKey}.${key}.${subKey}` ? (
                                                 <textarea
-                                                  value={editedContent.contact?.[sectionKey]?.[key]?.[subKey] || ''}
-                                                  onChange={(e) => handleTextEdit(`contact.${sectionKey}.${key}.${subKey}`, e.target.value)}
-                                                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                                                  value={editedContent.contact?.[sectionKey]?.[key]?.[subKey] || ""}
+                                                  onChange={(e) =>
+                                                    handleTextEdit(
+                                                      `contact.${sectionKey}.${key}.${subKey}`,
+                                                      e.target.value
+                                                    )
+                                                  }
+                                                  className="w-full rounded-md border border-gray-300 p-3 focus:border-transparent focus:ring-2 focus:ring-yellow-500"
                                                   rows={2}
                                                 />
                                               ) : (
-                                                <div className="flex items-start justify-between p-2 bg-gray-50 rounded-md">
+                                                <div className="flex items-start justify-between rounded-md bg-gray-50 p-2">
                                                   <span className="text-xs text-gray-800">{String(subValue)}</span>
                                                   <button
-                                                    onClick={() => setEditingSection(`contact.${sectionKey}.${key}.${subKey}`)}
+                                                    onClick={() =>
+                                                      setEditingSection(`contact.${sectionKey}.${key}.${subKey}`)
+                                                    }
                                                     className="ml-2 p-1 text-gray-400 hover:text-gray-600"
                                                   >
                                                     <Edit3 className="h-3 w-3" />
@@ -572,40 +733,42 @@ export default function ContentManagerPage() {
                                             </div>
                                           ))}
                                         </div>
+                                      ) : editingSection === `contact.${sectionKey}.${key}` ? (
+                                        <textarea
+                                          value={editedContent.contact?.[sectionKey]?.[key] || ""}
+                                          onChange={(e) =>
+                                            handleTextEdit(`contact.${sectionKey}.${key}`, e.target.value)
+                                          }
+                                          className="w-full rounded-md border border-gray-300 p-3 focus:border-transparent focus:ring-2 focus:ring-yellow-500"
+                                          rows={3}
+                                        />
                                       ) : (
-                                        editingSection === `contact.${sectionKey}.${key}` ? (
-                                          <textarea
-                                            value={editedContent.contact?.[sectionKey]?.[key] || ''}
-                                            onChange={(e) => handleTextEdit(`contact.${sectionKey}.${key}`, e.target.value)}
-                                            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                                            rows={3}
-                                          />
-                                        ) : (
-                                          <div className="flex items-start justify-between p-3 bg-gray-50 rounded-md">
-                                            <span className="text-sm text-gray-800">{String(value)}</span>
-                                            <button
-                                              onClick={() => setEditingSection(`contact.${sectionKey}.${key}`)}
-                                              className="ml-2 p-1 text-gray-400 hover:text-gray-600"
-                                            >
-                                              <Edit3 className="h-4 w-4" />
-                                            </button>
-                                          </div>
-                                        )
+                                        <div className="flex items-start justify-between rounded-md bg-gray-50 p-3">
+                                          <span className="text-sm text-gray-800">{String(value)}</span>
+                                          <button
+                                            onClick={() => setEditingSection(`contact.${sectionKey}.${key}`)}
+                                            className="ml-2 p-1 text-gray-400 hover:text-gray-600"
+                                          >
+                                            <Edit3 className="h-4 w-4" />
+                                          </button>
+                                        </div>
                                       )}
                                     </div>
                                   ))
                                 ) : (
                                   <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700 capitalize">{sectionKey.replace(/([A-Z])/g, ' $1')}</label>
+                                    <label className="text-sm font-medium text-gray-700 capitalize">
+                                      {sectionKey.replace(/([A-Z])/g, " $1")}
+                                    </label>
                                     {editingSection === `contact.${sectionKey}` ? (
                                       <textarea
-                                        value={editedContent.contact?.[sectionKey] || ''}
+                                        value={editedContent.contact?.[sectionKey] || ""}
                                         onChange={(e) => handleTextEdit(`contact.${sectionKey}`, e.target.value)}
-                                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                                        className="w-full rounded-md border border-gray-300 p-3 focus:border-transparent focus:ring-2 focus:ring-yellow-500"
                                         rows={3}
                                       />
                                     ) : (
-                                      <div className="flex items-start justify-between p-3 bg-gray-50 rounded-md">
+                                      <div className="flex items-start justify-between rounded-md bg-gray-50 p-3">
                                         <span className="text-sm text-gray-800">{String(sectionValue)}</span>
                                         <button
                                           onClick={() => setEditingSection(`contact.${sectionKey}`)}
@@ -631,9 +794,9 @@ export default function ContentManagerPage() {
 
           {!contentPreview && !loading && (
             <div className="rounded-xl bg-white p-12 text-center shadow-sm">
-              <FileText className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay contenido disponible</h3>
-              <p className="text-gray-600 mb-4">Haz clic en "Recargar" para obtener el contenido desde Firestore.</p>
+              <FileText className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+              <h3 className="mb-2 text-lg font-semibold text-gray-900">No hay contenido disponible</h3>
+              <p className="mb-4 text-gray-600">Haz clic en "Recargar" para obtener el contenido desde Firestore.</p>
             </div>
           )}
         </div>

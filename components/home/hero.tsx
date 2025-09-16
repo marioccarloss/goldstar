@@ -115,7 +115,8 @@ export const Hero = ({ initialContent }: HeroProps) => {
               style={{ fontSize: "clamp(3rem, 6vw, 88px)" }}
               variants={textItemVariants}
             >
-              {content?.home?.hero?.title?.l1 ?? ""} <br /> {content?.home?.hero?.title?.l2 ?? ""} <br /> {content?.home?.hero?.title?.l3 ?? ""}
+              {content?.home?.hero?.title?.l1 ?? ""} <br /> {content?.home?.hero?.title?.l2 ?? ""} <br />{" "}
+              {content?.home?.hero?.title?.l3 ?? ""}
             </motion.h1>
             <motion.p
               className="mx-auto max-w-[380px] lg:mx-0 lg:max-w-[521px]"

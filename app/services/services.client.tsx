@@ -45,7 +45,15 @@ export default function ServicesClient({ initialContent }: { initialContent?: an
     description: s.description,
   }));
 
-  const heatingIcons = [BoilerIcon, WrenchIcon, MaintenanceIcon, RadiatorIcon, ThermostatIcon, HeatPumpIcon, FurnaceIcon];
+  const heatingIcons = [
+    BoilerIcon,
+    WrenchIcon,
+    MaintenanceIcon,
+    RadiatorIcon,
+    ThermostatIcon,
+    HeatPumpIcon,
+    FurnaceIcon,
+  ];
   const heatingServices = (content?.services?.heatingServices ?? []).map((s: any, idx: number) => ({
     title: s.title,
     icon: heatingIcons[idx] ?? BoilerIcon,
@@ -63,7 +71,14 @@ export default function ServicesClient({ initialContent }: { initialContent?: an
     number: c.number,
     title: c.title,
     subtitle: c.subtitle,
-    services: idx === 0 ? plumbingServices : idx === 1 ? drainageServices : idx === 2 ? heatingServices : homeRenovationServices,
+    services:
+      idx === 0
+        ? plumbingServices
+        : idx === 1
+          ? drainageServices
+          : idx === 2
+            ? heatingServices
+            : homeRenovationServices,
   }));
 
   return (
@@ -83,13 +98,19 @@ export default function ServicesClient({ initialContent }: { initialContent?: an
 
       <div className="mx-auto max-w-[1400px] px-6 py-16">
         {serviceCategories.map((category: ServiceCategory, categoryIndex: number) => (
-          <div key={category.number} className={`mb-24 ${categoryIndex % 2 === 0 ? "" : "border border-black bg-white p-8"}`}>
+          <div
+            key={category.number}
+            className={`mb-24 ${categoryIndex % 2 === 0 ? "" : "border border-black bg-white p-8"}`}
+          >
             <div className="mb-12 flex items-start gap-8">
               <div className="flex-shrink-0">
                 <span className="text-8xl leading-none font-bold text-black/20">{category.number}</span>
               </div>
               <div className="flex-1 pt-4">
-                <h2 className="mb-4 leading-none font-extrabold text-black" style={{ fontSize: "clamp(2rem, 4vw, 48px)" }}>
+                <h2
+                  className="mb-4 leading-none font-extrabold text-black"
+                  style={{ fontSize: "clamp(2rem, 4vw, 48px)" }}
+                >
                   {category.title}
                 </h2>
                 <p className="max-w-2xl text-black" style={{ fontSize: "clamp(1rem, 1.2vw, 18px)" }}>
@@ -102,7 +123,10 @@ export default function ServicesClient({ initialContent }: { initialContent?: an
               {category.services.map((service: ServiceItem, serviceIndex: number) => {
                 const IconComponent = service.icon;
                 return (
-                  <div key={serviceIndex} className="group border border-black bg-white p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
+                  <div
+                    key={serviceIndex}
+                    className="group border border-black bg-white p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+                  >
                     <div className="flex items-start gap-4">
                       <div className="flex-shrink-0">
                         <div className="flex h-12 w-12 items-center justify-center border border-black bg-[#d0f5da] transition-colors duration-300 group-hover:bg-[#f6be00]">

@@ -23,7 +23,7 @@ export default function AboutClient({ initialContent }: { initialContent?: any }
     <div className="min-h-screen bg-white">
       <div className="mx-auto mt-20 max-w-[1430px] px-6 py-20 sm:py-24 2xl:px-4">
         <motion.div
-          className="relative min-h[500px] overflow-visible bg-gradient-to-br from-[#F6BE00] to-[#FFA500] md:min-h-[600px]"
+          className="min-h[500px] relative overflow-visible bg-gradient-to-br from-[#F6BE00] to-[#FFA500] md:min-h-[600px]"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -38,7 +38,7 @@ export default function AboutClient({ initialContent }: { initialContent?: any }
                 transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
               >
                 <motion.h1
-                  className="text-[8rem] font-black tracking-tight text-[#4A2C2A] sm:text-[10rem] md:text[12rem] lg:text-[14rem] xl:text-[16rem] 2xl:text-[18rem]"
+                  className="md:text[12rem] text-[8rem] font-black tracking-tight text-[#4A2C2A] sm:text-[10rem] lg:text-[14rem] xl:text-[16rem] 2xl:text-[18rem]"
                   style={{ lineHeight: 1 }}
                   initial={{ y: -100, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -152,7 +152,7 @@ export default function AboutClient({ initialContent }: { initialContent?: any }
                   </div>
                 </div>
 
-                <h3 className="mb-4 text-2xl font-bold text[color:var(--trust-primary)] transition-colors duration-300 group-hover:text-[color:var(--trust-secondary)] lg:text-3xl">
+                <h3 className="text[color:var(--trust-primary)] mb-4 text-2xl font-bold transition-colors duration-300 group-hover:text-[color:var(--trust-secondary)] lg:text-3xl">
                   {content.about.whyChoose.pillars[0].title}
                 </h3>
                 <p className="text-lg leading-relaxed text-gray-600">
