@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Gold Star Plumbing - Professional Plumbing Services in Vancouver, BC",
     description: "Professional plumbing services in Vancouver, BC. Emergency repairs, installations, drain cleaning, and heating services. Licensed plumbers serving Greater Vancouver Area.",
-    url: 'https://goldstarplumbing.ca',
+    url: 'https://www.goldstarplumbing.ca',
     images: [
       {
         url: '/goldstarplumbing.jpg',

@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://goldstarplumbing.ca";
+  const baseUrl = "https://www.goldstarplumbing.ca";
 
   return [
     {

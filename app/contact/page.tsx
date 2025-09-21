@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     title: "Contact Gold Star Plumbing - Vancouver Plumbers | Get Free Quote",
     description:
       "Contact Gold Star Plumbing for professional plumbing services in Vancouver, BC. Get a free quote, emergency service available 24/7.",
-    url: "https://goldstarplumbing.ca/contact",
+    url: "https://www.goldstarplumbing.ca/contact",
     images: [
       {
         url: "/goldstarplumbing.jpg",

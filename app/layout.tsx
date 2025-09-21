@@ -42,14 +42,14 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://goldstarplumbing.ca'),
+  metadataBase: new URL('https://www.goldstarplumbing.ca'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     title: "Gold Star Plumbing - Professional Plumbing Services in Vancouver, BC",
     description: "Professional plumbing services in Vancouver, BC. Emergency repairs, installations, drain cleaning, and heating services. Licensed plumbers serving Greater Vancouver Area.",
-    url: 'https://goldstarplumbing.ca',
+    url: 'https://www.goldstarplumbing.ca',
     siteName: 'Gold Star Plumbing',
     images: [
       {

@@ -8,20 +8,20 @@ export function StructuredData({ type = 'homepage' }: StructuredDataProps) {
   const baseStructuredData = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "@id": "https://goldstarplumbing.ca/#business",
+    "@id": "https://www.goldstarplumbing.ca/#business",
     "name": "Gold Star Plumbing",
     "alternateName": "Gold Star Plumbing Services",
     "description": "Professional plumbing services in Vancouver, BC. Emergency repairs, installations, drain cleaning, and heating services. Licensed plumbers serving Greater Vancouver Area.",
-    "url": "https://goldstarplumbing.ca",
+    "url": "https://www.goldstarplumbing.ca",
     "telephone": "+1-604-XXX-XXXX", // Replace with actual phone number
     "email": "info@goldstarplumbing.ca", // Replace with actual email
     "priceRange": "$$",
     "image": [
-      "https://goldstarplumbing.ca/goldstarplumbing.jpg"
+      "https://www.goldstarplumbing.ca/goldstarplumbing.jpg"
     ],
     "logo": {
       "@type": "ImageObject",
-      "url": "https://goldstarplumbing.ca/goldstarplumbing.jpg",
+      "url": "https://www.goldstarplumbing.ca/goldstarplumbing.jpg",
       "width": 400,
       "height": 400
     },
@@ -155,13 +155,13 @@ export function StructuredData({ type = 'homepage' }: StructuredDataProps) {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://goldstarplumbing.ca"
+        "item": "https://www.goldstarplumbing.ca"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": type.charAt(0).toUpperCase() + type.slice(1),
-        "item": `https://goldstarplumbing.ca/${type}`
+        "item": `https://www.goldstarplumbing.ca/${type}`
       }
     ]
   } : null;

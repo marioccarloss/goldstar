@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://goldstarplumbing.ca/sitemap.xml
+Sitemap: https://www.goldstarplumbing.ca/sitemap.xml
 
 # Block access to admin areas
 Disallow: /admin/
