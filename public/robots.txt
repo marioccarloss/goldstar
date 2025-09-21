@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://goldstarplumbing.ca/sitemap.xml
+
+# Block access to admin areas
+Disallow: /admin/
+Disallow: /api/
+
+# Allow important pages for SEO
+Allow: /
+Allow: /about
+Allow: /services
+Allow: /contact
+
+# Crawl delay (optional, helps with server load)
+Crawl-delay: 1

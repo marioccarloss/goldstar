@@ -102,20 +102,41 @@ export default function ServicesClient({ initialContent }: { initialContent?: an
             key={category.number}
             className={`mb-24 ${categoryIndex % 2 === 0 ? "" : "border border-black bg-white p-8"}`}
           >
-            <div className="mb-12 flex items-start gap-8">
-              <div className="flex-shrink-0">
-                <span className="text-8xl leading-none font-bold text-black/20">{category.number}</span>
+            <div className="mb-12">
+              {/* Layout móvil: número arriba del título */}
+              <div className="block md:hidden">
+                <div className="mb-4 text-center">
+                  <span className="text-8xl leading-none font-bold text-black/20">{category.number}</span>
+                </div>
+                <div>
+                  <h2
+                    className="mb-4 leading-none font-extrabold text-black"
+                    style={{ fontSize: "clamp(2rem, 4vw, 48px)" }}
+                  >
+                    {category.title}
+                  </h2>
+                  <p className="max-w-2xl text-black" style={{ fontSize: "clamp(1rem, 1.2vw, 18px)" }}>
+                    {category.subtitle}
+                  </p>
+                </div>
               </div>
-              <div className="flex-1 pt-4">
-                <h2
-                  className="mb-4 leading-none font-extrabold text-black"
-                  style={{ fontSize: "clamp(2rem, 4vw, 48px)" }}
-                >
-                  {category.title}
-                </h2>
-                <p className="max-w-2xl text-black" style={{ fontSize: "clamp(1rem, 1.2vw, 18px)" }}>
-                  {category.subtitle}
-                </p>
+              
+              {/* Layout desktop: número a la izquierda */}
+              <div className="hidden md:flex items-start gap-8">
+                <div className="flex-shrink-0">
+                  <span className="text-8xl leading-none font-bold text-black/20">{category.number}</span>
+                </div>
+                <div className="flex-1 pt-4">
+                  <h2
+                    className="mb-4 leading-none font-extrabold text-black"
+                    style={{ fontSize: "clamp(2rem, 4vw, 48px)" }}
+                  >
+                    {category.title}
+                  </h2>
+                  <p className="max-w-2xl text-black" style={{ fontSize: "clamp(1rem, 1.2vw, 18px)" }}>
+                    {category.subtitle}
+                  </p>
+                </div>
               </div>
             </div>
 

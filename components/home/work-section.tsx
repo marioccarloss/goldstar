@@ -284,7 +284,7 @@ export function WorkSection({ initialContent }: { initialContent?: any }) {
               </motion.div>
 
               {/* Plumbing - imagen */}
-              <motion.div variants={itemVariants} className="col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
+              <motion.div variants={itemVariants} className="hidden md:block col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
                 <GridItem onClick={() => setShowPlumbing(true)}>
                   <div className="relative h-full w-full">
                     <Image src="/images/plumbing-repair.jpg" alt="Plumbing" fill className="object-cover" />
@@ -300,7 +300,7 @@ export function WorkSection({ initialContent }: { initialContent?: any }) {
               </motion.div>
 
               {/* Drainage - imagen */}
-              <motion.div variants={itemVariants} className="col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
+              <motion.div variants={itemVariants} className="hidden md:block col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
                 <GridItem onClick={() => setShowDrainage(true)}>
                   <div className="relative h-full w-full">
                     <Image src="/images/drainge-service.jpg" alt="Drainage service" fill className="object-cover" />
@@ -317,7 +317,7 @@ export function WorkSection({ initialContent }: { initialContent?: any }) {
               </motion.div>
 
               {/* Heating - imagen */}
-              <motion.div variants={itemVariants} className="col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
+              <motion.div variants={itemVariants} className="hidden md:block col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
                 <GridItem onClick={() => setShowHeating(true)}>
                   <div className="relative h-full w-full">
                     <Image src="/images/heating-service-1.jpg" alt="Heating service" fill className="object-cover" />
@@ -333,7 +333,7 @@ export function WorkSection({ initialContent }: { initialContent?: any }) {
               </motion.div>
 
               {/* Renovations - imagen */}
-              <motion.div variants={itemVariants} className="col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
+              <motion.div variants={itemVariants} className="hidden md:block col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
                 <GridItem onClick={() => setShowRenovation(true)}>
                   <div className="relative h-full w-full">
                     <Image src="/images/home-renovations.jpg" alt="Home renovations" fill className="object-cover" />
