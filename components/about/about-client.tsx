@@ -1,6 +1,6 @@
 "use client";
 
-import { getContent } from "@/lib/content";
+import { getContent, subscribeToContent } from "@/lib/content";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
@@ -16,6 +16,12 @@ export default function AboutClient({ initialContent }: { initialContent?: any }
       fetchContent();
     }
   }, [initialContent]);
+
+  // Suscripción en tiempo real
+  useEffect(() => {
+    const cleanup = subscribeToContent((data) => setContent(data));
+    return cleanup;
+  }, []);
 
   if (!content) return null;
 
@@ -215,32 +221,6 @@ export default function AboutClient({ initialContent }: { initialContent?: any }
               </div>
             </motion.div>
           </div>
-
-          {/* CTA */}
-          <motion.div
-            className="relative overflow-hidden bg-gradient-to-r from-[#F6BE00] to-[#FFA500] p-12 text-center lg:p-16"
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 2.8 }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent" />
-            <div className="absolute top-0 right-0 h-64 w-64 translate-x-32 -translate-y-32 rounded-full bg-white/5" />
-            <div className="absolute bottom-0 left-0 h-48 w-48 -translate-x-24 translate-y-24 rounded-full bg-white/5" />
-
-            <div className="relative z-10">
-              <h3 className="mb-6 text-4xl font-black text-white lg:text-5xl">Ready to Experience Excellence?</h3>
-              <p className="mx-auto mb-8 max-w-2xl text-xl leading-relaxed text-white/90">
-                Join hundreds of satisfied customers who trust Gold Star for their home repair needs.
-              </p>
-              <motion.button
-                className="bg-white px-12 py-4 text-xl font-bold text-[#F6BE00] transition-all duration-300 hover:scale-105"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Get Your Free Quote Today
-              </motion.button>
-            </div>
-          </motion.div>
         </motion.div>
       </div>
     </div>

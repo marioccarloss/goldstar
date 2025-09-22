@@ -1,6 +1,6 @@
 "use client";
 
-import { getContent } from "@/lib/content";
+import { getContent, subscribeToContent } from "@/lib/content";
 import type { ComponentType } from "react";
 import { useEffect, useState } from "react";
 
@@ -16,6 +16,12 @@ export default function ServicesClient({ initialContent }: { initialContent?: an
       fetchContent();
     }
   }, [initialContent]);
+
+  // Suscripción en tiempo real
+  useEffect(() => {
+    const cleanup = subscribeToContent((data) => setContent(data));
+    return cleanup;
+  }, []);
 
   type ServiceItem = { title: string; icon: ComponentType<any>; description: string };
   type ServiceCategory = { number: string | number; title: string; subtitle: string; services: ServiceItem[] };
@@ -120,9 +126,9 @@ export default function ServicesClient({ initialContent }: { initialContent?: an
                   </p>
                 </div>
               </div>
-              
+
               {/* Layout desktop: número a la izquierda */}
-              <div className="hidden md:flex items-start gap-8">
+              <div className="hidden items-start gap-8 md:flex">
                 <div className="flex-shrink-0">
                   <span className="text-8xl leading-none font-bold text-black/20">{category.number}</span>
                 </div>

@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { getContent } from "@/lib/content";
+import { getContent, subscribeToContent } from "@/lib/content";
 import { motion, Variants } from "framer-motion";
 import { ArrowRight, Facebook, Instagram, Linkedin, Mail, MapPin, Phone, Twitter } from "lucide-react";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
@@ -77,6 +77,12 @@ export default function ContactClient({ initialContent }: { initialContent?: any
       fetchContent();
     }
   }, [initialContent]);
+
+  // Suscripción en tiempo real
+  useEffect(() => {
+    const cleanup = subscribeToContent((data) => setContent(normalizeContent(data)));
+    return cleanup;
+  }, []);
 
   if (!content) return null;
 

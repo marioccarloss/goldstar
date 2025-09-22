@@ -1,6 +1,6 @@
 "use client";
 
-import { getContent } from "@/lib/content";
+import { getContent, subscribeToContent } from "@/lib/content";
 import { motion, useInView } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
@@ -25,6 +25,12 @@ export function WorkItems({ initialContent }: { initialContent?: any }) {
       fetchData();
     }
   }, [initialContent]);
+
+  // Suscripción en tiempo real
+  useEffect(() => {
+    const cleanup = subscribeToContent((data) => setContent(data));
+    return cleanup;
+  }, []);
 
   const workItemsData: WorkItemData[] = (content?.home?.choose?.items ?? []).map((i: any, idx: number) => ({
     number: i.number,

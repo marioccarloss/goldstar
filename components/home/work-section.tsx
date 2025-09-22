@@ -1,6 +1,6 @@
 "use client";
 
-import { getContent } from "@/lib/content";
+import { getContent, subscribeToContent } from "@/lib/content";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { AlertTriangle, Droplets, Home, Wrench, X } from "lucide-react";
 import Image from "next/image";
@@ -221,6 +221,12 @@ export function WorkSection({ initialContent }: { initialContent?: any }) {
       fetchContent();
     }
   }, [initialContent]);
+
+  // Suscripción en tiempo real al documento de contenido
+  useEffect(() => {
+    const cleanup = subscribeToContent((data) => setContent(data));
+    return cleanup;
+  }, []);
 
   const categories = content?.services?.categories || [];
   const plumbingServices = content?.services?.plumbingServices || [];

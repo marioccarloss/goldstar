@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Marquee } from "../marquee";
 import { getContent } from "@/lib/content";
+import { subscribeToContent } from "@/lib/content";
 
 interface BookingData {
   name: string;
@@ -37,6 +38,12 @@ export const Hero = ({ initialContent }: HeroProps) => {
       fetchContent();
     }
   }, [initialContent]);
+
+  // Suscripción en tiempo real al documento de contenido
+  useEffect(() => {
+    const cleanup = subscribeToContent((data) => setContent(data));
+    return cleanup;
+  }, []);
 
   const handleBookingComplete = (booking: BookingData) => {
     console.log("Booking completed:", booking);

@@ -4,7 +4,7 @@ export const siteConfig = {
   name: "Gold Star Plumbing",
   description: "Professional plumbing services in Vancouver, BC. Emergency repairs, installations, drain cleaning, and heating services. Licensed plumbers serving Greater Vancouver Area.",
   url: "https://www.goldstarplumbing.ca",
-  ogImage: "/goldstarplumbing.jpg",
+  ogImage: "/images/plumbing-repair.jpg",
   links: {
     twitter: "https://twitter.com/goldstarplumbing",
     facebook: "https://facebook.com/goldstarplumbing",

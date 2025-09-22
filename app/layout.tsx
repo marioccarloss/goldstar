@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     siteName: 'Gold Star Plumbing',
     images: [
       {
-        url: '/goldstarplumbing.jpg',
+        url: '/images/plumbing-repair.jpg',
         width: 1200,
         height: 630,
         alt: 'Gold Star Plumbing - Professional Plumbing Services in Vancouver',
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: "Gold Star Plumbing - Professional Plumbing Services in Vancouver, BC",
     description: "Professional plumbing services in Vancouver, BC. Emergency repairs, installations, drain cleaning, and heating services. Licensed plumbers serving Greater Vancouver Area.",
-    images: ['/goldstarplumbing.jpg'],
+    images: ['/images/plumbing-repair.jpg'],
     creator: '@goldstarplumbing',
   },
   robots: {
