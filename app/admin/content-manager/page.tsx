@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Lock, ChevronLeft, Edit3, Save, X, FileText, Home, Phone, Users } from "lucide-react";
+import { Lock, ChevronLeft, Edit3, Save, X, FileText, Home, Phone, Users, Plus, Trash2, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { User } from "firebase/auth";
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
@@ -21,6 +21,15 @@ export default function ContentManagerPage() {
   const [contentPreview, setContentPreview] = useState<any | null>(null);
   const [editingSection, setEditingSection] = useState<string | null>(null);
   const [editedContent, setEditedContent] = useState<any>({});
+  
+  // Estados para gestión de servicios
+  const [showServiceManager, setShowServiceManager] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<string | null>(null);
+  const [editingService, setEditingService] = useState<{categoryIndex: number, serviceIndex: number} | null>(null);
+  const [newCategoryForm, setNewCategoryForm] = useState({ title: "", subtitle: "", number: "" });
+  const [newServiceForm, setNewServiceForm] = useState({ title: "", description: "" });
+  const [showNewCategoryForm, setShowNewCategoryForm] = useState(false);
+  const [showNewServiceForm, setShowNewServiceForm] = useState<number | null>(null);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user: User | null) => {
@@ -97,6 +106,182 @@ export default function ContentManagerPage() {
 
     current[pathArray[pathArray.length - 1]] = value;
     setEditedContent(newContent);
+  };
+
+  // Funciones para gestión de categorías de servicios
+  const addServiceCategory = () => {
+    // Validación mejorada
+    if (!newCategoryForm.title.trim()) {
+      setOpStatus("Error: El título de la categoría es requerido");
+      setTimeout(() => setOpStatus(null), 3000);
+      return;
+    }
+    
+    if (!newCategoryForm.subtitle.trim()) {
+      setOpStatus("Error: El subtítulo de la categoría es requerido");
+      setTimeout(() => setOpStatus(null), 3000);
+      return;
+    }
+
+    // Verificar duplicados
+    const existingCategory = editedContent.services?.categories?.find(
+      (cat: any) => cat.title.toLowerCase() === newCategoryForm.title.trim().toLowerCase()
+    );
+    
+    if (existingCategory) {
+      setOpStatus("Error: Ya existe una categoría con ese título");
+      setTimeout(() => setOpStatus(null), 3000);
+      return;
+    }
+    
+    try {
+      const newContent = { ...editedContent };
+      if (!newContent.services) newContent.services = {};
+      if (!newContent.services.categories) newContent.services.categories = [];
+      
+      const newCategory = {
+        number: newCategoryForm.number || (newContent.services.categories.length + 1).toString(),
+        title: newCategoryForm.title.trim(),
+        subtitle: newCategoryForm.subtitle.trim()
+      };
+      
+      newContent.services.categories.push(newCategory);
+      setEditedContent(newContent);
+      setNewCategoryForm({ title: "", subtitle: "", number: "" });
+      setShowNewCategoryForm(false);
+      setOpStatus("✅ Categoría agregada exitosamente. Recuerda guardar los cambios.");
+      setTimeout(() => setOpStatus(null), 5000);
+    } catch (error) {
+      setOpStatus("Error: No se pudo agregar la categoría");
+      setTimeout(() => setOpStatus(null), 3000);
+    }
+  };
+
+  const deleteServiceCategory = (categoryIndex: number) => {
+    if (!confirm("¿Estás seguro de que quieres eliminar esta categoría y todos sus servicios?")) return;
+    
+    try {
+      const newContent = { ...editedContent };
+      if (newContent.services?.categories) {
+        // También eliminar los servicios asociados
+        const categoryKey = getCategoryServiceKey(categoryIndex);
+        if (newContent.services[categoryKey]) {
+          delete newContent.services[categoryKey];
+        }
+        
+        newContent.services.categories.splice(categoryIndex, 1);
+        setEditedContent(newContent);
+        setOpStatus("✅ Categoría y servicios asociados eliminados. Recuerda guardar los cambios.");
+        setTimeout(() => setOpStatus(null), 5000);
+      }
+    } catch (error) {
+      setOpStatus("Error: No se pudo eliminar la categoría");
+      setTimeout(() => setOpStatus(null), 3000);
+    }
+  };
+
+  const updateServiceCategory = (categoryIndex: number, field: string, value: string) => {
+    try {
+      const newContent = { ...editedContent };
+      if (newContent.services?.categories?.[categoryIndex]) {
+        newContent.services.categories[categoryIndex][field] = value;
+        setEditedContent(newContent);
+      }
+    } catch (error) {
+      setOpStatus("Error: No se pudo actualizar la categoría");
+      setTimeout(() => setOpStatus(null), 3000);
+    }
+  };
+
+  // Funciones para gestión de servicios individuales
+  const addService = (categoryIndex: number) => {
+    // Validación mejorada
+    if (!newServiceForm.title.trim()) {
+      setOpStatus("Error: El título del servicio es requerido");
+      setTimeout(() => setOpStatus(null), 3000);
+      return;
+    }
+    
+    if (!newServiceForm.description.trim()) {
+      setOpStatus("Error: La descripción del servicio es requerida");
+      setTimeout(() => setOpStatus(null), 3000);
+      return;
+    }
+
+    const categoryKey = getCategoryServiceKey(categoryIndex);
+    
+    // Verificar duplicados en la misma categoría
+    const existingService = editedContent.services?.[categoryKey]?.find(
+      (service: any) => service.title.toLowerCase() === newServiceForm.title.trim().toLowerCase()
+    );
+    
+    if (existingService) {
+      setOpStatus("Error: Ya existe un servicio con ese título en esta categoría");
+      setTimeout(() => setOpStatus(null), 3000);
+      return;
+    }
+    
+    try {
+      const newContent = { ...editedContent };
+      
+      if (!newContent.services) newContent.services = {};
+      if (!newContent.services[categoryKey]) newContent.services[categoryKey] = [];
+      
+      const newService = {
+        title: newServiceForm.title.trim(),
+        description: newServiceForm.description.trim()
+      };
+      
+      newContent.services[categoryKey].push(newService);
+      setEditedContent(newContent);
+      setNewServiceForm({ title: "", description: "" });
+      setShowNewServiceForm(null);
+      setOpStatus("✅ Servicio agregado exitosamente. Recuerda guardar los cambios.");
+      setTimeout(() => setOpStatus(null), 5000);
+    } catch (error) {
+      setOpStatus("Error: No se pudo agregar el servicio");
+      setTimeout(() => setOpStatus(null), 3000);
+    }
+  };
+
+  const deleteService = (categoryIndex: number, serviceIndex: number) => {
+    if (!confirm("¿Estás seguro de que quieres eliminar este servicio?")) return;
+    
+    try {
+      const newContent = { ...editedContent };
+      const categoryKey = getCategoryServiceKey(categoryIndex);
+      
+      if (newContent.services?.[categoryKey]) {
+        newContent.services[categoryKey].splice(serviceIndex, 1);
+        setEditedContent(newContent);
+        setOpStatus("✅ Servicio eliminado exitosamente. Recuerda guardar los cambios.");
+        setTimeout(() => setOpStatus(null), 5000);
+      }
+    } catch (error) {
+      setOpStatus("Error: No se pudo eliminar el servicio");
+      setTimeout(() => setOpStatus(null), 3000);
+    }
+  };
+
+  const updateService = (categoryIndex: number, serviceIndex: number, field: string, value: string) => {
+    try {
+      const newContent = { ...editedContent };
+      const categoryKey = getCategoryServiceKey(categoryIndex);
+      
+      if (newContent.services?.[categoryKey]?.[serviceIndex]) {
+        newContent.services[categoryKey][serviceIndex][field] = value;
+        setEditedContent(newContent);
+      }
+    } catch (error) {
+      setOpStatus("Error: No se pudo actualizar el servicio");
+      setTimeout(() => setOpStatus(null), 3000);
+    }
+  };
+
+  // Función auxiliar para obtener la clave de servicios por categoría
+  const getCategoryServiceKey = (categoryIndex: number) => {
+    const serviceKeys = ['plumbingServices', 'drainageServices', 'heatingServices', 'homeRenovationServices'];
+    return serviceKeys[categoryIndex] || 'plumbingServices';
   };
 
   // Cargar contenido al montar el componente
@@ -184,6 +369,13 @@ export default function ContentManagerPage() {
             </div>
             <div className="flex gap-3">
               <button
+                onClick={() => setShowServiceManager(!showServiceManager)}
+                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              >
+                <Settings className="mr-1 inline h-4 w-4" /> 
+                {showServiceManager ? "Ocultar" : "Gestionar"} Servicios
+              </button>
+              <button
                 onClick={fetchContentPreview}
                 disabled={loading}
                 className="rounded-md bg-gray-200 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-70"
@@ -216,6 +408,250 @@ export default function ContentManagerPage() {
           {opStatus && (
             <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
               <p className="text-sm text-blue-800">{opStatus}</p>
+            </div>
+          )}
+
+          {/* Service Manager */}
+          {showServiceManager && contentPreview && (
+            <div className="overflow-hidden rounded-xl bg-white shadow-sm">
+              <div className="border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-6">
+                <div className="flex items-center gap-3">
+                  <Settings className="h-6 w-6 text-blue-600" />
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900">Gestión de Servicios</h2>
+                    <p className="text-sm text-gray-600">Administra categorías y servicios individuales</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-6 space-y-6">
+                {/* Gestión de Categorías */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900">Categorías de Servicios</h3>
+                    <button
+                      onClick={() => setShowNewCategoryForm(!showNewCategoryForm)}
+                      className="rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700"
+                    >
+                      <Plus className="mr-1 inline h-4 w-4" /> Nueva Categoría
+                    </button>
+                  </div>
+
+                  {/* Formulario para nueva categoría */}
+                  {showNewCategoryForm && (
+                    <div className="rounded-lg border border-green-200 bg-green-50 p-4 space-y-3">
+                      <h4 className="font-medium text-green-800">Agregar Nueva Categoría</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <input
+                          type="text"
+                          placeholder="Título de la categoría"
+                          value={newCategoryForm.title}
+                          onChange={(e) => setNewCategoryForm(prev => ({ ...prev, title: e.target.value }))}
+                          className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Subtítulo/descripción"
+                          value={newCategoryForm.subtitle}
+                          onChange={(e) => setNewCategoryForm(prev => ({ ...prev, subtitle: e.target.value }))}
+                          className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Número (opcional)"
+                          value={newCategoryForm.number}
+                          onChange={(e) => setNewCategoryForm(prev => ({ ...prev, number: e.target.value }))}
+                          className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200"
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={addServiceCategory}
+                          className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+                        >
+                          Agregar Categoría
+                        </button>
+                        <button
+                          onClick={() => {
+                            setShowNewCategoryForm(false);
+                            setNewCategoryForm({ title: "", subtitle: "", number: "" });
+                          }}
+                          className="rounded-md bg-gray-500 px-4 py-2 text-sm font-medium text-white hover:bg-gray-600"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Lista de categorías existentes */}
+                  <div className="space-y-3">
+                    {contentPreview.services?.categories?.map((category: any, categoryIndex: number) => (
+                      <div key={categoryIndex} className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex-1 space-y-2">
+                            {editingCategory === `${categoryIndex}` ? (
+                              <div className="space-y-2">
+                                <input
+                                  type="text"
+                                  value={editedContent.services?.categories?.[categoryIndex]?.title || ""}
+                                  onChange={(e) => updateServiceCategory(categoryIndex, "title", e.target.value)}
+                                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                />
+                                <input
+                                  type="text"
+                                  value={editedContent.services?.categories?.[categoryIndex]?.subtitle || ""}
+                                  onChange={(e) => updateServiceCategory(categoryIndex, "subtitle", e.target.value)}
+                                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                />
+                                <input
+                                  type="text"
+                                  value={editedContent.services?.categories?.[categoryIndex]?.number || ""}
+                                  onChange={(e) => updateServiceCategory(categoryIndex, "number", e.target.value)}
+                                  className="w-20 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                  placeholder="Núm."
+                                />
+                              </div>
+                            ) : (
+                              <div>
+                                <h4 className="font-semibold text-gray-900">
+                                  {category.number && `${category.number}. `}{category.title}
+                                </h4>
+                                <p className="text-sm text-gray-600">{category.subtitle}</p>
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex gap-2 ml-4">
+                            {editingCategory === `${categoryIndex}` ? (
+                              <button
+                                onClick={() => setEditingCategory(null)}
+                                className="p-1 text-green-600 hover:text-green-800"
+                              >
+                                <Save className="h-4 w-4" />
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => setEditingCategory(`${categoryIndex}`)}
+                                className="p-1 text-blue-600 hover:text-blue-800"
+                              >
+                                <Edit3 className="h-4 w-4" />
+                              </button>
+                            )}
+                            <button
+                              onClick={() => deleteServiceCategory(categoryIndex)}
+                              className="p-1 text-red-600 hover:text-red-800"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Gestión de servicios de esta categoría */}
+                        <div className="border-t border-gray-200 pt-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <h5 className="font-medium text-gray-700">Servicios en esta categoría</h5>
+                            <button
+                              onClick={() => setShowNewServiceForm(showNewServiceForm === categoryIndex ? null : categoryIndex)}
+                              className="rounded-md bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700"
+                            >
+                              <Plus className="mr-1 inline h-3 w-3" /> Agregar Servicio
+                            </button>
+                          </div>
+
+                          {/* Formulario para nuevo servicio */}
+                          {showNewServiceForm === categoryIndex && (
+                            <div className="mb-3 rounded-lg border border-blue-200 bg-blue-50 p-3 space-y-2">
+                              <input
+                                type="text"
+                                placeholder="Título del servicio"
+                                value={newServiceForm.title}
+                                onChange={(e) => setNewServiceForm(prev => ({ ...prev, title: e.target.value }))}
+                                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                              />
+                              <textarea
+                                placeholder="Descripción del servicio"
+                                value={newServiceForm.description}
+                                onChange={(e) => setNewServiceForm(prev => ({ ...prev, description: e.target.value }))}
+                                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                rows={2}
+                              />
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => addService(categoryIndex)}
+                                  className="rounded-md bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700"
+                                >
+                                  Agregar
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setShowNewServiceForm(null);
+                                    setNewServiceForm({ title: "", description: "" });
+                                  }}
+                                  className="rounded-md bg-gray-500 px-3 py-1 text-xs font-medium text-white hover:bg-gray-600"
+                                >
+                                  Cancelar
+                                </button>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Lista de servicios */}
+                          <div className="space-y-2">
+                            {contentPreview.services?.[getCategoryServiceKey(categoryIndex)]?.map((service: any, serviceIndex: number) => (
+                              <div key={serviceIndex} className="rounded-md border border-gray-200 bg-white p-3">
+                                {editingService?.categoryIndex === categoryIndex && editingService?.serviceIndex === serviceIndex ? (
+                                  <div className="space-y-2">
+                                    <input
+                                      type="text"
+                                      value={editedContent.services?.[getCategoryServiceKey(categoryIndex)]?.[serviceIndex]?.title || ""}
+                                      onChange={(e) => updateService(categoryIndex, serviceIndex, "title", e.target.value)}
+                                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                    />
+                                    <textarea
+                                      value={editedContent.services?.[getCategoryServiceKey(categoryIndex)]?.[serviceIndex]?.description || ""}
+                                      onChange={(e) => updateService(categoryIndex, serviceIndex, "description", e.target.value)}
+                                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                      rows={2}
+                                    />
+                                  </div>
+                                ) : (
+                                  <div>
+                                    <h6 className="font-medium text-gray-900">{service.title}</h6>
+                                    <p className="text-sm text-gray-600">{service.description}</p>
+                                  </div>
+                                )}
+                                <div className="flex justify-end gap-2 mt-2">
+                                  {editingService?.categoryIndex === categoryIndex && editingService?.serviceIndex === serviceIndex ? (
+                                    <button
+                                      onClick={() => setEditingService(null)}
+                                      className="p-1 text-green-600 hover:text-green-800"
+                                    >
+                                      <Save className="h-3 w-3" />
+                                    </button>
+                                  ) : (
+                                    <button
+                                      onClick={() => setEditingService({ categoryIndex, serviceIndex })}
+                                      className="p-1 text-blue-600 hover:text-blue-800"
+                                    >
+                                      <Edit3 className="h-3 w-3" />
+                                    </button>
+                                  )}
+                                  <button
+                                    onClick={() => deleteService(categoryIndex, serviceIndex)}
+                                    className="p-1 text-red-600 hover:text-red-800"
+                                  >
+                                    <Trash2 className="h-3 w-3" />
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
