@@ -1,14 +1,14 @@
 "use client";
 
-import Link from "next/link";
-import { Lock, ChevronLeft, Edit3, Save, X, FileText, Home, Phone, Users, Plus, Trash2, Settings } from "lucide-react";
-import { useEffect, useState } from "react";
+import * as Accordion from "@radix-ui/react-accordion";
 import type { User } from "firebase/auth";
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { motion } from "framer-motion";
+import { ChevronLeft, Edit3, FileText, Home, Lock, Phone, Plus, Save, Settings, Trash2, Users, X } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { auth, db } from "../../../lib/firebase";
-import * as Accordion from "@radix-ui/react-accordion";
-import { motion, AnimatePresence } from "framer-motion";
 
 export default function ContentManagerPage() {
   const [email, setEmail] = useState("");
@@ -21,11 +21,11 @@ export default function ContentManagerPage() {
   const [contentPreview, setContentPreview] = useState<any | null>(null);
   const [editingSection, setEditingSection] = useState<string | null>(null);
   const [editedContent, setEditedContent] = useState<any>({});
-  
+
   // Estados para gestión de servicios
   const [showServiceManager, setShowServiceManager] = useState(false);
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
-  const [editingService, setEditingService] = useState<{categoryIndex: number, serviceIndex: number} | null>(null);
+  const [editingService, setEditingService] = useState<{ categoryIndex: number; serviceIndex: number } | null>(null);
   const [newCategoryForm, setNewCategoryForm] = useState({ title: "", subtitle: "", number: "" });
   const [newServiceForm, setNewServiceForm] = useState({ title: "", description: "" });
   const [showNewCategoryForm, setShowNewCategoryForm] = useState(false);
@@ -116,7 +116,7 @@ export default function ContentManagerPage() {
       setTimeout(() => setOpStatus(null), 3000);
       return;
     }
-    
+
     if (!newCategoryForm.subtitle.trim()) {
       setOpStatus("Error: El subtítulo de la categoría es requerido");
       setTimeout(() => setOpStatus(null), 3000);
@@ -127,24 +127,24 @@ export default function ContentManagerPage() {
     const existingCategory = editedContent.services?.categories?.find(
       (cat: any) => cat.title.toLowerCase() === newCategoryForm.title.trim().toLowerCase()
     );
-    
+
     if (existingCategory) {
       setOpStatus("Error: Ya existe una categoría con ese título");
       setTimeout(() => setOpStatus(null), 3000);
       return;
     }
-    
+
     try {
       const newContent = { ...editedContent };
       if (!newContent.services) newContent.services = {};
       if (!newContent.services.categories) newContent.services.categories = [];
-      
+
       const newCategory = {
         number: newCategoryForm.number || (newContent.services.categories.length + 1).toString(),
         title: newCategoryForm.title.trim(),
-        subtitle: newCategoryForm.subtitle.trim()
+        subtitle: newCategoryForm.subtitle.trim(),
       };
-      
+
       newContent.services.categories.push(newCategory);
       setEditedContent(newContent);
       setNewCategoryForm({ title: "", subtitle: "", number: "" });
@@ -159,7 +159,7 @@ export default function ContentManagerPage() {
 
   const deleteServiceCategory = (categoryIndex: number) => {
     if (!confirm("¿Estás seguro de que quieres eliminar esta categoría y todos sus servicios?")) return;
-    
+
     try {
       const newContent = { ...editedContent };
       if (newContent.services?.categories) {
@@ -168,7 +168,7 @@ export default function ContentManagerPage() {
         if (newContent.services[categoryKey]) {
           delete newContent.services[categoryKey];
         }
-        
+
         newContent.services.categories.splice(categoryIndex, 1);
         setEditedContent(newContent);
         setOpStatus("✅ Categoría y servicios asociados eliminados. Recuerda guardar los cambios.");
@@ -201,7 +201,7 @@ export default function ContentManagerPage() {
       setTimeout(() => setOpStatus(null), 3000);
       return;
     }
-    
+
     if (!newServiceForm.description.trim()) {
       setOpStatus("Error: La descripción del servicio es requerida");
       setTimeout(() => setOpStatus(null), 3000);
@@ -209,29 +209,29 @@ export default function ContentManagerPage() {
     }
 
     const categoryKey = getCategoryServiceKey(categoryIndex);
-    
+
     // Verificar duplicados en la misma categoría
     const existingService = editedContent.services?.[categoryKey]?.find(
       (service: any) => service.title.toLowerCase() === newServiceForm.title.trim().toLowerCase()
     );
-    
+
     if (existingService) {
       setOpStatus("Error: Ya existe un servicio con ese título en esta categoría");
       setTimeout(() => setOpStatus(null), 3000);
       return;
     }
-    
+
     try {
       const newContent = { ...editedContent };
-      
+
       if (!newContent.services) newContent.services = {};
       if (!newContent.services[categoryKey]) newContent.services[categoryKey] = [];
-      
+
       const newService = {
         title: newServiceForm.title.trim(),
-        description: newServiceForm.description.trim()
+        description: newServiceForm.description.trim(),
       };
-      
+
       newContent.services[categoryKey].push(newService);
       setEditedContent(newContent);
       setNewServiceForm({ title: "", description: "" });
@@ -246,11 +246,11 @@ export default function ContentManagerPage() {
 
   const deleteService = (categoryIndex: number, serviceIndex: number) => {
     if (!confirm("¿Estás seguro de que quieres eliminar este servicio?")) return;
-    
+
     try {
       const newContent = { ...editedContent };
       const categoryKey = getCategoryServiceKey(categoryIndex);
-      
+
       if (newContent.services?.[categoryKey]) {
         newContent.services[categoryKey].splice(serviceIndex, 1);
         setEditedContent(newContent);
@@ -267,7 +267,7 @@ export default function ContentManagerPage() {
     try {
       const newContent = { ...editedContent };
       const categoryKey = getCategoryServiceKey(categoryIndex);
-      
+
       if (newContent.services?.[categoryKey]?.[serviceIndex]) {
         newContent.services[categoryKey][serviceIndex][field] = value;
         setEditedContent(newContent);
@@ -280,8 +280,8 @@ export default function ContentManagerPage() {
 
   // Función auxiliar para obtener la clave de servicios por categoría
   const getCategoryServiceKey = (categoryIndex: number) => {
-    const serviceKeys = ['plumbingServices', 'drainageServices', 'heatingServices', 'homeRenovationServices'];
-    return serviceKeys[categoryIndex] || 'plumbingServices';
+    const serviceKeys = ["plumbingServices", "drainageServices", "heatingServices", "homeRenovationServices"];
+    return serviceKeys[categoryIndex] || "plumbingServices";
   };
 
   // Cargar contenido al montar el componente
@@ -372,7 +372,7 @@ export default function ContentManagerPage() {
                 onClick={() => setShowServiceManager(!showServiceManager)}
                 className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
               >
-                <Settings className="mr-1 inline h-4 w-4" /> 
+                <Settings className="mr-1 inline h-4 w-4" />
                 {showServiceManager ? "Ocultar" : "Gestionar"} Servicios
               </button>
               <button
@@ -424,7 +424,7 @@ export default function ContentManagerPage() {
                 </div>
               </div>
 
-              <div className="p-6 space-y-6">
+              <div className="space-y-6 p-6">
                 {/* Gestión de Categorías */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -439,28 +439,28 @@ export default function ContentManagerPage() {
 
                   {/* Formulario para nueva categoría */}
                   {showNewCategoryForm && (
-                    <div className="rounded-lg border border-green-200 bg-green-50 p-4 space-y-3">
+                    <div className="space-y-3 rounded-lg border border-green-200 bg-green-50 p-4">
                       <h4 className="font-medium text-green-800">Agregar Nueva Categoría</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                         <input
                           type="text"
                           placeholder="Título de la categoría"
                           value={newCategoryForm.title}
-                          onChange={(e) => setNewCategoryForm(prev => ({ ...prev, title: e.target.value }))}
+                          onChange={(e) => setNewCategoryForm((prev) => ({ ...prev, title: e.target.value }))}
                           className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200"
                         />
                         <input
                           type="text"
                           placeholder="Subtítulo/descripción"
                           value={newCategoryForm.subtitle}
-                          onChange={(e) => setNewCategoryForm(prev => ({ ...prev, subtitle: e.target.value }))}
+                          onChange={(e) => setNewCategoryForm((prev) => ({ ...prev, subtitle: e.target.value }))}
                           className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200"
                         />
                         <input
                           type="text"
                           placeholder="Número (opcional)"
                           value={newCategoryForm.number}
-                          onChange={(e) => setNewCategoryForm(prev => ({ ...prev, number: e.target.value }))}
+                          onChange={(e) => setNewCategoryForm((prev) => ({ ...prev, number: e.target.value }))}
                           className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200"
                         />
                       </div>
@@ -488,7 +488,7 @@ export default function ContentManagerPage() {
                   <div className="space-y-3">
                     {contentPreview.services?.categories?.map((category: any, categoryIndex: number) => (
                       <div key={categoryIndex} className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                        <div className="flex items-start justify-between mb-4">
+                        <div className="mb-4 flex items-start justify-between">
                           <div className="flex-1 space-y-2">
                             {editingCategory === `${categoryIndex}` ? (
                               <div className="space-y-2">
@@ -515,13 +515,14 @@ export default function ContentManagerPage() {
                             ) : (
                               <div>
                                 <h4 className="font-semibold text-gray-900">
-                                  {category.number && `${category.number}. `}{category.title}
+                                  {category.number && `${category.number}. `}
+                                  {category.title}
                                 </h4>
                                 <p className="text-sm text-gray-600">{category.subtitle}</p>
                               </div>
                             )}
                           </div>
-                          <div className="flex gap-2 ml-4">
+                          <div className="ml-4 flex gap-2">
                             {editingCategory === `${categoryIndex}` ? (
                               <button
                                 onClick={() => setEditingCategory(null)}
@@ -548,10 +549,12 @@ export default function ContentManagerPage() {
 
                         {/* Gestión de servicios de esta categoría */}
                         <div className="border-t border-gray-200 pt-4">
-                          <div className="flex items-center justify-between mb-3">
+                          <div className="mb-3 flex items-center justify-between">
                             <h5 className="font-medium text-gray-700">Servicios en esta categoría</h5>
                             <button
-                              onClick={() => setShowNewServiceForm(showNewServiceForm === categoryIndex ? null : categoryIndex)}
+                              onClick={() =>
+                                setShowNewServiceForm(showNewServiceForm === categoryIndex ? null : categoryIndex)
+                              }
                               className="rounded-md bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700"
                             >
                               <Plus className="mr-1 inline h-3 w-3" /> Agregar Servicio
@@ -560,18 +563,20 @@ export default function ContentManagerPage() {
 
                           {/* Formulario para nuevo servicio */}
                           {showNewServiceForm === categoryIndex && (
-                            <div className="mb-3 rounded-lg border border-blue-200 bg-blue-50 p-3 space-y-2">
+                            <div className="mb-3 space-y-2 rounded-lg border border-blue-200 bg-blue-50 p-3">
                               <input
                                 type="text"
                                 placeholder="Título del servicio"
                                 value={newServiceForm.title}
-                                onChange={(e) => setNewServiceForm(prev => ({ ...prev, title: e.target.value }))}
+                                onChange={(e) => setNewServiceForm((prev) => ({ ...prev, title: e.target.value }))}
                                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                               />
                               <textarea
                                 placeholder="Descripción del servicio"
                                 value={newServiceForm.description}
-                                onChange={(e) => setNewServiceForm(prev => ({ ...prev, description: e.target.value }))}
+                                onChange={(e) =>
+                                  setNewServiceForm((prev) => ({ ...prev, description: e.target.value }))
+                                }
                                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                                 rows={2}
                               />
@@ -597,54 +602,68 @@ export default function ContentManagerPage() {
 
                           {/* Lista de servicios */}
                           <div className="space-y-2">
-                            {contentPreview.services?.[getCategoryServiceKey(categoryIndex)]?.map((service: any, serviceIndex: number) => (
-                              <div key={serviceIndex} className="rounded-md border border-gray-200 bg-white p-3">
-                                {editingService?.categoryIndex === categoryIndex && editingService?.serviceIndex === serviceIndex ? (
-                                  <div className="space-y-2">
-                                    <input
-                                      type="text"
-                                      value={editedContent.services?.[getCategoryServiceKey(categoryIndex)]?.[serviceIndex]?.title || ""}
-                                      onChange={(e) => updateService(categoryIndex, serviceIndex, "title", e.target.value)}
-                                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                    />
-                                    <textarea
-                                      value={editedContent.services?.[getCategoryServiceKey(categoryIndex)]?.[serviceIndex]?.description || ""}
-                                      onChange={(e) => updateService(categoryIndex, serviceIndex, "description", e.target.value)}
-                                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                      rows={2}
-                                    />
-                                  </div>
-                                ) : (
-                                  <div>
-                                    <h6 className="font-medium text-gray-900">{service.title}</h6>
-                                    <p className="text-sm text-gray-600">{service.description}</p>
-                                  </div>
-                                )}
-                                <div className="flex justify-end gap-2 mt-2">
-                                  {editingService?.categoryIndex === categoryIndex && editingService?.serviceIndex === serviceIndex ? (
-                                    <button
-                                      onClick={() => setEditingService(null)}
-                                      className="p-1 text-green-600 hover:text-green-800"
-                                    >
-                                      <Save className="h-3 w-3" />
-                                    </button>
+                            {contentPreview.services?.[getCategoryServiceKey(categoryIndex)]?.map(
+                              (service: any, serviceIndex: number) => (
+                                <div key={serviceIndex} className="rounded-md border border-gray-200 bg-white p-3">
+                                  {editingService?.categoryIndex === categoryIndex &&
+                                  editingService?.serviceIndex === serviceIndex ? (
+                                    <div className="space-y-2">
+                                      <input
+                                        type="text"
+                                        value={
+                                          editedContent.services?.[getCategoryServiceKey(categoryIndex)]?.[serviceIndex]
+                                            ?.title || ""
+                                        }
+                                        onChange={(e) =>
+                                          updateService(categoryIndex, serviceIndex, "title", e.target.value)
+                                        }
+                                        className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                      />
+                                      <textarea
+                                        value={
+                                          editedContent.services?.[getCategoryServiceKey(categoryIndex)]?.[serviceIndex]
+                                            ?.description || ""
+                                        }
+                                        onChange={(e) =>
+                                          updateService(categoryIndex, serviceIndex, "description", e.target.value)
+                                        }
+                                        className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                        rows={2}
+                                      />
+                                    </div>
                                   ) : (
-                                    <button
-                                      onClick={() => setEditingService({ categoryIndex, serviceIndex })}
-                                      className="p-1 text-blue-600 hover:text-blue-800"
-                                    >
-                                      <Edit3 className="h-3 w-3" />
-                                    </button>
+                                    <div>
+                                      <h6 className="font-medium text-gray-900">{service.title}</h6>
+                                      <p className="text-sm text-gray-600">{service.description}</p>
+                                    </div>
                                   )}
-                                  <button
-                                    onClick={() => deleteService(categoryIndex, serviceIndex)}
-                                    className="p-1 text-red-600 hover:text-red-800"
-                                  >
-                                    <Trash2 className="h-3 w-3" />
-                                  </button>
+                                  <div className="mt-2 flex justify-end gap-2">
+                                    {editingService?.categoryIndex === categoryIndex &&
+                                    editingService?.serviceIndex === serviceIndex ? (
+                                      <button
+                                        onClick={() => setEditingService(null)}
+                                        className="p-1 text-green-600 hover:text-green-800"
+                                      >
+                                        <Save className="h-3 w-3" />
+                                      </button>
+                                    ) : (
+                                      <button
+                                        onClick={() => setEditingService({ categoryIndex, serviceIndex })}
+                                        className="p-1 text-blue-600 hover:text-blue-800"
+                                      >
+                                        <Edit3 className="h-3 w-3" />
+                                      </button>
+                                    )}
+                                    <button
+                                      onClick={() => deleteService(categoryIndex, serviceIndex)}
+                                      className="p-1 text-red-600 hover:text-red-800"
+                                    >
+                                      <Trash2 className="h-3 w-3" />
+                                    </button>
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
+                              )
+                            )}
                           </div>
                         </div>
                       </div>
@@ -1046,46 +1065,67 @@ export default function ContentManagerPage() {
                                       {Array.isArray(value) ? (
                                         <div className="space-y-3 pl-2">
                                           {value.length === 0 && (
-                                            <div className="rounded-md bg-gray-50 p-2 text-sm text-gray-500">Sin elementos</div>
+                                            <div className="rounded-md bg-gray-50 p-2 text-sm text-gray-500">
+                                              Sin elementos
+                                            </div>
                                           )}
                                           {value.map((item: any, index: number) => (
                                             <div key={index} className="rounded-md bg-gray-50 p-2">
                                               {typeof item === "object" && item !== null ? (
                                                 <div className="space-y-2">
-                                                  {Object.entries(item as Record<string, any>).map(([subKey, subVal]) => (
-                                                    <div key={subKey} className="space-y-1">
-                                                      <label className="text-xs font-medium text-gray-600 capitalize">
-                                                        {subKey.replace(/([A-Z])/g, " $1")}
-                                                      </label>
-                                                      {editingSection === `about.${sectionKey}.${key}.${index}.${subKey}` ? (
-                                                        <textarea
-                                                          value={
-                                                            editedContent.about?.[sectionKey]?.[key]?.[index]?.[subKey] ?? ""
-                                                          }
-                                                          onChange={(e) =>
-                                                            handleTextEdit(`about.${sectionKey}.${key}.${index}.${subKey}`, e.target.value)
-                                                          }
-                                                          className="w-full rounded-md border border-gray-300 p-2 text-xs focus:border-transparent focus:ring-2 focus:ring-yellow-500"
-                                                          rows={2}
-                                                        />
-                                                      ) : (
-                                                        <div className="flex items-start justify-between rounded-md bg-white p-2">
-                                                          <span className="text-xs text-gray-800">{String(subVal)}</span>
-                                                          <button
-                                                            onClick={() => setEditingSection(`about.${sectionKey}.${key}.${index}.${subKey}`)}
-                                                            className="ml-2 p-1 text-gray-400 hover:text-gray-600"
-                                                          >
-                                                            <Edit3 className="h-3 w-3" />
-                                                          </button>
-                                                        </div>
-                                                      )}
-                                                    </div>
-                                                  ))}
+                                                  {Object.entries(item as Record<string, any>).map(
+                                                    ([subKey, subVal]) => (
+                                                      <div key={subKey} className="space-y-1">
+                                                        <label className="text-xs font-medium text-gray-600 capitalize">
+                                                          {subKey.replace(/([A-Z])/g, " $1")}
+                                                        </label>
+                                                        {editingSection ===
+                                                        `about.${sectionKey}.${key}.${index}.${subKey}` ? (
+                                                          <textarea
+                                                            value={
+                                                              editedContent.about?.[sectionKey]?.[key]?.[index]?.[
+                                                                subKey
+                                                              ] ?? ""
+                                                            }
+                                                            onChange={(e) =>
+                                                              handleTextEdit(
+                                                                `about.${sectionKey}.${key}.${index}.${subKey}`,
+                                                                e.target.value
+                                                              )
+                                                            }
+                                                            className="w-full rounded-md border border-gray-300 p-2 text-xs focus:border-transparent focus:ring-2 focus:ring-yellow-500"
+                                                            rows={2}
+                                                          />
+                                                        ) : (
+                                                          <div className="flex items-start justify-between rounded-md bg-white p-2">
+                                                            <span className="text-xs text-gray-800">
+                                                              {String(subVal)}
+                                                            </span>
+                                                            <button
+                                                              onClick={() =>
+                                                                setEditingSection(
+                                                                  `about.${sectionKey}.${key}.${index}.${subKey}`
+                                                                )
+                                                              }
+                                                              className="ml-2 p-1 text-gray-400 hover:text-gray-600"
+                                                            >
+                                                              <Edit3 className="h-3 w-3" />
+                                                            </button>
+                                                          </div>
+                                                        )}
+                                                      </div>
+                                                    )
+                                                  )}
                                                 </div>
                                               ) : editingSection === `about.${sectionKey}.${key}.${index}` ? (
                                                 <textarea
                                                   value={editedContent.about?.[sectionKey]?.[key]?.[index] ?? ""}
-                                                  onChange={(e) => handleTextEdit(`about.${sectionKey}.${key}.${index}`, e.target.value)}
+                                                  onChange={(e) =>
+                                                    handleTextEdit(
+                                                      `about.${sectionKey}.${key}.${index}`,
+                                                      e.target.value
+                                                    )
+                                                  }
                                                   className="w-full rounded-md border border-gray-300 p-2 text-xs focus:border-transparent focus:ring-2 focus:ring-yellow-500"
                                                   rows={2}
                                                 />
@@ -1093,7 +1133,9 @@ export default function ContentManagerPage() {
                                                 <div className="flex items-start justify-between rounded-md bg-white p-2">
                                                   <span className="text-xs text-gray-800">{String(item)}</span>
                                                   <button
-                                                    onClick={() => setEditingSection(`about.${sectionKey}.${key}.${index}`)}
+                                                    onClick={() =>
+                                                      setEditingSection(`about.${sectionKey}.${key}.${index}`)
+                                                    }
                                                     className="ml-2 p-1 text-gray-400 hover:text-gray-600"
                                                   >
                                                     <Edit3 className="h-3 w-3" />
@@ -1113,7 +1155,12 @@ export default function ContentManagerPage() {
                                               {editingSection === `about.${sectionKey}.${key}.${subKey}` ? (
                                                 <textarea
                                                   value={editedContent.about?.[sectionKey]?.[key]?.[subKey] || ""}
-                                                  onChange={(e) => handleTextEdit(`about.${sectionKey}.${key}.${subKey}`, e.target.value)}
+                                                  onChange={(e) =>
+                                                    handleTextEdit(
+                                                      `about.${sectionKey}.${key}.${subKey}`,
+                                                      e.target.value
+                                                    )
+                                                  }
                                                   className="w-full rounded-md border border-gray-300 p-2 text-xs focus:border-transparent focus:ring-2 focus:ring-yellow-500"
                                                   rows={2}
                                                 />
@@ -1121,7 +1168,9 @@ export default function ContentManagerPage() {
                                                 <div className="flex items-start justify-between rounded-md bg-white p-2">
                                                   <span className="text-xs text-gray-800">{String(subValue)}</span>
                                                   <button
-                                                    onClick={() => setEditingSection(`about.${sectionKey}.${key}.${subKey}`)}
+                                                    onClick={() =>
+                                                      setEditingSection(`about.${sectionKey}.${key}.${subKey}`)
+                                                    }
                                                     className="ml-2 p-1 text-gray-400 hover:text-gray-600"
                                                   >
                                                     <Edit3 className="h-3 w-3" />
