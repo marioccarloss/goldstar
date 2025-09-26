@@ -1043,7 +1043,95 @@ export default function ContentManagerPage() {
                                       <label className="text-sm font-medium text-gray-700 capitalize">
                                         {key.replace(/([A-Z])/g, " $1")}
                                       </label>
-                                      {editingSection === `about.${sectionKey}.${key}` ? (
+                                      {Array.isArray(value) ? (
+                                        <div className="space-y-3 pl-2">
+                                          {value.length === 0 && (
+                                            <div className="rounded-md bg-gray-50 p-2 text-sm text-gray-500">Sin elementos</div>
+                                          )}
+                                          {value.map((item: any, index: number) => (
+                                            <div key={index} className="rounded-md bg-gray-50 p-2">
+                                              {typeof item === "object" && item !== null ? (
+                                                <div className="space-y-2">
+                                                  {Object.entries(item as Record<string, any>).map(([subKey, subVal]) => (
+                                                    <div key={subKey} className="space-y-1">
+                                                      <label className="text-xs font-medium text-gray-600 capitalize">
+                                                        {subKey.replace(/([A-Z])/g, " $1")}
+                                                      </label>
+                                                      {editingSection === `about.${sectionKey}.${key}.${index}.${subKey}` ? (
+                                                        <textarea
+                                                          value={
+                                                            editedContent.about?.[sectionKey]?.[key]?.[index]?.[subKey] ?? ""
+                                                          }
+                                                          onChange={(e) =>
+                                                            handleTextEdit(`about.${sectionKey}.${key}.${index}.${subKey}`, e.target.value)
+                                                          }
+                                                          className="w-full rounded-md border border-gray-300 p-2 text-xs focus:border-transparent focus:ring-2 focus:ring-yellow-500"
+                                                          rows={2}
+                                                        />
+                                                      ) : (
+                                                        <div className="flex items-start justify-between rounded-md bg-white p-2">
+                                                          <span className="text-xs text-gray-800">{String(subVal)}</span>
+                                                          <button
+                                                            onClick={() => setEditingSection(`about.${sectionKey}.${key}.${index}.${subKey}`)}
+                                                            className="ml-2 p-1 text-gray-400 hover:text-gray-600"
+                                                          >
+                                                            <Edit3 className="h-3 w-3" />
+                                                          </button>
+                                                        </div>
+                                                      )}
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              ) : editingSection === `about.${sectionKey}.${key}.${index}` ? (
+                                                <textarea
+                                                  value={editedContent.about?.[sectionKey]?.[key]?.[index] ?? ""}
+                                                  onChange={(e) => handleTextEdit(`about.${sectionKey}.${key}.${index}`, e.target.value)}
+                                                  className="w-full rounded-md border border-gray-300 p-2 text-xs focus:border-transparent focus:ring-2 focus:ring-yellow-500"
+                                                  rows={2}
+                                                />
+                                              ) : (
+                                                <div className="flex items-start justify-between rounded-md bg-white p-2">
+                                                  <span className="text-xs text-gray-800">{String(item)}</span>
+                                                  <button
+                                                    onClick={() => setEditingSection(`about.${sectionKey}.${key}.${index}`)}
+                                                    className="ml-2 p-1 text-gray-400 hover:text-gray-600"
+                                                  >
+                                                    <Edit3 className="h-3 w-3" />
+                                                  </button>
+                                                </div>
+                                              )}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      ) : typeof value === "object" && value !== null ? (
+                                        <div className="space-y-2 pl-4">
+                                          {Object.entries(value as Record<string, any>).map(([subKey, subValue]) => (
+                                            <div key={subKey} className="space-y-1">
+                                              <label className="text-xs font-medium text-gray-600 capitalize">
+                                                {subKey.replace(/([A-Z])/g, " $1")}
+                                              </label>
+                                              {editingSection === `about.${sectionKey}.${key}.${subKey}` ? (
+                                                <textarea
+                                                  value={editedContent.about?.[sectionKey]?.[key]?.[subKey] || ""}
+                                                  onChange={(e) => handleTextEdit(`about.${sectionKey}.${key}.${subKey}`, e.target.value)}
+                                                  className="w-full rounded-md border border-gray-300 p-2 text-xs focus:border-transparent focus:ring-2 focus:ring-yellow-500"
+                                                  rows={2}
+                                                />
+                                              ) : (
+                                                <div className="flex items-start justify-between rounded-md bg-white p-2">
+                                                  <span className="text-xs text-gray-800">{String(subValue)}</span>
+                                                  <button
+                                                    onClick={() => setEditingSection(`about.${sectionKey}.${key}.${subKey}`)}
+                                                    className="ml-2 p-1 text-gray-400 hover:text-gray-600"
+                                                  >
+                                                    <Edit3 className="h-3 w-3" />
+                                                  </button>
+                                                </div>
+                                              )}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      ) : editingSection === `about.${sectionKey}.${key}` ? (
                                         <textarea
                                           value={editedContent.about?.[sectionKey]?.[key] || ""}
                                           onChange={(e) => handleTextEdit(`about.${sectionKey}.${key}`, e.target.value)}
