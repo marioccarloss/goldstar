@@ -66,7 +66,7 @@ function TextBlock({ title, subtitle, className }: { title: string; subtitle?: s
       <div className="relative z-10 space-y-4 text-center">
         {/* Enhanced icon with glow effect */}
         <div className="relative mx-auto">
-          <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-white/30 bg-white/20 shadow-2xl backdrop-blur-sm">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl border border-white/30 bg-white/20 shadow-2xl backdrop-blur-sm">
             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-white/40 to-white/20 shadow-inner"></div>
           </div>
           <div className="absolute inset-0 scale-110 rounded-2xl bg-white/10 opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100"></div>
@@ -208,7 +208,6 @@ export function WorkSection({ initialContent }: { initialContent?: any }) {
   const [showPlumbing, setShowPlumbing] = useState(false);
   const [showDrainage, setShowDrainage] = useState(false);
   const [showHeating, setShowHeating] = useState(false);
-  const [showRenovation, setShowRenovation] = useState(false);
 
   // Contenido Firestore (usar SSR si viene, sino fallback en cliente)
   const [content, setContent] = useState<any>(initialContent ?? null);
@@ -232,12 +231,11 @@ export function WorkSection({ initialContent }: { initialContent?: any }) {
   const plumbingServices = content?.services?.plumbingServices || [];
   const drainageServices = content?.services?.drainageServices || [];
   const heatingServices = content?.services?.heatingServices || [];
-  const renovationServices = content?.services?.homeRenovationServices || [];
 
   const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.08 } } };
   const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
 
-  const anyOverlayOpen = showPlumbing || showDrainage || showHeating || showRenovation;
+  const anyOverlayOpen = showPlumbing || showDrainage || showHeating;
 
   return (
     <section
@@ -276,21 +274,36 @@ export function WorkSection({ initialContent }: { initialContent?: any }) {
             }
           >
             <motion.div
-              className="grid auto-rows-[140px] grid-cols-1 gap-6 md:auto-rows-[160px] md:grid-cols-6 lg:grid-cols-12"
+              className="grid auto-rows-[140px] grid-cols-1 gap-6 md:auto-rows-[160px] md:grid-cols-3 lg:grid-cols-3"
               variants={containerVariants}
               initial="hidden"
               animate={isInView ? "visible" : "hidden"}
             >
-              {/* FILA 1 - Plumbing */}
+              {/* FILA 1 - Textos de las categorías */}
               {/* Plumbing - bloque de texto */}
-              <motion.div variants={itemVariants} className="col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
+              <motion.div variants={itemVariants} className="col-span-1 row-span-3">
                 <GridItem className="bg-[#E85D2A]" onClick={() => setShowPlumbing(true)}>
                   <TextBlock title={categories[0]?.title || "Plumbing"} subtitle={categories[0]?.subtitle} />
                 </GridItem>
               </motion.div>
 
+              {/* Drainage - bloque de texto */}
+              <motion.div variants={itemVariants} className="col-span-1 row-span-3">
+                <GridItem className="bg-[#4A6B4D]" onClick={() => setShowDrainage(true)}>
+                  <TextBlock title={categories[1]?.title || "Drainage"} subtitle={categories[1]?.subtitle} />
+                </GridItem>
+              </motion.div>
+
+              {/* Heating - bloque de texto */}
+              <motion.div variants={itemVariants} className="col-span-1 row-span-3">
+                <GridItem className="bg-[#0f3d3b]" onClick={() => setShowHeating(true)}>
+                  <TextBlock title={categories[2]?.title || "Heating"} subtitle={categories[2]?.subtitle} />
+                </GridItem>
+              </motion.div>
+
+              {/* FILA 2 - Imágenes de las categorías */}
               {/* Plumbing - imagen */}
-              <motion.div variants={itemVariants} className="hidden md:block col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
+              <motion.div variants={itemVariants} className="col-span-1 row-span-3">
                 <GridItem onClick={() => setShowPlumbing(true)}>
                   <div className="relative h-full w-full">
                     <Image src="/images/plumbing-repair.jpg" alt="Plumbing" fill className="object-cover" />
@@ -298,15 +311,8 @@ export function WorkSection({ initialContent }: { initialContent?: any }) {
                 </GridItem>
               </motion.div>
 
-              {/* Drainage - bloque de texto */}
-              <motion.div variants={itemVariants} className="col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
-                <GridItem className="bg-[#4A6B4D]" onClick={() => setShowDrainage(true)}>
-                  <TextBlock title={categories[1]?.title || "Drainage"} subtitle={categories[1]?.subtitle} />
-                </GridItem>
-              </motion.div>
-
               {/* Drainage - imagen */}
-              <motion.div variants={itemVariants} className="hidden md:block col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
+              <motion.div variants={itemVariants} className="col-span-1 row-span-3">
                 <GridItem onClick={() => setShowDrainage(true)}>
                   <div className="relative h-full w-full">
                     <Image src="/images/drainge-service.jpg" alt="Drainage service" fill className="object-cover" />
@@ -314,35 +320,11 @@ export function WorkSection({ initialContent }: { initialContent?: any }) {
                 </GridItem>
               </motion.div>
 
-              {/* FILA 2 - Heating */}
-              {/* Heating - bloque de texto */}
-              <motion.div variants={itemVariants} className="col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
-                <GridItem className="bg-[#0f3d3b]" onClick={() => setShowHeating(true)}>
-                  <TextBlock title={categories[2]?.title || "Heating"} subtitle={categories[2]?.subtitle} />
-                </GridItem>
-              </motion.div>
-
               {/* Heating - imagen */}
-              <motion.div variants={itemVariants} className="hidden md:block col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
+              <motion.div variants={itemVariants} className="col-span-1 row-span-3">
                 <GridItem onClick={() => setShowHeating(true)}>
                   <div className="relative h-full w-full">
                     <Image src="/images/heating-service-1.jpg" alt="Heating service" fill className="object-cover" />
-                  </div>
-                </GridItem>
-              </motion.div>
-
-              {/* Renovations - bloque de texto */}
-              <motion.div variants={itemVariants} className="col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
-                <GridItem className="bg-[#4285F4]" onClick={() => setShowRenovation(true)}>
-                  <TextBlock title={categories[3]?.title || "Home Renovations"} subtitle={categories[3]?.subtitle} />
-                </GridItem>
-              </motion.div>
-
-              {/* Renovations - imagen */}
-              <motion.div variants={itemVariants} className="hidden md:block col-span-1 row-span-3 md:col-span-3 lg:col-span-3">
-                <GridItem onClick={() => setShowRenovation(true)}>
-                  <div className="relative h-full w-full">
-                    <Image src="/images/home-renovations.jpg" alt="Home renovations" fill className="object-cover" />
                   </div>
                 </GridItem>
               </motion.div>
@@ -373,14 +355,6 @@ export function WorkSection({ initialContent }: { initialContent?: any }) {
                 services={heatingServices}
                 onBack={() => setShowHeating(false)}
                 bgClass="bg-[#E85D2A]"
-              />
-            )}
-            {showRenovation && (
-              <CategoryOverlay
-                title={categories[3]?.title || "Home Renovations"}
-                services={renovationServices}
-                onBack={() => setShowRenovation(false)}
-                bgClass="bg-[#4285F4]"
               />
             )}
           </AnimatePresence>
