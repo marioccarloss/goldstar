@@ -63,8 +63,9 @@ export default function AboutClient({ initialContent }: { initialContent?: any }
                 </motion.h1>
               </motion.div>
 
+              {/* Elementos flotantes - ocultos en mobile para evitar superposición */}
               <motion.div
-                className="absolute top-0 right-0 z-10 rounded-2xl bg-[#E8B4E3] p-4 shadow-xl md:right-8 md:p-6 lg:right-16"
+                className="absolute top-2 right-2 z-5 hidden rounded-2xl bg-[#E8B4E3] p-3 shadow-xl sm:block md:right-8 md:top-0 md:p-6 lg:right-16"
                 initial={{ x: 200, y: -100, opacity: 0, rotate: 15 }}
                 animate={{ x: 0, y: 0, opacity: 1, rotate: 0 }}
                 transition={{ duration: 1, delay: 0.9, ease: "easeOut" }}
@@ -75,32 +76,33 @@ export default function AboutClient({ initialContent }: { initialContent?: any }
               </motion.div>
 
               <motion.div
-                className="absolute top-1/2 -left-4 z-10 rounded-2xl bg-[#FFB366] p-4 shadow-xl md:-left-8 md:p-6"
+                className="absolute top-1/2 -left-2 z-5 hidden rounded-2xl bg-[#FFB366] p-3 shadow-xl sm:block md:-left-8 md:p-6"
                 initial={{ x: -200, opacity: 0, rotate: -15 }}
                 animate={{ x: 0, opacity: 1, rotate: 0 }}
                 transition={{ duration: 1, delay: 1.1, ease: "easeOut" }}
               >
-                <div className="text-3xl font-bold text-[#8B4513] md:text-4xl lg:text-5xl">500+</div>
+                <div className="text-2xl font-bold text-[#8B4513] md:text-4xl lg:text-5xl">500+</div>
                 <div className="text-sm font-medium whitespace-nowrap text-[#8B4513] md:text-base">
                   {content.about.stats.customers}
                 </div>
               </motion.div>
 
               <motion.div
-                className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 transform rounded-2xl bg-[#B8E6FF] p-4 shadow-xl md:p-6"
+                className="absolute bottom-20 left-1/2 z-5 hidden -translate-x-1/2 transform rounded-2xl bg-[#B8E6FF] p-3 shadow-xl sm:block md:bottom-8 md:p-6"
                 initial={{ y: 200, opacity: 0, scale: 0.5 }}
                 animate={{ y: 0, opacity: 1, scale: 1 }}
                 transition={{ duration: 1, delay: 1.3, ease: "easeOut" }}
               >
-                <div className="text-3xl font-bold text-[#1E5A8A] md:text-4xl lg:text-5xl">24/7</div>
+                <div className="text-2xl font-bold text-[#1E5A8A] md:text-4xl lg:text-5xl">24/7</div>
                 <div className="text-sm font-medium whitespace-nowrap text-[#1E5A8A] md:text-base">
                   {content.about.stats.emergency}
                 </div>
               </motion.div>
             </div>
 
+            {/* Texto principal con mejor espaciado en mobile */}
             <motion.p
-              className="absolute right-8 bottom-8 left-8 mx-auto mt-8 max-w-3xl text-center text-lg font-medium text-[#4A2C2A] md:text-xl"
+              className="relative mx-auto mt-8 max-w-3xl px-4 text-center text-lg font-medium text-[#4A2C2A] sm:absolute sm:right-8 sm:bottom-8 sm:left-8 sm:px-0 md:text-xl"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.5 }}

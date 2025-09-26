@@ -1,6 +1,6 @@
-import { ArrowRight, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
-import Link from "next/link";
 import { Logo } from "@/components/icons/logo";
+import { ArrowRight, Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
+import Link from "next/link";
 
 export function Footer() {
   return (
@@ -18,7 +18,7 @@ export function Footer() {
             </div>
             <div className="flex-grow text-center md:pl-8 md:text-left">
               <p className="mx-auto max-w-md md:mx-0">
-                Expert Solutions for Every Home Need — With Lasting Results & Guaranteed Satisfaction
+                Expert Solutions for Every Plumbing Need — With Lasting Results & Guaranteed Satisfaction
               </p>
             </div>
             <div>
