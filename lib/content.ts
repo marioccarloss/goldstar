@@ -69,23 +69,35 @@ export function subscribeToContent(onData: (data: any) => void, lang: string = "
   // Import dinámico para no cargar Firestore completo en SSR
   import("firebase/firestore")
     .then(({ doc, onSnapshot, getFirestore }) => {
-      const db = getFirestore(app);
-      const ref = doc(db, "content", lang);
-      unsubscribe = onSnapshot(ref, (snap) => {
-        if (snap.exists()) {
-          const data = snap.data();
-          // Actualiza la caché para que getContent refleje los últimos datos
-          cached = data;
-          cachedAt = Date.now();
-          onData(data);
-        }
-      });
+      try {
+        const db = getFirestore(app);
+        const ref = doc(db, "content", lang);
+        unsubscribe = onSnapshot(ref, (snap) => {
+          if (snap.exists()) {
+            const data = snap.data();
+            // Actualiza la caché para que getContent refleje los últimos datos
+            cached = data;
+            cachedAt = Date.now();
+            onData(data);
+          }
+        }, (error) => {
+          console.error("onSnapshot error:", error);
+        });
+      } catch (error) {
+        console.error("subscribeToContent setup error:", error);
+      }
     })
     .catch((e) => {
-      console.error("subscribeToContent error:", e);
+      console.error("subscribeToContent import error:", e);
     });
 
   return () => {
-    if (unsubscribe) unsubscribe();
+    try {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    } catch (error) {
+      console.error("unsubscribe error:", error);
+    }
   };
 }

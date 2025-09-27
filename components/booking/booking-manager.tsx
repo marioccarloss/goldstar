@@ -403,6 +403,33 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
         });
       });
 
+      // Enviar email de notificación de reserva
+      try {
+        const emailResponse = await fetch("/api/booking", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: bookingData.name,
+            email: bookingData.email,
+            phone: bookingData.phone,
+            service: bookingData.service,
+            date: dateStr,
+            timeSlot: timeStr,
+            comments: bookingData.comments,
+          }),
+        });
+
+        if (!emailResponse.ok) {
+          console.error("Failed to send booking email:", await emailResponse.text());
+          // No lanzamos error aquí para no afectar el flujo principal
+        }
+      } catch (emailError) {
+        console.error("Error sending booking email:", emailError);
+        // No lanzamos error aquí para no afectar el flujo principal
+      }
+
       onBookingComplete?.({
         ...bookingData,
         date: dateStr,
