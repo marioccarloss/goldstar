@@ -2,7 +2,8 @@
 
 export const siteConfig = {
   name: "Gold Star Plumbing",
-  description: "Professional plumbing services in Vancouver, BC. Emergency repairs, installations, drain cleaning, and heating services. Licensed plumbers serving Greater Vancouver Area.",
+  description:
+    "Professional plumbing services in Vancouver, BC. Emergency repairs, installations, drain cleaning, and heating services. Licensed plumbers serving Greater Vancouver Area.",
   url: "https://www.goldstarplumbing.ca",
   ogImage: "/images/plumbing-repair.jpg",
   links: {
@@ -12,7 +13,7 @@ export const siteConfig = {
   },
   business: {
     name: "Gold Star Plumbing",
-    phone: "+1-604-XXX-XXXX", // Replace with actual phone
+    phone: "+1-778-554-8619", // Gold Star Plumbing phone number
     email: "info@goldstarplumbing.ca", // Replace with actual email
     address: {
       street: "123 Main Street", // Replace with actual address
@@ -59,29 +60,29 @@ export function generateLocalBusinessSchema() {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "@id": `${siteConfig.url}/#business`,
-    "name": siteConfig.business.name,
-    "description": siteConfig.description,
-    "url": siteConfig.url,
-    "telephone": siteConfig.business.phone,
-    "email": siteConfig.business.email,
-    "address": {
+    name: siteConfig.business.name,
+    description: siteConfig.description,
+    url: siteConfig.url,
+    telephone: siteConfig.business.phone,
+    email: siteConfig.business.email,
+    address: {
       "@type": "PostalAddress",
-      "streetAddress": siteConfig.business.address.street,
-      "addressLocality": siteConfig.business.address.city,
-      "addressRegion": siteConfig.business.address.province,
-      "postalCode": siteConfig.business.address.postalCode,
-      "addressCountry": siteConfig.business.address.country,
+      streetAddress: siteConfig.business.address.street,
+      addressLocality: siteConfig.business.address.city,
+      addressRegion: siteConfig.business.address.province,
+      postalCode: siteConfig.business.address.postalCode,
+      addressCountry: siteConfig.business.address.country,
     },
-    "areaServed": siteConfig.business.serviceAreas.map(area => ({
+    areaServed: siteConfig.business.serviceAreas.map((area) => ({
       "@type": "City",
-      "name": area,
+      name: area,
     })),
-    "serviceType": siteConfig.business.services,
-    "priceRange": "$$",
-    "image": `${siteConfig.url}${siteConfig.ogImage}`,
-    "logo": {
+    serviceType: siteConfig.business.services,
+    priceRange: "$$",
+    image: `${siteConfig.url}${siteConfig.ogImage}`,
+    logo: {
       "@type": "ImageObject",
-      "url": `${siteConfig.url}${siteConfig.ogImage}`,
+      url: `${siteConfig.url}${siteConfig.ogImage}`,
     },
   };
 }
@@ -104,12 +105,7 @@ export const vancouverKeywords = [
   "24/7 plumber Vancouver",
 ];
 
-export function generatePageMetadata(page: {
-  title: string;
-  description: string;
-  path: string;
-  keywords?: string[];
-}) {
+export function generatePageMetadata(page: { title: string; description: string; path: string; keywords?: string[] }) {
   return {
     title: page.title,
     description: page.description,

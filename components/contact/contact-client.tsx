@@ -166,7 +166,12 @@ export default function ContactClient({ initialContent }: { initialContent?: any
               <motion.div className="flex flex-wrap gap-4 md:mx-auto lg:mx-0 lg:flex-col" variants={textItemVariants}>
                 <div className="flex items-center gap-3">
                   <Phone className="h-6 w-6 text-black" />
-                  <span className="text-lg font-medium">{content.contact.info.phone}</span>
+                  <a
+                    href={`tel:+17785548619`}
+                    className="cursor-pointer text-lg font-medium text-black transition-colors duration-200 hover:text-blue-600"
+                  >
+                    {content.contact.info.phone}
+                  </a>
                 </div>
                 <div className="flex items-center gap-3">
                   <Mail className="h-6 w-6 text-black" />

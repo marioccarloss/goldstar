@@ -3,8 +3,8 @@
 import { Phone } from "lucide-react";
 
 export function WhatsappButton() {
-  // Número de teléfono canadiense ficticio para pruebas
-  const phoneNumber = "+1-416-555-0123"; // Número ficticio de Toronto, Canadá
+  // Número de teléfono de Gold Star Plumbing
+  const phoneNumber = "+1-778-554-8619"; // Número real de Gold Star Plumbing Vancouver
 
   return (
     <a
