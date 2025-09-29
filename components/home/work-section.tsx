@@ -306,7 +306,7 @@ export function WorkSection({ initialContent }: { initialContent?: any }) {
               <motion.div variants={itemVariants} className="col-span-1 row-span-3">
                 <GridItem onClick={() => setShowPlumbing(true)}>
                   <div className="relative h-full w-full">
-                    <Image src="/images/plumbing-repair.jpg" alt="Plumbing" fill className="object-cover" />
+                    <Image src="/images/plumbing-repair-services.jpg" alt="Plumbing" fill className="object-cover" />
                   </div>
                 </GridItem>
               </motion.div>
@@ -315,7 +315,7 @@ export function WorkSection({ initialContent }: { initialContent?: any }) {
               <motion.div variants={itemVariants} className="col-span-1 row-span-3">
                 <GridItem onClick={() => setShowDrainage(true)}>
                   <div className="relative h-full w-full">
-                    <Image src="/images/drainge-service.jpg" alt="Drainage service" fill className="object-cover" />
+                    <Image src="/images/drainage-services.jpg" alt="Drainage service" fill className="object-cover" />
                   </div>
                 </GridItem>
               </motion.div>
@@ -324,7 +324,7 @@ export function WorkSection({ initialContent }: { initialContent?: any }) {
               <motion.div variants={itemVariants} className="col-span-1 row-span-3">
                 <GridItem onClick={() => setShowHeating(true)}>
                   <div className="relative h-full w-full">
-                    <Image src="/images/heating-service-1.jpg" alt="Heating service" fill className="object-cover" />
+                    <Image src="/images/heating-services.jpg" alt="Heating service" fill className="object-cover" />
                   </div>
                 </GridItem>
               </motion.div>

@@ -38,10 +38,10 @@ export function WorkItems({ initialContent }: { initialContent?: any }) {
     description: i.description,
     image:
       idx === 0
-        ? "/certified-handyman-with-uniform-and-credentials-ba.png"
+        ? "/certified-handyman-with-uniform-and-credentials-ba.jpg"
         : idx === 1
-          ? "/handyman-checking-watch-arriving-with-toolbox-punctu.png"
-          : "/expert-handyman-using-specialized-tools-showing-pr.png",
+          ? "/handyman-checking-watch-arriving-with-toolbox-punctu.jpg"
+          : "/expert-handyman-using-specialized-tools-showing-pr.jpg",
     imageAlt: i.imageAlt,
   }));
 
