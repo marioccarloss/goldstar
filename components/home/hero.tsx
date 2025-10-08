@@ -118,13 +118,6 @@ export const Hero = ({ initialContent }: HeroProps) => {
             initial="hidden"
             animate="visible"
           >
-            <motion.div
-              className="mb-4 inline-flex flex-col items-center gap-2 self-center bg-[#d0f5da] p-2 sm:mb-6 lg:flex-row lg:self-start"
-              variants={textItemVariants}
-            >
-              <Star className="hidden h-5 w-5 text-[#eb9b4a] lg:block" fill="#eb9b4a" />
-              <span className="text-xs font-medium text-black lg:text-sm">{content?.home?.hero?.badge ?? ""}</span>
-            </motion.div>
             <motion.h1
               className="mr-auto mb-4 ml-auto max-w-[669px] leading-none font-extrabold sm:mb-6 lg:ml-0"
               style={{ fontSize: "clamp(3rem, 6vw, 88px)" }}
