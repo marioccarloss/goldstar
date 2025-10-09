@@ -260,35 +260,6 @@ export const Hero = ({ initialContent }: HeroProps) => {
                 />
               </motion.div>
             </div>
-
-            {/* Tarjeta de Satisfacción */}
-            <motion.div
-              className="relative z-20 flex items-center gap-3 bg-[#fefae0] p-3 shadow-lg lg:absolute lg:right-1/3 lg:bottom-0 lg:left-auto"
-              variants={satisfactionCardVariants}
-              initial="hidden"
-              animate="visible"
-            >
-              <div className="flex -space-x-3">
-                <Image
-                  src="/images/p1.png"
-                  alt="Customer 1"
-                  width={40}
-                  height={40}
-                  className="rounded-full border-2 border-white"
-                />
-                <Image
-                  src="/images/p2.png"
-                  alt="Customer 2"
-                  width={40}
-                  height={40}
-                  className="rounded-full border-2 border-white"
-                />
-              </div>
-              <div>
-                <p className="text-lg font-bold text-amber-700">98%</p>
-                <p className="text-sm text-stone-600">Customer Satisfaction</p>
-              </div>
-            </motion.div>
           </div>
         </div>
       </div>

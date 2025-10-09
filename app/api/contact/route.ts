@@ -1,100 +1,71 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+// Configurar el transporter de Mailjet
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT) || 587,
+  secure: false, // true para 465, false para otros puertos
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL || "goldstarplumbingvancouver@gmail.com";
-const CONTACT_FROM_EMAIL = process.env.CONTACT_FROM_EMAIL || "no-reply@goldstarplumbing.com";
+interface ContactFormData {
+  name: string;
+  email: string;
+  phone?: string;
+  message: string;
+}
 
 export async function POST(req: NextRequest) {
   try {
-    const contentType = req.headers.get("content-type") || "";
-    let body: any = {};
+    // Parsear el body del request
+    const body: ContactFormData = await req.json();
+    const { name, email, phone, message } = body;
 
-    if (contentType.includes("application/json")) {
-      body = await req.json();
-    } else if (contentType.includes("application/x-www-form-urlencoded")) {
-      const form = await req.formData();
-      body = Object.fromEntries(form.entries());
-    } else {
-      try {
-        body = await req.json();
-      } catch {
-        return NextResponse.json({ error: "Unsupported content type" }, { status: 415 });
-      }
+    // Validate required fields
+    if (!name || !email || !message) {
+      return NextResponse.json({ error: "Missing required fields: name, email and message" }, { status: 400 });
     }
 
-    const { name = "", email = "", phone = "", message = "", website = "" } = body;
+    // Configure email options
+    const mailOptions = {
+      from: `"Goldstar Plumbing Contact Form" <${process.env.CONTACT_FROM_EMAIL}>`,
+      to: process.env.CONTACT_TO_EMAIL,
+      subject: `🔧 New Contact Message - ${name}`,
+      text: `You have received a new contact message:
 
-    // Honeypot antispam
-    if (website && String(website).trim() !== "") {
-      return NextResponse.json({ ok: true }, { status: 200 });
-    }
+Name: ${name}
+Email: ${email}
+Phone: ${phone || "Not provided"}
+Message:
+${message}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #1e40af;">🔧 New Contact Message</h2>
+          <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px;">
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Phone:</strong> ${phone || "Not provided"}</p>
+            <p><strong>Message:</strong></p>
+            <p style="background-color: white; padding: 15px; border-radius: 4px;">${message}</p>
+          </div>
+        </div>
+      `,
+      replyTo: email,
+    };
 
-    if (!name || !email) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-    }
+    // Send the email
+    await transporter.sendMail(mailOptions);
 
-    const subject = `🔧 Nuevo mensaje de contacto - ${name}`;
-    const text = [
-      `Name: ${name}`,
-      `Email: ${email}`,
-      phone ? `Phone: ${phone}` : null,
-      "",
-      "Message:",
-      message || "(no message)",
-    ]
-      .filter(Boolean)
-      .join("\n");
+    return NextResponse.json({ ok: true, message: "Email sent successfully" }, { status: 200 });
+  } catch (error) {
+    console.error("Error sending email:", error);
 
-    // Timestamp e ID
-    const timestamp = new Date().toLocaleString("es-ES", {
-      timeZone: "America/Vancouver",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
-    const trackingId = Date.now();
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
 
-    const html = `
-      <div style="font-family: system-ui, ...">
-        <!-- el mismo HTML que usabas arriba, usa escapeHtml donde corresponda -->
-        <!-- ... -->
-      </div>
-    `;
-
-    // ENVÍO CON RESEND
-    const { error } = await resend.emails.send({
-      from: `Goldstar Plumbing <onboarding@resend.dev>`, // Mejor personalizar con tu dominio propio si lo verificas
-      to: [CONTACT_TO_EMAIL],
-      subject,
-      replyTo: email, // Para que al responder se contacte al cliente
-      text,
-      html,
-    });
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 502 });
-    }
-
-    return NextResponse.json({ ok: true });
-  } catch (err: any) {
-    console.error("/api/contact error", err);
-    return NextResponse.json({ error: "Unexpected server error" }, { status: 500 });
+    return NextResponse.json({ error: "Error sending email", details: errorMessage }, { status: 500 });
   }
-}
-
-// Escapador de HTML de tu ejemplo
-function escapeHtml(input: string) {
-  return String(input)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "'");
 }

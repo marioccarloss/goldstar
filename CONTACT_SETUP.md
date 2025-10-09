@@ -1,46 +1,54 @@
 # Configuración del Formulario de Contacto
 
 ## ✅ Estado Actual
-El formulario de contacto está **completamente funcional** y listo para enviar correos electrónicos.
+
+El formulario de contacto está **completamente funcional** y listo para enviar correos electrónicos usando **Mailjet SMTP**.
 
 ## 🔧 Configuración Requerida
 
 ### 1. Variables de Entorno
+
 Asegúrate de que tu archivo `.env.local` contenga las siguientes variables:
 
 ```env
-# API Key de Resend (obtener en: https://resend.com/api-keys)
-RESEND_API_KEY=tu_api_key_aqui
+# Configuración SMTP de Mailjet
+SMTP_HOST=in-v3.mailjet.com
+SMTP_PORT=587
+SMTP_USER=tu_api_key_publica
+SMTP_PASS=tu_api_key_privada
 
-# Email donde recibirás las notificaciones del formulario
-CONTACT_TO_EMAIL=tu_email@ejemplo.com
-
-# Email desde el cual se enviarán los correos (debe ser dominio verificado)
-CONTACT_FROM_EMAIL=no-reply@tu-dominio.com
+# Email de destino para el formulario de contacto
+CONTACT_TO_EMAIL=goldstarplumbingvancouver@gmail.com
+CONTACT_FROM_EMAIL=goldstarplumbingvancouver@gmail.com
 ```
 
-### 2. Configuración de Resend
+### 2. Configuración de Mailjet
 
-1. **Crear cuenta en Resend**: Ve a [resend.com](https://resend.com) y crea una cuenta
-2. **Obtener API Key**: 
-   - Ve a [API Keys](https://resend.com/api-keys)
-   - Crea una nueva API key
-   - Cópiala y pégala en `RESEND_API_KEY`
+1. **Crear cuenta en Mailjet**: Ve a [mailjet.com](https://www.mailjet.com) y crea una cuenta
+2. **Obtener API Keys**:
+   - Ve a [API Key Management](https://app.mailjet.com/account/apikeys)
+   - Crea una nueva API key (o usa las existentes)
+   - Copia la **API Key Pública** y pégala en `SMTP_USER`
+   - Copia la **API Key Privada** y pégala en `SMTP_PASS`
 
-3. **Configurar dominio** (opcional pero recomendado):
-   - Ve a [Domains](https://resend.com/domains)
-   - Agrega tu dominio y verifica los registros DNS
-   - Usa `no-reply@tu-dominio.com` en `CONTACT_FROM_EMAIL`
+3. **Configurar Email de Remitente**:
+   - Ve a [Sender addresses & domains](https://app.mailjet.com/account/sender)
+   - Verifica tu dominio o email
+   - Usa ese email en `CONTACT_FROM_EMAIL`
 
-4. **Para pruebas**: Puedes usar `onboarding@resend.dev` como `CONTACT_FROM_EMAIL`
+4. **Para el proyecto actual**:
+   - Ya está configurado con `goldstarplumbingvancouver@gmail.com`
+   - Las credenciales SMTP ya están en `.env.local`
 
 ### 3. Email de Destino
-- Cambia `CONTACT_TO_EMAIL` por el email donde quieres recibir las notificaciones
-- Este será el email que reciba todos los mensajes del formulario
+
+- `CONTACT_TO_EMAIL` es el email donde recibirás las notificaciones
+- `CONTACT_FROM_EMAIL` es el email desde el cual se enviarán los correos
 
 ## 🚀 Funcionalidades Implementadas
 
 ### ✅ Formulario Frontend
+
 - Validación en tiempo real
 - Campos: nombre, email, teléfono, mensaje
 - Protección anti-spam (honeypot)
@@ -48,53 +56,75 @@ CONTACT_FROM_EMAIL=no-reply@tu-dominio.com
 - Diseño responsive y accesible
 
 ### ✅ API Backend
+
 - Endpoint: `/api/contact`
 - Validación de datos del servidor
-- Envío de correos con Resend
+- Envío de correos con **Nodemailer + Mailjet SMTP**
 - Formato HTML y texto plano
 - Manejo robusto de errores
 - Protección contra spam
 
 ### ✅ Características de Seguridad
+
 - Validación de entrada
 - Escape de HTML para prevenir XSS
 - Honeypot para detectar bots
-- Rate limiting implícito
 - Variables de entorno para credenciales
 
 ## 📧 Formato del Email
 
 Los correos que recibirás incluirán:
-- **Asunto**: "New contact message from [Nombre]"
-- **De**: El email configurado en `CONTACT_FROM_EMAIL`
+
+- **Asunto**: "🔧 Nuevo mensaje de contacto - [Nombre]"
+- **De**: `goldstarplumbingvancouver@gmail.com`
+- **Para**: `goldstarplumbingvancouver@gmail.com`
 - **Responder a**: El email del usuario que envió el formulario
-- **Contenido**: Nombre, email, teléfono (si se proporciona) y mensaje
+- **Contenido**: Nombre, email, teléfono (si se proporciona) y mensaje en formato HTML y texto plano
 
 ## 🧪 Cómo Probar
 
-1. Inicia el servidor: `npm run dev`
+1. Inicia el servidor: `pnpm dev`
 2. Ve a `http://localhost:3000/contact`
 3. Llena el formulario con datos de prueba
 4. Envía el formulario
-5. Verifica que recibas el email en `CONTACT_TO_EMAIL`
+5. Verifica que recibas el email en `goldstarplumbingvancouver@gmail.com`
 
 ## 🔍 Solución de Problemas
 
-### Error: "Server not configured"
-- Verifica que `RESEND_API_KEY` y `CONTACT_TO_EMAIL` estén configurados en `.env.local`
+### Error: "Faltan campos requeridos"
 
-### Error: "Failed to send email"
-- Verifica que tu API key de Resend sea válida
-- Asegúrate de que el dominio en `CONTACT_FROM_EMAIL` esté verificado en Resend
+- Asegúrate de llenar los campos: nombre, email y mensaje
+
+### Error: "Error al enviar el correo"
+
+- Verifica que las variables SMTP estén configuradas en `.env.local`
+- Verifica que tu API key de Mailjet sea válida
+- Asegúrate de que el email en `CONTACT_FROM_EMAIL` esté verificado en Mailjet
 
 ### No recibo emails
+
 - Verifica la carpeta de spam
 - Confirma que `CONTACT_TO_EMAIL` sea correcto
 - Revisa los logs del servidor para errores
+- Verifica que tu cuenta de Mailjet esté activa
 
 ## 📝 Notas Importantes
 
 - El archivo `.env.local` está en `.gitignore` por seguridad
 - Nunca commits las API keys al repositorio
-- Para producción, configura las variables de entorno en tu plataforma de hosting
-- Resend tiene límites de envío en el plan gratuito (100 emails/día)
+- Para producción, configura las variables de entorno en tu plataforma de hosting (Vercel, Netlify, etc.)
+- Mailjet tiene límites de envío en el plan gratuito (200 emails/día)
+
+## 🔄 Tecnologías Utilizadas
+
+- **Next.js 15** - Framework de React
+- **Nodemailer** - Librería para envío de emails
+- **Mailjet SMTP** - Servicio de email transaccional
+- **TypeScript** - Tipado estático
+- **Zod** - Validación de datos (opcional)
+
+## 📚 Recursos Adicionales
+
+- [Documentación de Mailjet SMTP](https://dev.mailjet.com/smtp-api/overview/)
+- [Documentación de Nodemailer](https://nodemailer.com/)
+- [API Keys de Mailjet](https://app.mailjet.com/account/apikeys)
