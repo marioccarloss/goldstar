@@ -14,7 +14,7 @@ export const siteConfig = {
   business: {
     name: "Gold Star Plumbing",
     phone: "+1-778-554-8619", // Gold Star Plumbing phone number
-    email: "info@goldstarplumbing.ca", // Replace with actual email
+    email: "goldstarplumbingvancouver@gmail.com", // Replace with actual email
     address: {
       street: "123 Main Street", // Replace with actual address
       city: "Vancouver",

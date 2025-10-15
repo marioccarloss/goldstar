@@ -1,71 +1,70 @@
-import Script from 'next/script';
+import Script from "next/script";
 
 interface StructuredDataProps {
-  type?: 'homepage' | 'about' | 'services' | 'contact';
+  type?: "homepage" | "about" | "services" | "contact";
 }
 
-export function StructuredData({ type = 'homepage' }: StructuredDataProps) {
+export function StructuredData({ type = "homepage" }: StructuredDataProps) {
   const baseStructuredData = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "@id": "https://www.goldstarplumbing.ca/#business",
-    "name": "Gold Star Plumbing",
-    "alternateName": "Gold Star Plumbing Services",
-    "description": "Professional plumbing services in Vancouver, BC. Emergency repairs, installations, drain cleaning, and heating services. Licensed plumbers serving Greater Vancouver Area.",
-    "url": "https://www.goldstarplumbing.ca",
-    "telephone": "+1-604-XXX-XXXX", // Replace with actual phone number
-    "email": "info@goldstarplumbing.ca", // Replace with actual email
-    "priceRange": "$$",
-    "image": [
-      "https://www.goldstarplumbing.ca/goldstarplumbing.jpg"
-    ],
-    "logo": {
+    name: "Gold Star Plumbing",
+    alternateName: "Gold Star Plumbing Services",
+    description:
+      "Professional plumbing services in Vancouver, BC. Emergency repairs, installations, drain cleaning, and heating services. Licensed plumbers serving Greater Vancouver Area.",
+    url: "https://www.goldstarplumbing.ca",
+    telephone: "+1-778-554-8619", // Replace with actual phone number
+    email: "goldstarplumbingvancouver@gmail.com", // Replace with actual email
+    priceRange: "$$",
+    image: ["https://www.goldstarplumbing.ca/goldstarplumbing.jpg"],
+    logo: {
       "@type": "ImageObject",
-      "url": "https://www.goldstarplumbing.ca/goldstarplumbing.jpg",
-      "width": 400,
-      "height": 400
+      url: "https://www.goldstarplumbing.ca/goldstarplumbing.jpg",
+      width: 400,
+      height: 400,
     },
-    "address": {
+    address: {
       "@type": "PostalAddress",
-      "streetAddress": "123 Main Street", // Replace with actual address
-      "addressLocality": "Vancouver",
-      "addressRegion": "BC",
-      "postalCode": "V6B 1A1", // Replace with actual postal code
-      "addressCountry": "CA"
+      streetAddress: "123 Main Street", // Replace with actual address
+      addressLocality: "Vancouver",
+      addressRegion: "BC",
+      postalCode: "V6B 1A1", // Replace with actual postal code
+      addressCountry: "CA",
     },
-    "geo": {
+    geo: {
       "@type": "GeoCoordinates",
-      "latitude": 49.2827, // Vancouver coordinates - replace with actual business location
-      "longitude": -123.1207
+      latitude: 49.2827, // Vancouver coordinates - replace with actual business location
+      longitude: -123.1207,
     },
-    "areaServed": [
+    areaServed: [
       {
         "@type": "City",
-        "name": "Vancouver",
-        "sameAs": "https://en.wikipedia.org/wiki/Vancouver"
+        name: "Vancouver",
+        sameAs: "https://en.wikipedia.org/wiki/Vancouver",
       },
       {
         "@type": "City",
-        "name": "Burnaby"
+        name: "Burnaby",
       },
       {
         "@type": "City",
-        "name": "Richmond"
+        name: "Richmond",
       },
       {
         "@type": "City",
-        "name": "Surrey"
+        name: "Surrey",
       },
       {
         "@type": "City",
-        "name": "North Vancouver"
+        name: "North Vancouver",
       },
       {
         "@type": "City",
-        "name": "West Vancouver"
-      }
+        name: "West Vancouver",
+      },
     ],
-    "serviceType": [
+    serviceType: [
       "Emergency Plumbing",
       "Drain Cleaning",
       "Water Heater Repair",
@@ -74,97 +73,94 @@ export function StructuredData({ type = 'homepage' }: StructuredDataProps) {
       "Kitchen Plumbing",
       "Heating Services",
       "Commercial Plumbing",
-      "Residential Plumbing"
+      "Residential Plumbing",
     ],
-    "hasOfferCatalog": {
+    hasOfferCatalog: {
       "@type": "OfferCatalog",
-      "name": "Plumbing Services",
-      "itemListElement": [
+      name: "Plumbing Services",
+      itemListElement: [
         {
           "@type": "Offer",
-          "itemOffered": {
+          itemOffered: {
             "@type": "Service",
-            "name": "Emergency Plumbing Repair",
-            "description": "24/7 emergency plumbing services in Vancouver"
-          }
+            name: "Emergency Plumbing Repair",
+            description: "24/7 emergency plumbing services in Vancouver",
+          },
         },
         {
           "@type": "Offer",
-          "itemOffered": {
+          itemOffered: {
             "@type": "Service",
-            "name": "Drain Cleaning",
-            "description": "Professional drain cleaning and unclogging services"
-          }
+            name: "Drain Cleaning",
+            description: "Professional drain cleaning and unclogging services",
+          },
         },
         {
           "@type": "Offer",
-          "itemOffered": {
+          itemOffered: {
             "@type": "Service",
-            "name": "Water Heater Services",
-            "description": "Water heater installation, repair, and maintenance"
-          }
-        }
-      ]
+            name: "Water Heater Services",
+            description: "Water heater installation, repair, and maintenance",
+          },
+        },
+      ],
     },
-    "openingHoursSpecification": [
+    openingHoursSpecification: [
       {
         "@type": "OpeningHoursSpecification",
-        "dayOfWeek": [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday"
-        ],
-        "opens": "08:00",
-        "closes": "18:00"
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "08:00",
+        closes: "18:00",
       },
       {
         "@type": "OpeningHoursSpecification",
-        "dayOfWeek": "Saturday",
-        "opens": "09:00",
-        "closes": "17:00"
+        dayOfWeek: "Saturday",
+        opens: "09:00",
+        closes: "17:00",
       },
       {
         "@type": "OpeningHoursSpecification",
-        "dayOfWeek": "Sunday",
-        "opens": "10:00",
-        "closes": "16:00"
-      }
+        dayOfWeek: "Sunday",
+        opens: "10:00",
+        closes: "16:00",
+      },
     ],
-    "sameAs": [
+    sameAs: [
       "https://www.facebook.com/goldstarplumbing", // Replace with actual social media
       "https://www.instagram.com/goldstarplumbing",
-      "https://www.linkedin.com/company/goldstarplumbing"
+      "https://www.linkedin.com/company/goldstarplumbing",
     ],
-    "aggregateRating": {
+    aggregateRating: {
       "@type": "AggregateRating",
-      "ratingValue": "4.8",
-      "reviewCount": "127",
-      "bestRating": "5",
-      "worstRating": "1"
-    }
+      ratingValue: "4.8",
+      reviewCount: "127",
+      bestRating: "5",
+      worstRating: "1",
+    },
   };
 
   // Add breadcrumb for non-homepage pages
-  const breadcrumbData = type !== 'homepage' ? {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://www.goldstarplumbing.ca"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": type.charAt(0).toUpperCase() + type.slice(1),
-        "item": `https://www.goldstarplumbing.ca/${type}`
-      }
-    ]
-  } : null;
+  const breadcrumbData =
+    type !== "homepage"
+      ? {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type": "ListItem",
+              position: 1,
+              name: "Home",
+              item: "https://www.goldstarplumbing.ca",
+            },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: type.charAt(0).toUpperCase() + type.slice(1),
+              item: `https://www.goldstarplumbing.ca/${type}`,
+            },
+          ],
+        }
+      : null;
 
   return (
     <>
