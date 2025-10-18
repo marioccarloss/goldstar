@@ -254,7 +254,7 @@ export default function AdminPage() {
             <div className="mb-6 flex flex-col items-center justify-between gap-4 md:flex-row">
               <h1 className="flex items-center gap-3 text-2xl font-bold text-gray-900 md:text-3xl">
                 <Calendar className="h-8 w-8 text-yellow-500" />
-                Gestión de Reservas
+                Reservation management
               </h1>
               <div className="flex items-center gap-2 md:gap-4">
                 <button
@@ -286,7 +286,7 @@ export default function AdminPage() {
             </div>
 
             {loading ? (
-              <div className="py-10 text-center text-gray-500">Cargando reservas...</div>
+              <div className="py-10 text-center text-gray-500">Loading reservations...</div>
             ) : (
               <>
                 {/* Vista escritorio/tablet: cuadrícula semanal */}
@@ -414,7 +414,7 @@ export default function AdminPage() {
                             <span className="font-medium">{hour}</span>
                           </div>
                           <div className="mt-1 text-xs text-gray-500">
-                            {booked ? "Reservado" : isPast ? "Pasado" : "Disponible"}
+                            {booked ? "Reserved" : isPast ? "Past" : "Available"}
                           </div>
                         </button>
                       );
@@ -423,9 +423,9 @@ export default function AdminPage() {
 
                   {/* Leyenda rápida */}
                   <div className="mt-6 grid grid-cols-3 gap-3 text-center text-xs text-gray-600">
-                    <div className="rounded-lg bg-green-100 p-2">Disponible</div>
-                    <div className="rounded-lg bg-red-200 p-2">Reservado</div>
-                    <div className="rounded-lg bg-gray-200 p-2">Pasado</div>
+                    <div className="rounded-lg bg-green-100 p-2">Available</div>
+                    <div className="rounded-lg bg-red-200 p-2">Reserved</div>
+                    <div className="rounded-lg bg-gray-200 p-2">Past</div>
                   </div>
 
                   <div className="mt-8 flex justify-center">

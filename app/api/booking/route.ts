@@ -51,15 +51,15 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const { 
-      name = "", 
-      email = "", 
-      phone = "", 
+    const {
+      name = "",
+      email = "",
+      phone = "",
       service = "",
       date = "",
       timeSlot = "",
       comments = "",
-      website = "" 
+      website = "",
     } = body;
 
     // Honeypot
@@ -71,17 +71,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    const subject = `📅 Nueva reserva de servicio - ${name}`;
+    const subject = `📅 New service reservation - ${name}`;
     const text = [
-      `NUEVA RESERVA DE SERVICIO`,
+      `NEW SERVICE RESERVATION`,
       ``,
-      `Cliente: ${name}`,
+      `Customer: ${name}`,
       email ? `Email: ${email}` : null,
-      `Teléfono: ${phone}`,
+      `Phone: ${phone}`,
       ``,
-      `DETALLES DE LA RESERVA:`,
-      `Servicio: ${service}`,
-      `Fecha: ${date}`,
+      `RESERVATION DETAILS:`,
+      `Service: ${service}`,
+      `Date: ${date}`,
       `Hora: ${timeSlot}`,
       ``,
       comments ? `Comentarios adicionales:` : null,
@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
         <!-- Header -->
         <div style="background: linear-gradient(135deg, #059669 0%, #047857 100%); padding: 24px; border-radius: 12px 12px 0 0;">
           <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-            📅 Nueva reserva de servicio
+            📅 New service reservation
           </h1>
           <div style="height: 3px; background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%); margin-top: 16px; border-radius: 2px;"></div>
         </div>
@@ -141,7 +141,7 @@ export async function POST(req: NextRequest) {
               }
 
               <p style="margin: 0; color: #374151; font-size: 16px;">
-                <strong style="color: #1f2937;">Teléfono:</strong> 
+                <strong style="color: #1f2937;">Teléfono:</strong>
                 <a href="tel:${escapeHtml(phone)}" style="color: #059669; text-decoration: none; font-weight: 500;">
                   ${escapeHtml(phone)}
                 </a>
@@ -152,7 +152,7 @@ export async function POST(req: NextRequest) {
           <!-- Service Details Section -->
           <div style="margin-bottom: 32px;">
             <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 16px 0; border-bottom: 2px solid #f3f4f6; padding-bottom: 8px;">
-              Detalles de la reserva:
+            Reservation details:
             </h2>
 
             <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px; border-left: 4px solid #f59e0b;">
@@ -194,18 +194,18 @@ export async function POST(req: NextRequest) {
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
               <span style="font-size: 16px;">📍</span>
               <strong style="color: #1e40af; font-size: 14px;">Enviado desde:</strong>
-              <span style="color: #1e40af; font-size: 14px;">Sistema de reservas web</span>
+              <span style="color: #1e40af; font-size: 14px;">Web reservation system</span>
             </div>
 
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
               <span style="font-size: 16px;">🕐</span>
-              <strong style="color: #1e40af; font-size: 14px;">Fecha de reserva:</strong>
+              <strong style="color: #1e40af; font-size: 14px;">Reservation date:</strong>
               <span style="color: #1e40af; font-size: 14px;">${timestamp}</span>
             </div>
 
             <div style="display: flex; align-items: center; gap: 8px;">
               <span style="font-size: 16px;">🔍</span>
-              <strong style="color: #1e40af; font-size: 14px;">ID de reserva:</strong>
+              <strong style="color: #1e40af; font-size: 14px;">Reservation ID:</strong>
               <span style="color: #1e40af; font-size: 14px; font-family: monospace;">${bookingId}</span>
             </div>
           </div>

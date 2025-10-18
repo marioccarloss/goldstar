@@ -107,8 +107,8 @@ export default function AdminLanding() {
             >
               <Calendar className="h-5 w-5 text-yellow-500" />
               <div>
-                <p className="font-semibold">Gestión de Reservas</p>
-                <p className="text-sm text-gray-600">Bloquea y libera horarios</p>
+                <p className="font-semibold">Reservation Management</p>
+                <p className="text-sm text-gray-600">Block and release schedules</p>
               </div>
             </Link>
             <Link

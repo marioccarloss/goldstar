@@ -816,7 +816,7 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
                 </div>
               </div>
 
-              <h3 className="mb-2 text-xl font-semibold text-gray-900">¡Reserva Confirmada!</h3>
+              <h3 className="mb-2 text-xl font-semibold text-gray-900">Reservation Confirmed!</h3>
 
               <p className="mb-6 text-gray-600">
                 Tu cita ha sido registrada exitosamente. Recibirás una confirmación pronto.
