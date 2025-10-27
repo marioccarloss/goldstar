@@ -26,7 +26,7 @@ export default function AdminLanding() {
     try {
       await signInWithEmailAndPassword(auth, email.trim(), password);
     } catch (error) {
-      setAuthError("Credenciales inválidas o usuario no registrado.");
+      setAuthError("Invalid credentials or user not registered.");
     }
   };
 
@@ -42,7 +42,7 @@ export default function AdminLanding() {
         <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
           <div className="mb-6 flex items-center gap-3">
             <Lock className="h-6 w-6 text-yellow-500" />
-            <h1 className="text-2xl font-bold text-gray-900">Acceso Administrador</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Administrator Access</h1>
           </div>
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
@@ -55,13 +55,13 @@ export default function AdminLanding() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="h-11 w-full rounded-lg border border-gray-300 px-3 text-gray-900 placeholder-gray-400 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 focus:outline-none"
-                placeholder="Ingresa tu email"
+                placeholder="Enter your email"
                 autoComplete="email"
               />
             </div>
             <div>
               <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700">
-                Contraseña
+                Password
               </label>
               <input
                 id="password"
@@ -69,7 +69,7 @@ export default function AdminLanding() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="h-11 w-full rounded-lg border border-gray-300 px-3 text-gray-900 placeholder-gray-400 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 focus:outline-none"
-                placeholder="Ingresa tu contraseña"
+                placeholder="Enter your password"
                 autoComplete="current-password"
               />
             </div>
@@ -78,9 +78,9 @@ export default function AdminLanding() {
               type="submit"
               className="mt-2 w-full rounded-lg bg-black px-4 py-2.5 font-semibold text-white transition-colors hover:bg-gray-800"
             >
-              Ingresar
+              Sign In
             </button>
-            <p className="text-xs text-gray-500">Acceso protegido con Firebase Authentication.</p>
+            <p className="text-xs text-gray-500">Access protected with Firebase Authentication.</p>
           </form>
         </div>
       </div>
@@ -92,12 +92,12 @@ export default function AdminLanding() {
       <div className="mx-auto max-w-4xl px-4">
         <div className="rounded-lg bg-white p-6 shadow-lg">
           <div className="mb-6 flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">Panel de Administración</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Administration Panel</h1>
             <button
               onClick={handleLogout}
               className="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
             >
-              Cerrar sesión
+              Sign Out
             </button>
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -118,7 +118,7 @@ export default function AdminLanding() {
               <FileText className="h-5 w-5 text-yellow-500" />
               <div>
                 <p className="font-semibold">Content Manager</p>
-                <p className="text-sm text-gray-600">Administrar contenido del sitio</p>
+                <p className="text-sm text-gray-600">Manage site content</p>
               </div>
             </Link>
           </div>

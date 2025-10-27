@@ -22,7 +22,7 @@ export default function ContentManagerPage() {
   const [editingSection, setEditingSection] = useState<string | null>(null);
   const [editedContent, setEditedContent] = useState<any>({});
 
-  // Estados para gestión de servicios
+  // States for service management
   const [showServiceManager, setShowServiceManager] = useState(false);
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
   const [editingService, setEditingService] = useState<{ categoryIndex: number; serviceIndex: number } | null>(null);
@@ -44,7 +44,7 @@ export default function ContentManagerPage() {
     try {
       await signInWithEmailAndPassword(auth, email.trim(), password);
     } catch (error) {
-      setAuthError("Credenciales inválidas o usuario no registrado.");
+      setAuthError("Invalid credentials or user not registered.");
     }
   };
 
@@ -52,11 +52,11 @@ export default function ContentManagerPage() {
     try {
       await signOut(auth);
     } catch (e) {
-      setAuthError("No se pudo cerrar sesión. Inténtalo de nuevo.");
+      setAuthError("Could not sign out. Please try again.");
     }
   };
 
-  // Obtener vista previa del doc content/en
+  // Get preview of content/en doc
   const fetchContentPreview = async () => {
     setOpStatus(null);
     setLoading(true);
@@ -66,28 +66,28 @@ export default function ContentManagerPage() {
         const data = snap.data();
         setContentPreview(data);
         setEditedContent(data);
-        setOpStatus("Contenido cargado desde Firestore.");
+        setOpStatus("Content loaded from Firestore.");
       } else {
         setContentPreview(null);
-        setOpStatus("El documento content/en no existe todavía.");
+        setOpStatus("The content/en document does not exist yet.");
       }
     } catch (e) {
-      setOpStatus("Error al obtener el contenido: " + (e as Error).message);
+      setOpStatus("Error getting content: " + (e as Error).message);
     } finally {
       setLoading(false);
     }
   };
 
-  // Guardar cambios en Firestore
+  // Save changes to Firestore
   const saveContent = async () => {
     setLoading(true);
     try {
       await setDoc(doc(db, "content", "en"), editedContent);
       setContentPreview(editedContent);
       setEditingSection(null);
-      setOpStatus("Contenido guardado exitosamente.");
+      setOpStatus("Content saved successfully.");
     } catch (e) {
-      setOpStatus("Error al guardar: " + (e as Error).message);
+      setOpStatus("Error saving: " + (e as Error).message);
     } finally {
       setLoading(false);
     }
@@ -108,28 +108,28 @@ export default function ContentManagerPage() {
     setEditedContent(newContent);
   };
 
-  // Funciones para gestión de categorías de servicios
+  // Functions for managing service categories
   const addServiceCategory = () => {
-    // Validación mejorada
+    // Enhanced validation
     if (!newCategoryForm.title.trim()) {
-      setOpStatus("Error: El título de la categoría es requerido");
+      setOpStatus("Error: Category title is required");
       setTimeout(() => setOpStatus(null), 3000);
       return;
     }
 
     if (!newCategoryForm.subtitle.trim()) {
-      setOpStatus("Error: El subtítulo de la categoría es requerido");
+      setOpStatus("Error: Category subtitle is required");
       setTimeout(() => setOpStatus(null), 3000);
       return;
     }
 
-    // Verificar duplicados
+    // Check for duplicates
     const existingCategory = editedContent.services?.categories?.find(
       (cat: any) => cat.title.toLowerCase() === newCategoryForm.title.trim().toLowerCase()
     );
 
     if (existingCategory) {
-      setOpStatus("Error: Ya existe una categoría con ese título");
+      setOpStatus("Error: A category with this title already exists");
       setTimeout(() => setOpStatus(null), 3000);
       return;
     }
@@ -149,21 +149,21 @@ export default function ContentManagerPage() {
       setEditedContent(newContent);
       setNewCategoryForm({ title: "", subtitle: "", number: "" });
       setShowNewCategoryForm(false);
-      setOpStatus("✅ Categoría agregada exitosamente. Recuerda guardar los cambios.");
+      setOpStatus("✅ Category added successfully. Remember to save changes.");
       setTimeout(() => setOpStatus(null), 5000);
     } catch (error) {
-      setOpStatus("Error: No se pudo agregar la categoría");
+      setOpStatus("Error: Could not add category");
       setTimeout(() => setOpStatus(null), 3000);
     }
   };
 
   const deleteServiceCategory = (categoryIndex: number) => {
-    if (!confirm("¿Estás seguro de que quieres eliminar esta categoría y todos sus servicios?")) return;
+    if (!confirm("Are you sure you want to delete this category and all its services?")) return;
 
     try {
       const newContent = { ...editedContent };
       if (newContent.services?.categories) {
-        // También eliminar los servicios asociados
+        // Also delete associated services
         const categoryKey = getCategoryServiceKey(categoryIndex);
         if (newContent.services[categoryKey]) {
           delete newContent.services[categoryKey];
@@ -171,11 +171,11 @@ export default function ContentManagerPage() {
 
         newContent.services.categories.splice(categoryIndex, 1);
         setEditedContent(newContent);
-        setOpStatus("✅ Categoría y servicios asociados eliminados. Recuerda guardar los cambios.");
+        setOpStatus("✅ Category and associated services deleted. Remember to save changes.");
         setTimeout(() => setOpStatus(null), 5000);
       }
     } catch (error) {
-      setOpStatus("Error: No se pudo eliminar la categoría");
+      setOpStatus("Error: Could not delete category");
       setTimeout(() => setOpStatus(null), 3000);
     }
   };
@@ -188,35 +188,35 @@ export default function ContentManagerPage() {
         setEditedContent(newContent);
       }
     } catch (error) {
-      setOpStatus("Error: No se pudo actualizar la categoría");
+      setOpStatus("Error: Could not update category");
       setTimeout(() => setOpStatus(null), 3000);
     }
   };
 
-  // Funciones para gestión de servicios individuales
+  // Functions for managing individual services
   const addService = (categoryIndex: number) => {
-    // Validación mejorada
+    // Enhanced validation
     if (!newServiceForm.title.trim()) {
-      setOpStatus("Error: El título del servicio es requerido");
+      setOpStatus("Error: Service title is required");
       setTimeout(() => setOpStatus(null), 3000);
       return;
     }
 
     if (!newServiceForm.description.trim()) {
-      setOpStatus("Error: La descripción del servicio es requerida");
+      setOpStatus("Error: Service description is required");
       setTimeout(() => setOpStatus(null), 3000);
       return;
     }
 
     const categoryKey = getCategoryServiceKey(categoryIndex);
 
-    // Verificar duplicados en la misma categoría
+    // Check for duplicates in the same category
     const existingService = editedContent.services?.[categoryKey]?.find(
       (service: any) => service.title.toLowerCase() === newServiceForm.title.trim().toLowerCase()
     );
 
     if (existingService) {
-      setOpStatus("Error: Ya existe un servicio con ese título en esta categoría");
+      setOpStatus("Error: A service with this title already exists in this category");
       setTimeout(() => setOpStatus(null), 3000);
       return;
     }
@@ -236,16 +236,16 @@ export default function ContentManagerPage() {
       setEditedContent(newContent);
       setNewServiceForm({ title: "", description: "" });
       setShowNewServiceForm(null);
-      setOpStatus("✅ Servicio agregado exitosamente. Recuerda guardar los cambios.");
+      setOpStatus("✅ Service added successfully. Remember to save changes.");
       setTimeout(() => setOpStatus(null), 5000);
     } catch (error) {
-      setOpStatus("Error: No se pudo agregar el servicio");
+      setOpStatus("Error: Could not add service");
       setTimeout(() => setOpStatus(null), 3000);
     }
   };
 
   const deleteService = (categoryIndex: number, serviceIndex: number) => {
-    if (!confirm("¿Estás seguro de que quieres eliminar este servicio?")) return;
+    if (!confirm("Are you sure you want to delete this service?")) return;
 
     try {
       const newContent = { ...editedContent };
@@ -254,11 +254,11 @@ export default function ContentManagerPage() {
       if (newContent.services?.[categoryKey]) {
         newContent.services[categoryKey].splice(serviceIndex, 1);
         setEditedContent(newContent);
-        setOpStatus("✅ Servicio eliminado exitosamente. Recuerda guardar los cambios.");
+        setOpStatus("✅ Service deleted successfully. Remember to save changes.");
         setTimeout(() => setOpStatus(null), 5000);
       }
     } catch (error) {
-      setOpStatus("Error: No se pudo eliminar el servicio");
+      setOpStatus("Error: Could not delete service");
       setTimeout(() => setOpStatus(null), 3000);
     }
   };
@@ -273,7 +273,7 @@ export default function ContentManagerPage() {
         setEditedContent(newContent);
       }
     } catch (error) {
-      setOpStatus("Error: No se pudo actualizar el servicio");
+      setOpStatus("Error: Could not update service");
       setTimeout(() => setOpStatus(null), 3000);
     }
   };
@@ -297,7 +297,7 @@ export default function ContentManagerPage() {
         <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
           <div className="mb-6 flex items-center gap-3">
             <Lock className="h-6 w-6 text-yellow-500" />
-            <h1 className="text-2xl font-bold text-gray-900">Acceso Administrador</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Administrator Access</h1>
           </div>
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
@@ -310,13 +310,13 @@ export default function ContentManagerPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="h-11 w-full rounded-lg border border-gray-300 px-3 text-gray-900 placeholder-gray-400 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 focus:outline-none"
-                placeholder="Ingresa tu email"
+                placeholder="Enter your email"
                 autoComplete="email"
               />
             </div>
             <div>
               <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700">
-                Contraseña
+                Password
               </label>
               <input
                 id="password"
@@ -324,7 +324,7 @@ export default function ContentManagerPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="h-11 w-full rounded-lg border border-gray-300 px-3 text-gray-900 placeholder-gray-400 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 focus:outline-none"
-                placeholder="Ingresa tu contraseña"
+                placeholder="Enter your password"
                 autoComplete="current-password"
               />
             </div>
@@ -333,9 +333,9 @@ export default function ContentManagerPage() {
               type="submit"
               className="mt-2 w-full rounded-lg bg-black px-4 py-2.5 font-semibold text-white transition-colors hover:bg-gray-800"
             >
-              Ingresar
+              Sign In
             </button>
-            <p className="text-xs text-gray-500">Acceso protegido con Firebase Authentication.</p>
+            <p className="text-xs text-gray-500">Access protected with Firebase Authentication.</p>
           </form>
         </div>
       </div>
@@ -356,16 +356,16 @@ export default function ContentManagerPage() {
             onClick={handleLogout}
             className="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
           >
-            Cerrar sesión
+            Sign Out
           </button>
         </div>
-        {/* Panel de gestión de contenido */}
+        {/* Content management panel */}
         <div className="mt-8 space-y-6">
-          {/* Barra de acciones */}
+          {/* Action bar */}
           <div className="flex items-center justify-between rounded-xl bg-white p-6 shadow-sm">
             <div>
-              <h2 className="text-xl font-semibold">Gestionar Contenido del Sitio</h2>
-              <p className="mt-1 text-sm text-gray-600">Edita el contenido de todas las páginas desde un solo lugar.</p>
+              <h2 className="text-xl font-semibold">Manage Site Content</h2>
+              <p className="mt-1 text-sm text-gray-600">Edit the content of all pages from one place.</p>
             </div>
             <div className="flex gap-3">
               <button
@@ -373,14 +373,14 @@ export default function ContentManagerPage() {
                 className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
               >
                 <Settings className="mr-1 inline h-4 w-4" />
-                {showServiceManager ? "Ocultar" : "Gestionar"} Servicios
+                {showServiceManager ? "Hide" : "Manage"} Services
               </button>
               <button
                 onClick={fetchContentPreview}
                 disabled={loading}
                 className="rounded-md bg-gray-200 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-70"
               >
-                {loading ? "Cargando..." : "Recargar"}
+                {loading ? "Loading..." : "Reload"}
               </button>
               {editingSection && (
                 <>
@@ -391,14 +391,14 @@ export default function ContentManagerPage() {
                     }}
                     className="rounded-md bg-gray-500 px-4 py-2 text-sm font-medium text-white hover:bg-gray-600"
                   >
-                    <X className="mr-1 inline h-4 w-4" /> Cancelar
+                    <X className="mr-1 inline h-4 w-4" /> Cancel
                   </button>
                   <button
                     onClick={saveContent}
                     disabled={loading}
                     className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-70"
                   >
-                    <Save className="mr-1 inline h-4 w-4" /> Guardar
+                    <Save className="mr-1 inline h-4 w-4" /> Save
                   </button>
                 </>
               )}
@@ -418,8 +418,8 @@ export default function ContentManagerPage() {
                 <div className="flex items-center gap-3">
                   <Settings className="h-6 w-6 text-blue-600" />
                   <div>
-                    <h2 className="text-xl font-semibold text-gray-900">Gestión de Servicios</h2>
-                    <p className="text-sm text-gray-600">Administra categorías y servicios individuales</p>
+                    <h2 className="text-xl font-semibold text-gray-900">Service Management</h2>
+                    <p className="text-sm text-gray-600">Manage categories and individual services</p>
                   </div>
                 </div>
               </div>
@@ -428,37 +428,37 @@ export default function ContentManagerPage() {
                 {/* Gestión de Categorías */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-gray-900">Categorías de Servicios</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">Service Categories</h3>
                     <button
                       onClick={() => setShowNewCategoryForm(!showNewCategoryForm)}
                       className="rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700"
                     >
-                      <Plus className="mr-1 inline h-4 w-4" /> Nueva Categoría
+                      <Plus className="mr-1 inline h-4 w-4" /> New Category
                     </button>
                   </div>
 
-                  {/* Formulario para nueva categoría */}
+                  {/* Form for new category */}
                   {showNewCategoryForm && (
                     <div className="space-y-3 rounded-lg border border-green-200 bg-green-50 p-4">
-                      <h4 className="font-medium text-green-800">Agregar Nueva Categoría</h4>
+                      <h4 className="font-medium text-green-800">Add New Category</h4>
                       <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                         <input
                           type="text"
-                          placeholder="Título de la categoría"
+                          placeholder="Category title"
                           value={newCategoryForm.title}
                           onChange={(e) => setNewCategoryForm((prev) => ({ ...prev, title: e.target.value }))}
                           className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200"
                         />
                         <input
                           type="text"
-                          placeholder="Subtítulo/descripción"
+                          placeholder="Subtitle/description"
                           value={newCategoryForm.subtitle}
                           onChange={(e) => setNewCategoryForm((prev) => ({ ...prev, subtitle: e.target.value }))}
                           className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200"
                         />
                         <input
                           type="text"
-                          placeholder="Número (opcional)"
+                          placeholder="Number (optional)"
                           value={newCategoryForm.number}
                           onChange={(e) => setNewCategoryForm((prev) => ({ ...prev, number: e.target.value }))}
                           className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200"
@@ -469,7 +469,7 @@ export default function ContentManagerPage() {
                           onClick={addServiceCategory}
                           className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
                         >
-                          Agregar Categoría
+                          Add Category
                         </button>
                         <button
                           onClick={() => {
@@ -478,13 +478,13 @@ export default function ContentManagerPage() {
                           }}
                           className="rounded-md bg-gray-500 px-4 py-2 text-sm font-medium text-white hover:bg-gray-600"
                         >
-                          Cancelar
+                          Cancel
                         </button>
                       </div>
                     </div>
                   )}
 
-                  {/* Lista de categorías existentes */}
+                  {/* List of existing categories */}
                   <div className="space-y-3">
                     {contentPreview.services?.categories?.map((category: any, categoryIndex: number) => (
                       <div key={categoryIndex} className="rounded-lg border border-gray-200 bg-gray-50 p-4">
@@ -547,32 +547,32 @@ export default function ContentManagerPage() {
                           </div>
                         </div>
 
-                        {/* Gestión de servicios de esta categoría */}
+                        {/* Service management for this category */}
                         <div className="border-t border-gray-200 pt-4">
                           <div className="mb-3 flex items-center justify-between">
-                            <h5 className="font-medium text-gray-700">Servicios en esta categoría</h5>
+                            <h5 className="font-medium text-gray-700">Services in this category</h5>
                             <button
                               onClick={() =>
                                 setShowNewServiceForm(showNewServiceForm === categoryIndex ? null : categoryIndex)
                               }
                               className="rounded-md bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700"
                             >
-                              <Plus className="mr-1 inline h-3 w-3" /> Agregar Servicio
+                              <Plus className="mr-1 inline h-3 w-3" /> Add Service
                             </button>
                           </div>
 
-                          {/* Formulario para nuevo servicio */}
+                          {/* Form for new service */}
                           {showNewServiceForm === categoryIndex && (
                             <div className="mb-3 space-y-2 rounded-lg border border-blue-200 bg-blue-50 p-3">
                               <input
                                 type="text"
-                                placeholder="Título del servicio"
+                                placeholder="Service title"
                                 value={newServiceForm.title}
                                 onChange={(e) => setNewServiceForm((prev) => ({ ...prev, title: e.target.value }))}
                                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                               />
                               <textarea
-                                placeholder="Descripción del servicio"
+                                placeholder="Service description"
                                 value={newServiceForm.description}
                                 onChange={(e) =>
                                   setNewServiceForm((prev) => ({ ...prev, description: e.target.value }))
@@ -585,7 +585,7 @@ export default function ContentManagerPage() {
                                   onClick={() => addService(categoryIndex)}
                                   className="rounded-md bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700"
                                 >
-                                  Agregar
+                                  Add
                                 </button>
                                 <button
                                   onClick={() => {
@@ -594,13 +594,13 @@ export default function ContentManagerPage() {
                                   }}
                                   className="rounded-md bg-gray-500 px-3 py-1 text-xs font-medium text-white hover:bg-gray-600"
                                 >
-                                  Cancelar
+                                  Cancel
                                 </button>
                               </div>
                             </div>
                           )}
 
-                          {/* Lista de servicios */}
+                          {/* List of services */}
                           <div className="space-y-2">
                             {contentPreview.services?.[getCategoryServiceKey(categoryIndex)]?.map(
                               (service: any, serviceIndex: number) => (
@@ -1369,7 +1369,7 @@ export default function ContentManagerPage() {
             <div className="rounded-xl bg-white p-12 text-center shadow-sm">
               <FileText className="mx-auto mb-4 h-12 w-12 text-gray-400" />
               <h3 className="mb-2 text-lg font-semibold text-gray-900">No hay contenido disponible</h3>
-              <p className="mb-4 text-gray-600">Haz clic en "Recargar" para obtener el contenido desde Firestore.</p>
+              <p className="mb-4 text-gray-600">Click "Reload" to get content from Firestore.</p>
             </div>
           )}
         </div>

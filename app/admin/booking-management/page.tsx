@@ -19,10 +19,10 @@ interface Booking {
   // Aquí podrían ir otros detalles de la reserva como userName, userEmail, etc.
 }
 
-// Horario laboral estándar
+// Standard working hours
 const workHours = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
 
-// Autenticación mediante Firebase Auth (Email y contraseña)
+// Authentication via Firebase Auth (Email and password)
 
 export default function AdminPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -54,7 +54,7 @@ export default function AdminPage() {
     try {
       await signInWithEmailAndPassword(auth, email.trim(), password);
     } catch (error) {
-      setAuthError("Credenciales inválidas o usuario no registrado.");
+      setAuthError("Invalid credentials or user not registered.");
     }
   };
 
@@ -133,10 +133,10 @@ export default function AdminPage() {
     try {
       if (existing) {
         await handleRemoveBooking(existing.id);
-        setBanner("Horario liberado");
+        setBanner("Flexible schedule");
       } else {
         await handleAddBooking(date, time);
-        setBanner("Horario bloqueado");
+        setBanner("Blocked schedule");
       }
     } catch (e) {
       console.error("Error al alternar reserva:", e);
@@ -196,7 +196,7 @@ export default function AdminPage() {
         <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
           <div className="mb-6 flex items-center gap-3">
             <Lock className="h-6 w-6 text-yellow-500" />
-            <h1 className="text-2xl font-bold text-gray-900">Acceso Administrador</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Administrator Access</h1>
           </div>
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
@@ -209,13 +209,13 @@ export default function AdminPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="h-11 w-full rounded-lg border border-gray-300 px-3 text-gray-900 placeholder-gray-400 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 focus:outline-none"
-                placeholder="Ingresa tu email"
+                placeholder="Enter your email"
                 autoComplete="email"
               />
             </div>
             <div>
               <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700">
-                Contraseña
+                Password
               </label>
               <input
                 id="password"
@@ -223,7 +223,7 @@ export default function AdminPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="h-11 w-full rounded-lg border border-gray-300 px-3 text-gray-900 placeholder-gray-400 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 focus:outline-none"
-                placeholder="Ingresa tu contraseña"
+                placeholder="Enter your password"
                 autoComplete="current-password"
               />
             </div>
@@ -232,9 +232,9 @@ export default function AdminPage() {
               type="submit"
               className="mt-2 w-full rounded-lg bg-black px-4 py-2.5 font-semibold text-white transition-colors hover:bg-gray-800"
             >
-              Ingresar
+              Sign In
             </button>
-            <p className="text-xs text-gray-500">Acceso protegido con Firebase Authentication.</p>
+            <p className="text-xs text-gray-500">Access protected with Firebase Authentication.</p>
           </form>
         </div>
       </div>
@@ -260,7 +260,7 @@ export default function AdminPage() {
                 <button
                   onClick={handlePrevWeek}
                   className="rounded-md p-2 hover:bg-gray-100"
-                  aria-label="Semana anterior"
+                  aria-label="Previous week"
                 >
                   <ChevronLeft className="h-6 w-6" />
                 </button>
@@ -268,19 +268,15 @@ export default function AdminPage() {
                   {format(startOfCurrentWeek, "d MMM", { locale: es })} -{" "}
                   {format(endOfCurrentWeek, "d MMM, yyyy", { locale: es })}
                 </h2>
-                <button
-                  onClick={handleNextWeek}
-                  className="rounded-md p-2 hover:bg-gray-100"
-                  aria-label="Siguiente semana"
-                >
+                <button onClick={handleNextWeek} className="rounded-md p-2 hover:bg-gray-100" aria-label="Next week">
                   <ChevronRight className="h-6 w-6" />
                 </button>
                 <button
                   onClick={handleLogout}
                   className="ml-2 rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
-                  aria-label="Cerrar sesión"
+                  aria-label="Sign out"
                 >
-                  Cerrar sesión
+                  Sign Out
                 </button>
               </div>
             </div>
@@ -327,8 +323,8 @@ export default function AdminPage() {
                             onClick={() => handleSlotClick(day, hour)}
                             disabled={isPast || pending}
                             className={`m-1 rounded p-2 text-center text-xs font-medium transition-all duration-200 hover:scale-105 focus:ring-2 focus:ring-yellow-500 focus:outline-none ${slotClass} ${!isPast && !booked ? "hover:bg-yellow-100 hover:text-yellow-800" : ""} ${pending ? "opacity-70" : ""}`}
-                            title={booked ? "Clic para liberar horario" : "Clic para bloquear horario"}
-                            aria-label={`${booked ? "Liberar" : "Bloquear"} ${hour} del ${format(day, "PPP", { locale: es })}`}
+                            title={booked ? "Click to release time slot" : "Click to block time slot"}
+                            aria-label={`${booked ? "Release" : "Block"} ${hour} on ${format(day, "PPP", { locale: es })}`}
                           >
                             <div className="flex items-center justify-center gap-1">
                               {pending ? (
@@ -402,8 +398,8 @@ export default function AdminPage() {
                                 ? "cursor-not-allowed border-gray-300 bg-gray-100 text-gray-500"
                                 : "border-black/30 text-black hover:border-black/50 active:scale-[0.98]"
                           } ${pending ? "opacity-70" : ""}`}
-                          aria-label={`${booked ? "Liberar" : "Bloquear"} ${hour} del ${format(selectedMobileDay, "PPP", { locale: es })}`}
-                          title={booked ? "Clic para liberar horario" : "Clic para bloquear horario"}
+                          aria-label={`${booked ? "Release" : "Block"} ${hour} on ${format(selectedMobileDay, "PPP", { locale: es })}`}
+                          title={booked ? "Click to release time slot" : "Click to block time slot"}
                         >
                           <div className="flex items-center justify-center gap-2">
                             {pending ? (
@@ -433,7 +429,7 @@ export default function AdminPage() {
                       onClick={handleLogout}
                       className="rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
                     >
-                      Cerrar sesión
+                      Sign Out
                     </button>
                   </div>
                 </div>
@@ -453,12 +449,12 @@ export default function AdminPage() {
         <div className="fixed inset-0 z-50 flex items-end bg-black/40 p-4 md:items-center">
           <div className="w-full rounded-2xl bg-white p-5 shadow-xl md:mx-auto md:max-w-sm">
             <h3 className="mb-2 text-lg font-semibold">
-              {confirmAction.booked ? "Liberar horario" : "Bloquear horario"}
+              {confirmAction.booked ? "Release Time Slot" : "Block Time Slot"}
             </h3>
             <p className="mb-4 text-sm text-gray-600">
               {confirmAction.booked
-                ? "¿Seguro que quieres liberar este horario?"
-                : "¿Seguro que quieres bloquear este horario?"}
+                ? "Are you sure you want to release this time slot?"
+                : "Are you sure you want to block this time slot?"}
               <br />
               <span className="font-medium text-gray-900">
                 {format(confirmAction.date, "PPP", { locale: es })} — {confirmAction.time}
@@ -469,7 +465,7 @@ export default function AdminPage() {
                 onClick={() => setConfirmAction(null)}
                 className="rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
               >
-                Cancelar
+                Cancel
               </button>
               <button
                 onClick={() => {
@@ -478,7 +474,7 @@ export default function AdminPage() {
                 }}
                 className="rounded-md bg-black px-3 py-2 text-sm font-medium text-white hover:bg-gray-800"
               >
-                Confirmar
+                Confirm
               </button>
             </div>
           </div>
