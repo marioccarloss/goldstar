@@ -819,22 +819,22 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
               <h3 className="mb-2 text-xl font-semibold text-gray-900">Reservation Confirmed!</h3>
 
               <p className="mb-6 text-gray-600">
-                Tu cita ha sido registrada exitosamente. Recibirás una confirmación pronto.
+                Your appointment has been successfully booked. You will receive a confirmation shortly.
               </p>
 
               <div className="mb-6 rounded-lg bg-gray-50 p-4 text-left">
                 <div className="space-y-2 text-sm">
                   <div>
-                    <strong>Servicio:</strong> {bookingData.service}
+                    <strong>Service:</strong> {bookingData.service}
                   </div>
                   <div>
-                    <strong>Fecha:</strong> {selectedDate ? selectedDate.toLocaleDateString() : ""}
+                    <strong>Date:</strong> {selectedDate ? selectedDate.toLocaleDateString() : ""}
                   </div>
                   <div>
-                    <strong>Hora:</strong> {availableSlots.find((s) => s.id === selectedTimeSlot)?.time}
+                    <strong>Time:</strong> {availableSlots.find((s) => s.id === selectedTimeSlot)?.time}
                   </div>
                   <div>
-                    <strong>Nombre:</strong> {bookingData.name}
+                    <strong>Name:</strong> {bookingData.name}
                   </div>
                 </div>
               </div>
@@ -843,7 +843,7 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
                 onClick={handleConfirmationClose}
                 className="w-full rounded-lg bg-black px-4 py-2 text-white transition-colors hover:bg-gray-800"
               >
-                Cerrar
+                Close
               </button>
             </div>
           </div>
