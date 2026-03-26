@@ -128,8 +128,8 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body className={`${geologica.variable} font-sans`}>
-        <StructuredData type="homepage" />
         <Analytics />
+        <StructuredData type="homepage" />
         <Header />
         <main>{children}</main>
         <Footer />

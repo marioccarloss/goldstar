@@ -59,7 +59,7 @@ Actualizar en `/components/seo/analytics.tsx`:
 
 ```typescript
 googleAnalyticsId: "G-XXXXXXXXXX"; // ID real de GA4
-googleTagManagerId: "GTM-XXXXXXX"; // ID real de GTM
+googleTagManagerId: "GTM-T922J8RJ"; // ID real de GTM
 ```
 
 ### 3. Verificación de Google

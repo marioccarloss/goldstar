@@ -36,7 +36,7 @@ async function testVerifiedSender() {
         // Preparar email de prueba
         const timestamp = new Date().toISOString();
         const trackingId = Date.now();
-        
+
         const mailOptions = {
             from: process.env.CONTACT_FROM_EMAIL,
             to: process.env.CONTACT_TO_EMAIL,
@@ -44,7 +44,7 @@ async function testVerifiedSender() {
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #2563eb;">✅ Prueba con Dirección Verificada</h2>
-                    
+
                     <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
                         <h3>📊 Información de la Prueba</h3>
                         <p><strong>Tracking ID:</strong> ${trackingId}</p>
@@ -53,13 +53,13 @@ async function testVerifiedSender() {
                         <p><strong>Destinatario:</strong> ${process.env.CONTACT_TO_EMAIL}</p>
                         <p><strong>Estado del remitente:</strong> ✅ VERIFICADO en Mailjet</p>
                     </div>
-                    
+
                     <div style="background: #dcfce7; padding: 20px; border-radius: 8px; margin: 20px 0;">
                         <h3>🎯 Objetivo de la Prueba</h3>
-                        <p>Esta prueba utiliza <strong>hello@marioroca.dev</strong>, que es la única dirección verificada y activa en Mailjet.</p>
+                        <p>Esta prueba utiliza <strong>hello@marioroca.site</strong>, que es la única dirección verificada y activa en Mailjet.</p>
                         <p>Si este email llega correctamente, confirma que el problema anterior era la falta de verificación de la dirección remitente.</p>
                     </div>
-                    
+
                     <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0;">
                         <h3>📝 Simulación de Formulario de Contacto</h3>
                         <p><strong>Nombre:</strong> Cliente de Prueba</p>
@@ -68,7 +68,7 @@ async function testVerifiedSender() {
                         <p><strong>Servicio:</strong> Reparación de plomería</p>
                         <p><strong>Mensaje:</strong> Esta es una prueba del formulario de contacto con dirección verificada.</p>
                     </div>
-                    
+
                     <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
                         Si recibes este email, ¡el sistema de contacto está funcionando correctamente! 🎉
                     </p>
@@ -89,21 +89,21 @@ async function testVerifiedSender() {
         console.log('');
 
         const result = await transporter.sendMail(mailOptions);
-        
+
         console.log('✅ EMAIL ENVIADO EXITOSAMENTE');
         console.log('📊 Detalles del envío:');
         console.log('- Message ID:', result.messageId);
         console.log('- Response:', result.response);
         console.log('');
-        
+
         console.log('🔍 PRÓXIMOS PASOS:');
         console.log('1. ✅ Revisar la bandeja de entrada de goldstarplumbingvancouver@gmail.com');
         console.log('2. ✅ Buscar email con Tracking ID:', trackingId);
-        console.log('3. ✅ Verificar que el remitente aparece como hello@marioroca.dev');
+        console.log('3. ✅ Verificar que el remitente aparece como hello@marioroca.site');
         console.log('4. ✅ Si llega este email, el problema estaba en la verificación del remitente');
         console.log('');
         console.log('⏰ Tiempo estimado de entrega: 1-5 minutos');
-        
+
     } catch (error) {
         console.error('❌ ERROR:', error.message);
         console.error('📋 Detalles completos:', error);

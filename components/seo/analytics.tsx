@@ -8,8 +8,8 @@ interface AnalyticsProps {
 }
 
 export function Analytics({
-  googleAnalyticsId = "G-XXXXXXXXXX", // Replace with actual GA4 ID
-  googleTagManagerId = "GTM-TJXZSS7K", // Google Tag Manager ID
+  googleAnalyticsId, // Removed default placeholder
+  googleTagManagerId = "GTM-T922J8RJ", // Updated with user's GTM ID
 }: AnalyticsProps) {
   return (
     <>
