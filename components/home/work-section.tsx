@@ -324,7 +324,7 @@ export function WorkSection({ initialContent }: { initialContent?: any }) {
               <motion.div variants={itemVariants} className="col-span-1 row-span-3">
                 <GridItem onClick={() => setShowHeating(true)}>
                   <div className="relative h-full w-full">
-                    <Image src="/images/heating-services.jpg" alt="Heating service" fill className="object-cover" />
+                    <Image src="/images/heating-service-1.jpg" alt="Heating service" fill className="object-cover" />
                   </div>
                 </GridItem>
               </motion.div>
