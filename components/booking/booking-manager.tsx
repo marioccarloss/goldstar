@@ -20,6 +20,8 @@ import {
 import { useEffect, useState } from "react";
 import { db } from "../../lib/firebase";
 import { Button } from "../ui/button";
+import { Turnstile } from "@marsidev/react-turnstile";
+import { TURNSTILE_SITE_KEY } from "@/lib/turnstile-config";
 
 interface BookingData {
   name: string;
@@ -223,6 +225,7 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
   });
   const [saving, setSaving] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
 
   // Formatea fecha localmente como YYYY-MM-DD para evitar problemas de zona horaria
   const formatLocalDate = (date: Date) => {
@@ -373,6 +376,11 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
     e.preventDefault();
     if (!isStepValid()) return;
 
+    if (!turnstileToken) {
+      setSubmitError("Please complete the bot protection check");
+      return;
+    }
+
     try {
       setSubmitError(null);
       setSaving(true);
@@ -418,6 +426,7 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
             date: dateStr,
             timeSlot: timeStr,
             comments: bookingData.comments,
+            turnstileToken,
           }),
         });
 
@@ -745,6 +754,14 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
                       className="w-full resize-none rounded-2xl border-2 border-black/30 bg-transparent px-4 py-3 text-black placeholder-black/60 transition-all duration-300 hover:border-black/50 focus:border-black focus:ring-0 focus:outline-none"
                     />
                   </div>
+
+                  <div className="mt-4 flex justify-center">
+                    <Turnstile
+                      siteKey={TURNSTILE_SITE_KEY}
+                      onSuccess={(token) => setTurnstileToken(token)}
+                      onExpire={() => setTurnstileToken("")}
+                    />
+                  </div>
                 </div>
                 {submitError && (
                   <div className="rounded-xl border-2 border-red-600 bg-red-50 p-3 text-sm text-red-700">
@@ -788,7 +805,7 @@ export const BookingManager = ({ isOpen, onClose, onBookingComplete }: BookingMa
             ) : (
               <Button
                 onClick={handleSubmit}
-                disabled={!isStepValid() || saving}
+                disabled={!isStepValid() || saving || !turnstileToken}
                 className="group relative h-12 overflow-hidden rounded-2xl bg-green-600 px-6 text-white shadow-lg transition-all duration-500 hover:scale-[1.02] hover:bg-green-700 hover:shadow-2xl disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-green-700/20 transition-all duration-500 group-hover:from-white/20 group-hover:to-green-800/30"></div>

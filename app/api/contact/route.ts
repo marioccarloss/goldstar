@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 // Configurar el transporter de Mailjet
 const transporter = nodemailer.createTransport({
@@ -22,8 +23,14 @@ interface ContactFormData {
 export async function POST(req: NextRequest) {
   try {
     // Parsear el body del request
-    const body: ContactFormData = await req.json();
-    const { name, email, phone, message } = body;
+    const body = await req.json();
+    const { name, email, phone, message, turnstileToken } = body;
+
+    // Verify Turnstile token
+    const verification = await verifyTurnstileToken(turnstileToken);
+    if (!verification.success) {
+      return NextResponse.json({ error: "Bot detection failed. Please try again." }, { status: 403 });
+    }
 
     // Validate required fields
     if (!name || !email || !message) {

@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { getContent, subscribeToContent } from "@/lib/content";
 import { motion, Variants } from "framer-motion";
 import { ArrowRight, Facebook, Instagram, Linkedin, Mail, MapPin, Phone, Twitter } from "lucide-react";
+import { Turnstile } from "@marsidev/react-turnstile";
+import { TURNSTILE_SITE_KEY } from "@/lib/turnstile-config";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast, Toaster } from "sonner";
 
@@ -66,6 +68,7 @@ export default function ContactClient({ initialContent }: { initialContent?: any
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [honeypot, setHoneypot] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
   const [content, setContent] = useState<any>(initialContent ? normalizeContent(initialContent) : null);
 
   useEffect(() => {
@@ -98,6 +101,12 @@ export default function ContactClient({ initialContent }: { initialContent?: any
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (honeypot) return;
+    
+    if (!turnstileToken) {
+      toast.error("Please complete the bot protection check");
+      return;
+    }
+
     const newErrors = validateForm();
     setErrors(newErrors);
     if (Object.keys(newErrors).length === 0) {
@@ -106,7 +115,7 @@ export default function ContactClient({ initialContent }: { initialContent?: any
         const res = await fetch("/api/contact", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...formData, website: honeypot }),
+          body: JSON.stringify({ ...formData, website: honeypot, turnstileToken }),
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
@@ -114,6 +123,7 @@ export default function ContactClient({ initialContent }: { initialContent?: any
         }
         toast.success(content.contact.form.toast.success);
         setFormData({ name: "", email: "", phone: "", message: "" });
+        setTurnstileToken(""); // Reset token after success
       } catch (err: any) {
         toast.error(err?.message || "Something went wrong");
       } finally {
@@ -296,6 +306,15 @@ export default function ContactClient({ initialContent }: { initialContent?: any
                     placeholder={content.contact.form.placeholders.message}
                   />
                 </motion.div>
+
+                <motion.div variants={textItemVariants}>
+                  <Turnstile
+                    siteKey={TURNSTILE_SITE_KEY}
+                    onSuccess={(token) => setTurnstileToken(token)}
+                    onExpire={() => setTurnstileToken("")}
+                  />
+                </motion.div>
+
                 <motion.div variants={textItemVariants}>
                   <Button
                     type="submit"

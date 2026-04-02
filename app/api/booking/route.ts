@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -60,7 +61,14 @@ export async function POST(req: NextRequest) {
       timeSlot = "",
       comments = "",
       website = "",
+      turnstileToken = "",
     } = body;
+
+    // Verify Turnstile token
+    const verification = await verifyTurnstileToken(turnstileToken);
+    if (!verification.success) {
+      return NextResponse.json({ error: "Bot detection failed. Please try again." }, { status: 403 });
+    }
 
     // Honeypot
     if (website && String(website).trim() !== "") {
